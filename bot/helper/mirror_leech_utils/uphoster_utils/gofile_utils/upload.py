@@ -1,3 +1,4 @@
+
 from io import BufferedReader
 from json import JSONDecodeError
 from logging import getLogger
@@ -98,16 +99,20 @@ class GoFileUpload:
     async def __resp_handler(self, response):
         if (api_resp := response.get("status", "")) == "ok":
             return response["data"]
-        raise Exception(
-            api_resp.split("-")[1]
-            if "error-" in api_resp
-            else "Response Status is not ok and Reason is Unknown"
-        )
+        message = response.get("message") or response.get("error")
+        if "error-" in api_resp:
+            message = message or api_resp.split("-", 1)[1]
+        if not message:
+            message = f"Response Status is not ok and Reason is Unknown (status={api_resp or 'missing'})"
+        raise Exception(message)
 
     async def __getServer(self):
         async with ClientSession() as session:
             async with session.get(f"{self.api_url}servers") as resp:
-                return await self.__resp_handler(await resp.json())
+                response = await resp.json()
+                if response.get("status") == "noServer":
+                    return {"servers": [{"name": "upload"}]}
+                return await self.__resp_handler(response)
 
     async def __getAccount(self, check_account=False):
         if self.token is None:
