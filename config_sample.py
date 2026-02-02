@@ -15,7 +15,7 @@ CMD_SUFFIX = ""
 AUTHORIZED_CHATS = ""
 SUDO_USERS = ""
 STATUS_LIMIT = 10
-DEFAULT_UPLOAD = "rc"
+DEFAULT_UPLOAD = "rc"  # rc (rclone), gd (gdrive), ddl (uphoster)
 STATUS_UPDATE_INTERVAL = 15
 FILELION_API = ""
 STREAMWISH_API = ""
@@ -26,6 +26,7 @@ USE_SERVICE_ACCOUNTS = False
 NAME_SWAP = ""
 FFMPEG_CMDS = {}
 UPLOAD_PATHS = {}
+VIKINGFILE_USER = ""
 
 # Hyper Tg Downloader
 HELPER_TOKENS = ""

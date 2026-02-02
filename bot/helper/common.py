@@ -305,6 +305,12 @@ class TaskConfig:
                 (not self.up_dest and default_upload == "gd") or self.up_dest == "gd"
             ):
                 self.up_dest = self.user_dict.get("GDRIVE_ID") or Config.GDRIVE_ID
+            elif not self.is_uphoster and not self.is_clone and (
+                (not self.up_dest and default_upload == "ddl") or self.up_dest == "ddl"
+            ):
+                self.is_uphoster = True
+                if self.up_dest == "ddl":
+                    self.up_dest = ""
 
             if self.is_uphoster and not self.up_dest:
                 uphoster_service = self.user_dict.get("UPHOSTER_SERVICE", "gofile")
@@ -327,6 +333,12 @@ class TaskConfig:
                             or Config.PIXELDRAIN_KEY
                         ):
                             raise ValueError("No PixelDrain Key Found!")
+                    elif service == "vikingfile":
+                        if not (
+                            self.user_dict.get("VIKINGFILE_USER")
+                            or Config.VIKINGFILE_USER
+                        ):
+                            raise ValueError("No VikingFile User Hash Found!")
                 self.up_dest = "Uphoster"
 
             if not self.up_dest:
