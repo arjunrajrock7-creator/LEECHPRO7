@@ -390,22 +390,26 @@ sudo docker image prune -a
 <details>
   <summary><b>Step-by-Step Guide</b> <sup><kbd>Click Here</kbd></sup></summary>
 
-1. **Fork the Repository**: Fork this repo to your own GitHub account.
-2. **Fill Config**: Edit `config.env` in your forked repo with your own values (Bot Token, API ID, etc.).
+1. **Fork the Repository**: Fork this repository to your own GitHub account.
+2. **Fill Config**: Edit `config.env` in your forked repository.
+   - Fill in your `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, and `TELEGRAM_HASH`.
+   - Add your `DATABASE_URL` (MongoDB).
+   - **Important**: Ensure there is no `_____REMOVE_THIS_LINE_____` in your `config.env`.
 3. **Koyeb Setup**:
-   - Create a new **Service** on Koyeb.
-   - Select **GitHub** as the deployment method.
-   - Choose your forked repository.
-   - In the **Environment Variables** section (Optional but recommended):
-     - You can also set your variables here instead of `config.env`.
-     - The bot is already configured to prioritize Koyeb's dynamic `PORT`.
-   - In the **Health Checks** section:
-     - Set the type to `HTTP`.
-     - Set the port to `8000` (or whatever you set in `BASE_URL_PORT`).
-     - Set the path to `/`.
+   - Go to [Koyeb](https://app.koyeb.com/) and create a new **Service**.
+   - Choose **GitHub** as your deployment method.
+   - Select your forked repository.
+   - **Build and Run Settings**:
+     - Use `Docker` as the builder.
+   - **Environment Variables** (Optional):
+     - You can set your variables here instead of editing `config.env`. The bot will prioritize these.
+   - **Health Checks**:
+     - Type: `HTTP`
+     - Port: `8000` (Default)
+     - Path: `/`
 4. **Deploy**: Click **Deploy**.
 
-The bot will automatically start and bind to the correct port for Koyeb's health checks.
+The bot is optimized for Koyeb and will automatically handle the dynamic port assignment for health checks.
 
 </details>
 
