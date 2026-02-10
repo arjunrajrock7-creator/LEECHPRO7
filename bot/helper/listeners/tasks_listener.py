@@ -58,6 +58,7 @@ from bot.helper.ext_utils.leech_utils import (
     split_file,
     format_filename,
     get_document_type,
+    merge_videos,
 )
 from bot.helper.ext_utils.exceptions import NotSupportedExtractionArchive
 from bot.helper.ext_utils.task_manager import start_from_queued
@@ -74,6 +75,7 @@ from bot.helper.mirror_utils.upload_utils.pyrogramEngine import TgUploader
 from bot.helper.mirror_utils.upload_utils.ddlEngine import DDLUploader
 from bot.helper.mirror_utils.rclone_utils.transfer import RcloneTransferHelper
 from bot.helper.mirror_utils.status_utils.metadata_status import MetadataStatus
+from bot.helper.mirror_utils.status_utils.merge_status import MergeStatus
 from bot.helper.telegram_helper.message_utils import (
     sendCustomMsg,
     sendMessage,
@@ -405,6 +407,16 @@ class MirrorLeechListener:
                 LOGGER.info("Not any valid archive, uploading file as it is.")
                 self.newDir = ""
                 up_path = dl_path
+
+        if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE")) and self.isLeech:
+            merge_path = up_path or dl_path
+            if await aiopath.isdir(merge_path):
+                async with download_dict_lock:
+                    download_dict[self.uid] = MergeStatus(name, size, gid, self)
+                if await merge_videos(merge_path, self, name):
+                    up_path = merge_path
+                if self.suproc == "cancelled":
+                    return
 
         if metadata := self.user_dict.get("lmeta") or config_dict["METADATA"]:
             meta_path = up_path or dl_path

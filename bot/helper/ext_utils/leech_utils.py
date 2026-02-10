@@ -3,16 +3,16 @@ from time import strftime, gmtime, time
 from re import sub as re_sub, search as re_search
 from shlex import split as ssplit
 from natsort import natsorted
-from os import path as ospath
-from aiofiles.os import remove as aioremove, path as aiopath, mkdir, makedirs, listdir
-from aioshutil import rmtree as aiormtree
+from os import walk, path as ospath
+from aiofiles.os import remove as aioremove, path as aiopath, mkdir, makedirs, listdir, rmdir
+from aioshutil import rmtree as aiormtree, move
 from contextlib import suppress
 from asyncio import create_subprocess_exec, create_task, gather, Semaphore
 from asyncio.subprocess import PIPE
 from telegraph import upload_file
 from langcodes import Language
 
-from bot import LOGGER, MAX_SPLIT_SIZE, config_dict, user_data
+from bot import LOGGER, MAX_SPLIT_SIZE, config_dict, user_data, bot_cache
 from bot.modules.mediainfo import parseinfo
 from bot.helper.ext_utils.bot_utils import (
     cmd_exec,
@@ -541,3 +541,52 @@ def get_md5_hash(up_path):
         for byte_block in iter(lambda: f.read(4096), b""):
             md5_hash.update(byte_block)
         return md5_hash.hexdigest()
+
+
+async def merge_videos(path, listener, name):
+    videos = []
+    for dirpath, _, files in await sync_to_async(walk, path):
+        for file in files:
+            if (await get_document_type(ospath.join(dirpath, file)))[0]:
+                videos.append(ospath.join(dirpath, file))
+    if len(videos) > 1:
+        videos = natsorted(videos)
+        new_path = f"{path}10000"
+        if not await aiopath.exists(new_path):
+            await mkdir(new_path)
+        dest_path = ospath.join(new_path, f"{name}.mkv")
+        with open(f"{path}/input.txt", "w") as f:
+            for video in videos:
+                f.write(f"file '{video}'\n")
+        cmd = [
+            bot_cache["pkgs"][2],
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            f"{path}/input.txt",
+            "-clever_packets_check",
+            "1",
+            "-c",
+            "copy",
+            dest_path,
+            "-y",
+        ]
+        listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
+        code = await listener.suproc.wait()
+        if code == 0:
+            for video in videos:
+                await aioremove(video)
+            await aioremove(f"{path}/input.txt")
+            await move(dest_path, path)
+            await rmdir(new_path)
+            return True
+        else:
+            err = (await listener.suproc.stderr.read()).decode().strip()
+            LOGGER.error(f"Error while merging videos. Name: {name} stderr: {err}")
+            await aioremove(f"{path}/input.txt")
+            await aioremove(dest_path)
+            await rmdir(new_path)
+            return False
+    return False

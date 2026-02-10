@@ -125,6 +125,10 @@ desp_dict = {
         "Your Channel Name that will be used while editing metadata of the Video File",
         "Send Metadata Text for Leeching Files.\n<b>Timeout:</b> 60 Sec.",
     ],
+    "lmerge": [
+        "Enable or Disable Video Merging after extraction or for multiple video files in a task",
+        "",
+    ],
 }
 fname_dict = {
     "rcc": "RClone",
@@ -132,6 +136,7 @@ fname_dict = {
     "lsuffix": "Suffix",
     "lremname": "Remname",
     "lmeta": "Metadata",
+    "lmerge": "Leech Merge",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -444,6 +449,14 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"userset {user_id} lmeta",
         )
 
+        lmerge = (
+            "Enabled" if user_dict.get("lmerge", False) else "Disabled"
+        )
+        buttons.ibutton(
+            f"Disable Merge" if lmerge == "Enabled" else "Enable Merge",
+            f"userset {user_id} lmerge",
+        )
+
         text = BotTheme(
             "LEECH",
             NAME=name,
@@ -459,6 +472,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             LDUMP=ldump,
             LREMNAME=escape(lremname),
             LMETA=escape(lmeta),
+            LMERGE=lmerge,
         )
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
@@ -954,7 +968,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "universal")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode"]:
+    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge"]:
         handler_dict[user_id] = False
         if (
             data[2] == "save_mode"
