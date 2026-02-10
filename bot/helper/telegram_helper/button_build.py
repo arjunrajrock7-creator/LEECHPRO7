@@ -42,40 +42,40 @@ class ButtonMaker:
             )
 
     def build_menu(self, b_cols=1, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):
-        menu = [
-            self.__button[i : i + b_cols] for i in range(0, len(self.__button), b_cols)
-        ]
-        if self.__header_button:
-            if len(self.__header_button) > h_cols:
-                header_buttons = [
-                    self.__header_button[i : i + h_cols]
-                    for i in range(0, len(self.__header_button), h_cols)
-                ]
-                menu = header_buttons + menu
-            else:
-                menu.insert(0, self.__header_button)
-        if self.__first_body_button:
-            if len(self.__first_body_button) > fb_cols:
+        menu = []
+        if self.__button:
+            menu.extend(
                 [
-                    menu.append(self.__first_body_button[i : i + fb_cols])
+                    self.__button[i : i + b_cols]
+                    for i in range(0, len(self.__button), b_cols)
+                ]
+            )
+        if self.__header_button:
+            header_menu = [
+                self.__header_button[i : i + h_cols]
+                for i in range(0, len(self.__header_button), h_cols)
+            ]
+            for row in reversed(header_menu):
+                menu.insert(0, row)
+        if self.__first_body_button:
+            menu.extend(
+                [
+                    self.__first_body_button[i : i + fb_cols]
                     for i in range(0, len(self.__first_body_button), fb_cols)
                 ]
-            else:
-                menu.append(self.__first_body_button)
+            )
         if self.__last_body_button:
-            if len(self.__last_body_button) > lb_cols:
+            menu.extend(
                 [
-                    menu.append(self.__last_body_button[i : i + lb_cols])
+                    self.__last_body_button[i : i + lb_cols]
                     for i in range(0, len(self.__last_body_button), lb_cols)
                 ]
-            else:
-                menu.append(self.__last_body_button)
+            )
         if self.__footer_button:
-            if len(self.__footer_button) > f_cols:
+            menu.extend(
                 [
-                    menu.append(self.__footer_button[i : i + f_cols])
+                    self.__footer_button[i : i + f_cols]
                     for i in range(0, len(self.__footer_button), f_cols)
                 ]
-            else:
-                menu.append(self.__footer_button)
+            )
         return InlineKeyboardMarkup(menu)

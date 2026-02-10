@@ -24,7 +24,7 @@
 - **Leech Capabilities**: Upload files to Telegram with custom thumbnails, captions, and automatic splitting.
 - **Premium Merge**: Automatically merge multiple video files into a single high-quality MKV file.
 - **Metadata Integration**: Add custom metadata to your leeched videos.
-- **Stylish UI**: Premium-look progress bars, stylized fonts, and intuitive user settings.
+- **Premium UI**: Experience a stylized interface with math alphanumeric fonts, custom emojis, and hexagon-style progress bars.
 - **Database Backed**: Persistent settings, RSS feeds, and task history using MongoDB.
 - **Multi-User Ready**: Individual settings for users, including custom TD, RClone config, and more.
 

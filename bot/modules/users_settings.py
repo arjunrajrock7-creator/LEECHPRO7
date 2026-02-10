@@ -998,6 +998,8 @@ async def edit_user_settings(client, query):
         update_user_ldata(user_id, data[2], not user_dict.get(data[2], False))
         if data[2] in ["td_mode"]:
             await update_user_settings(query, "user_tds", "mirror")
+        elif data[2] == "lmerge":
+            await update_user_settings(query, "leech")
         else:
             await update_user_settings(query, "universal")
         if DATABASE_URL:
