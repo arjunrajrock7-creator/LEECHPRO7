@@ -1,4 +1,3 @@
-config.env
 *.pyc
 data*
 .vscode

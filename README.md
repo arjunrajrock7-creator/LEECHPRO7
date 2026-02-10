@@ -385,6 +385,30 @@ sudo docker image prune -a
     
 ------
 
+### 🚀 ***Koyeb Deployment Guide***
+
+<details>
+  <summary><b>Step-by-Step Guide</b> <sup><kbd>Click Here</kbd></sup></summary>
+
+1. **Fork the Repository**: Fork this repo to your own GitHub account.
+2. **Fill Config**: Edit `config.env` in your forked repo with your own values (Bot Token, API ID, etc.).
+3. **Koyeb Setup**:
+   - Create a new **Service** on Koyeb.
+   - Select **GitHub** as the deployment method.
+   - Choose your forked repository.
+   - In the **Environment Variables** section (Optional but recommended):
+     - You can also set your variables here instead of `config.env`.
+     - The bot is already configured to prioritize Koyeb's dynamic `PORT`.
+   - In the **Health Checks** section:
+     - Set the type to `HTTP`.
+     - Set the port to `8000` (or whatever you set in `BASE_URL_PORT`).
+     - Set the path to `/`.
+4. **Deploy**: Click **Deploy**.
+
+The bot will automatically start and bind to the correct port for Koyeb's health checks.
+
+</details>
+
 ### 🤖 ***Bot Commands***
 
 <details>
