@@ -382,8 +382,8 @@ async def load_config():
     MEDIA_GROUP = environ.get("MEDIA_GROUP", "")
     MEDIA_GROUP = MEDIA_GROUP.lower() == "true"
 
-    BASE_URL_PORT = environ.get("BASE_URL_PORT", "")
-    BASE_URL_PORT = 80 if len(BASE_URL_PORT) == 0 else int(BASE_URL_PORT)
+    BASE_URL_PORT = environ.get("BASE_URL_PORT", environ.get("PORT", ""))
+    BASE_URL_PORT = 8000 if len(str(BASE_URL_PORT)) == 0 else int(BASE_URL_PORT)
 
     RCLONE_SERVE_URL = environ.get("RCLONE_SERVE_URL", "")
     if len(RCLONE_SERVE_URL) == 0:
@@ -404,7 +404,7 @@ async def load_config():
     BASE_URL = environ.get("BASE_URL", "").rstrip("/")
     if len(BASE_URL) == 0:
         BASE_URL = ""
-    else:
+    if BASE_URL or environ.get("PORT"):
         await create_subprocess_shell(
             f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent"
         )
@@ -958,7 +958,7 @@ async def edit_variable(_, message, pre_message, key):
             value = "code"
     elif key == "BASE_URL_PORT":
         value = int(value)
-        if config_dict["BASE_URL"]:
+        if config_dict["BASE_URL"] or environ.get("PORT"):
             await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
             await create_subprocess_shell(
                 f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent"
@@ -1269,15 +1269,16 @@ async def edit_bot_settings(client, query):
             if DATABASE_URL:
                 await DbManger().update_aria2("bt-stop-timeout", "0")
         elif data[2] == "BASE_URL":
-            await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
+            if not environ.get("PORT"):
+                await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
         elif data[2] == "BASE_URL_PORT":
-            value = 80
-            if config_dict["BASE_URL"]:
+            value = int(environ.get("PORT", 8000))
+            if config_dict["BASE_URL"] or environ.get("PORT"):
                 await (
                     await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")
                 ).wait()
                 await create_subprocess_shell(
-                    "gunicorn web.wserver:app --bind 0.0.0.0:80 --worker-class gevent"
+                    f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent"
                 )
         elif data[2] == "GDRIVE_ID":
             if "Main" in list_drives_dict:
