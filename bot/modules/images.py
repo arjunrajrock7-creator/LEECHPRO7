@@ -3,6 +3,7 @@ from asyncio import sleep as asleep
 from aiofiles.os import path as aiopath, remove as aioremove, mkdir
 from telegraph import upload_file
 
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
@@ -90,6 +91,7 @@ async def pictures(_, message):
 
 
 @new_task
+@callback_handler
 async def pics_callback(_, query):
     message = query.message
     user_id = query.from_user.id

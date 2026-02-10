@@ -4,6 +4,7 @@ from re import findall, IGNORECASE
 from imdb import Cinemagoer
 from pycountry import countries as conn
 
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -220,6 +221,7 @@ def list_to_hash(k, flagg=False, emoji=False):
         return listing[:-2]
 
 
+@callback_handler
 async def imdb_callback(_, query):
     message = query.message
     user_id = query.from_user.id

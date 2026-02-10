@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from datetime import datetime
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
 from aiofiles import open as aiopen
@@ -59,19 +60,19 @@ desp_dict = {
     ],
     "lprefix": [
         "Leech Filename Prefix is the Front Part attacted with the Filename of the Leech Files.",
-        'Send Leech Filename Prefix. Documentation Here : <a href="https://t.me/WZML_X/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
+        'Send Leech Filename Prefix. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
     ],
     "lsuffix": [
         "Leech Filename Suffix is the End Part attached with the Filename of the Leech Files",
-        'Send Leech Filename Suffix. Documentation Here : <a href="https://t.me/WZML_X/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
+        'Send Leech Filename Suffix. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
     ],
     "lremname": [
         "Leech Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files",
-        'Send Leech Filename Remname. Documentation Here : <a href="https://t.me/WZML_X/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
+        'Send Leech Filename Remname. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
     ],
     "lcaption": [
         "Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot",
-        'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/WZML_X/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
+        'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
     ],
     "ldump": [
         "Leech Files User Dump for Personal Use as a Storage.",
@@ -98,7 +99,7 @@ desp_dict = {
         'Send YT-DLP Options. Timeout: 60 sec\nFormat: key:value|key:value|key:value.\nExample: format:bv*+mergeall[vcodec=none]|nocheckcertificate:True\nCheck all yt-dlp api options from this <a href="https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L184">FILE</a> to convert cli arguments to api options.',
     ],
     "usess": [
-        f'User Session is Telegram Session used to Download Private Contents from Private Channels with no compromise in Privacy, Build with Encryption.\n{"<b>Warning:</b> This Bot is not secured. We recommend asking the group owner to set the Upstream repo to the Official repo. If it is not the official repo, then WZML-X is not responsible for any issues that may occur in your account." if config_dict["UPSTREAM_REPO"] != "https://github.com/weebzone/WZML-X" else "Bot is Secure. You can use the session securely."}',
+        f'User Session is Telegram Session used to Download Private Contents from Private Channels with no compromise in Privacy, Build with Encryption.\n{"<b>Warning:</b> This Bot is not secured. We recommend asking the group owner to set the Upstream repo to the Official repo. If it is not the official repo, then ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ is not responsible for any issues that may occur in your account." if config_dict["UPSTREAM_REPO"] != "https://github.com/ALONEKINGSTAR77/WZML" else "Bot is Secure. You can use the session securely."}',
         "Send your Session String.\n<b>Timeout:</b> 60 sec",
     ],
     "split_size": [
@@ -125,8 +126,20 @@ desp_dict = {
         "Your Channel Name that will be used while editing metadata of the Video File",
         "Send Metadata Text for Leeching Files.\n<b>Timeout:</b> 60 Sec.",
     ],
+    "media_presets": [
+        "Predefined FFmpeg operations for media files",
+        "Configure presets for tracks, compression and more",
+    ],
+    "strip_metadata": [
+        "Remove all metadata from media files during processing",
+        "",
+    ],
     "lmerge": [
         "Enable or Disable Video Merging after extraction or for multiple video files in a task",
+        "",
+    ],
+    "merge_original": [
+        "Upload Merged file along with Original video files",
         "",
     ],
 }
@@ -137,6 +150,8 @@ fname_dict = {
     "lremname": "Remname",
     "lmeta": "Metadata",
     "lmerge": "Leech Merge",
+    "merge_original": "Merge + Original",
+    "strip_metadata": "Strip Metadata",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -455,6 +470,23 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         buttons.ibutton(
             f"Disable Merge" if lmerge == "Enabled" else "Enable Merge",
             f"userset {user_id} lmerge",
+        )
+
+        merge_original = (
+            "Enabled" if user_dict.get("merge_original", False) else "Disabled"
+        )
+        if lmerge == "Enabled":
+            buttons.ibutton(
+                f"Disable Original" if merge_original == "Enabled" else "Enable Original",
+                f"userset {user_id} merge_original",
+            )
+
+        strip_metadata = (
+            "Enabled" if user_dict.get("strip_metadata", False) else "Disabled"
+        )
+        buttons.ibutton(
+            f"Disable Strip" if strip_metadata == "Enabled" else "Enable Strip",
+            f"userset {user_id} strip_metadata",
         )
 
         text = BotTheme(
@@ -889,6 +921,7 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
 
 
 @new_thread
+@callback_handler
 async def edit_user_settings(client, query):
     from_user = query.from_user
     user_id = from_user.id
@@ -968,7 +1001,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "universal")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge"]:
+    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata"]:
         handler_dict[user_id] = False
         if (
             data[2] == "save_mode"

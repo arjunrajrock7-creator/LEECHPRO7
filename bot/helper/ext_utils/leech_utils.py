@@ -543,7 +543,7 @@ def get_md5_hash(up_path):
         return md5_hash.hexdigest()
 
 
-async def merge_videos(path, listener, name):
+async def merge_videos(path, listener, name, merge_original=False):
     videos = []
     for dirpath, _, files in await sync_to_async(walk, path):
         for file in files:
@@ -577,8 +577,9 @@ async def merge_videos(path, listener, name):
         listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
         code = await listener.suproc.wait()
         if code == 0:
-            for video in videos:
-                await aioremove(video)
+            if not merge_original:
+                for video in videos:
+                    await aioremove(video)
             await aioremove(f"{path}/input.txt")
             await move(dest_path, path)
             await rmdir(new_path)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from random import choice
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
 from pyrogram.enums import ChatType
@@ -70,10 +71,10 @@ default_values = {
     "BOT_THEME": "minimal",
     "BOT_LANG": "en",
     "IMG_PAGE": 1,
-    "AUTHOR_NAME": "WZML-X",
-    "AUTHOR_URL": "https://t.me/WZML_X",
+    "AUTHOR_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
+    "AUTHOR_URL": "https://t.me/ALONEKINGSTAR77",
     "TITLE_NAME": "WZ Mirror/Leech X",
-    "GD_INFO": "Uploaded by WZML-X",
+    "GD_INFO": "Uploaded by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
 }
 bool_vars = [
     "AS_DOCUMENT",
@@ -520,15 +521,15 @@ async def load_config():
 
     AUTHOR_NAME = environ.get("AUTHOR_NAME", "")
     if len(AUTHOR_NAME) == 0:
-        AUTHOR_NAME = "WZML-X"
+        AUTHOR_NAME = "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡"
 
     AUTHOR_URL = environ.get("AUTHOR_URL", "")
     if len(AUTHOR_URL) == 0:
-        AUTHOR_URL = "https://t.me/WZML_X"
+        AUTHOR_URL = "https://t.me/ALONEKINGSTAR77"
 
     TITLE_NAME = environ.get("TITLE_NAME", "")
     if len(TITLE_NAME) == 0:
-        TITLE_NAME = "WeebZone-X"
+        TITLE_NAME = "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡-X"
 
     COVER_IMAGE = environ.get("COVER_IMAGE", "")
     if len(COVER_IMAGE) == 0:
@@ -536,7 +537,7 @@ async def load_config():
 
     GD_INFO = environ.get("GD_INFO", "")
     if len(GD_INFO) == 0:
-        GD_INFO = "Uploaded by WZML-X"
+        GD_INFO = "Uploaded by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡"
 
     SAVE_MSG = environ.get("SAVE_MSG", "")
     SAVE_MSG = SAVE_MSG.lower() == "true"
@@ -1225,6 +1226,7 @@ async def event_handler(client, query, pfunc, rfunc, document=False):
 
 
 @new_thread
+@callback_handler
 async def edit_bot_settings(client, query):
     data = query.data.split()
     message = query.message

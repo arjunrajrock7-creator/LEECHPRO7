@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from contextlib import suppress
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import regex
 from aiofiles.os import remove as aioremove, path as aiopath
@@ -103,6 +104,7 @@ async def select(client, message):
     await sendMessage(message, msg, SBUTTONS)
 
 
+@callback_handler
 async def get_confirm(client, query):
     user_id = query.from_user.id
     data = query.data.split()

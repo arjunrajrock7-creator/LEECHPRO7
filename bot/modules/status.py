@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 from psutil import cpu_percent, virtual_memory, disk_usage
@@ -69,6 +70,7 @@ async def mirror_status(_, message):
 
 
 @new_task
+@callback_handler
 async def status_pages(_, query):
     user_id = query.from_user.id
     data = query.data.split()

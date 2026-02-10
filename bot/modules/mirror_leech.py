@@ -52,6 +52,7 @@ from bot.helper.mirror_utils.download_utils.telegram_download import (
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.button_build import ButtonMaker
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from bot.helper.telegram_helper.message_utils import (
     sendMessage,
     editMessage,
@@ -527,6 +528,7 @@ async def _mirror_leech(
 
 
 @new_task
+@callback_handler
 async def wzmlxcb(_, query):
     message = query.message
     user_id = query.from_user.id
@@ -534,7 +536,6 @@ async def wzmlxcb(_, query):
     if user_id != int(data[1]):
         return await query.answer(text="Not Yours!", show_alert=True)
     elif data[2] == "logdisplay":
-        await query.answer()
         async with aiopen("log.txt", "r") as f:
             logFileLines = (await f.read()).splitlines()
 

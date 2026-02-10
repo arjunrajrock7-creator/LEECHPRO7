@@ -708,7 +708,7 @@ async def get_stats(event, key="home"):
             )[0]
         official_v = (
             await cmd_exec(
-                f"curl -o latestversion.py https://raw.githubusercontent.com/weebzone/WZML-X/{config_dict['UPSTREAM_BRANCH']}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
+                f"curl -o latestversion.py https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML/{config_dict['UPSTREAM_BRANCH']}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
                 True,
             )
         )[0]
@@ -923,7 +923,7 @@ async def set_commands(client):
             ),
             BotCommand(
                 BotCommands.HelpCommand,
-                "Get detailed help about the WZML-X Bot",
+                "Get detailed help about the ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot",
             ),
             BotCommand(
                 BotCommands.UserSetCommand[0],

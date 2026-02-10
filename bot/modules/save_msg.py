@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pyrogram.types import InlineKeyboardMarkup
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import CallbackQueryHandler
 from pyrogram.filters import regex
 from asyncio import sleep
@@ -7,6 +8,7 @@ from asyncio import sleep
 from bot import bot, bot_name, user_data
 
 
+@callback_handler
 async def save_message(_, query):
     usr = query.from_user.id
     user_dict = user_data.get(usr, {})

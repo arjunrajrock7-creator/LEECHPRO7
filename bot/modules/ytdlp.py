@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, user
 from asyncio import sleep, wait_for, Event, wrap_future

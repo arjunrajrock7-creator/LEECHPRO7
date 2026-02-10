@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from asyncio import sleep
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
@@ -91,6 +92,7 @@ async def cancell_all_buttons(_, message):
 
 
 @new_task
+@callback_handler
 async def cancel_all_update(_, query):
     data = query.data.split()
     message = query.message

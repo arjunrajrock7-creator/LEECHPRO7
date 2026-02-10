@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from feedparser import parse as feedparse
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
 from asyncio import Lock, sleep
@@ -427,6 +428,7 @@ async def event_handler(client, query, pfunc):
 
 
 @new_thread
+@callback_handler
 async def rssListener(client, query):
     user_id = query.from_user.id
     message = query.message

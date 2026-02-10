@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pyrogram.filters import command, regex
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import CallbackQueryHandler, MessageHandler
 from time import time
 
@@ -106,6 +107,7 @@ async def change_category(client, message):
 
 
 @new_task
+@callback_handler
 async def confirm_category(client, query):
     user_id = query.from_user.id
     data = query.data.split(maxsplit=3)
@@ -153,6 +155,7 @@ async def confirm_category(client, query):
 
 
 @new_task
+@callback_handler
 async def confirm_dump(client, query):
     user_id = query.from_user.id
     data = query.data.split(maxsplit=3)

@@ -408,12 +408,31 @@ class MirrorLeechListener:
                 self.newDir = ""
                 up_path = dl_path
 
+        if self.user_dict.get("strip_metadata") and self.isLeech:
+            from bot.helper.ext_utils.media_utils import MediaUtils
+            meta_path = up_path or dl_path
+            if await aiopath.isfile(meta_path):
+                out_path = f"{meta_path}.tmp"
+                success, _ = await MediaUtils.strip_metadata(meta_path, out_path)
+                if success:
+                    await move(out_path, meta_path)
+            elif await aiopath.isdir(meta_path):
+                for dirpath, _, files in await sync_to_async(walk, meta_path):
+                    for file in files:
+                        v_path = ospath.join(dirpath, file)
+                        if (await get_document_type(v_path))[0]:
+                            out_v = f"{v_path}.tmp"
+                            success, _ = await MediaUtils.strip_metadata(v_path, out_v)
+                            if success:
+                                await move(out_v, v_path)
+
         if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE")) and self.isLeech:
             merge_path = up_path or dl_path
             if await aiopath.isdir(merge_path):
                 async with download_dict_lock:
                     download_dict[self.uid] = MergeStatus(name, size, gid, self)
-                if await merge_videos(merge_path, self, name):
+                merge_original = self.user_dict.get("merge_original")
+                if await merge_videos(merge_path, self, name, merge_original):
                     up_path = merge_path
                 if self.suproc == "cancelled":
                     return

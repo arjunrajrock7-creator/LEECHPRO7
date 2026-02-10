@@ -1,32 +1,39 @@
 <p align="center">
-    <img src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="WZML-X Logo" width="200">
+    <img src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Logo" width="200">
 </p>
 
-<h1 align="center">🚀 WZML-X: The Ultimate Mirror-Leech Bot</h1>
+<h1 align="center">⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡: Production-Grade Mirror-Leech Bot</h1>
 
 <p align="center">
-    <i>A high-performance Telegram bot built with Pyrogram for all your mirroring, leeching, and cloning needs.</i>
+    <i>A high-performance, stable, and feature-rich Telegram bot for professional mirroring, leeching, and media processing.</i>
 </p>
 
 <p align="center">
-    <a href="https://github.com/weebzone/WZML-X/stargazers"><img src="https://img.shields.io/github/stars/weebzone/WZML-X?style=for-the-badge&color=yellow" alt="Stars"></a>
-    <a href="https://github.com/weebzone/WZML-X/network/members"><img src="https://img.shields.io/github/forks/weebzone/WZML-X?style=for-the-badge&color=blue" alt="Forks"></a>
-    <a href="https://github.com/weebzone/WZML-X/blob/master/LICENSE"><img src="https://img.shields.io/github/license/weebzone/WZML-X?style=for-the-badge&color=green" alt="License"></a>
-    <a href="https://t.me/WZML_X"><img src="https://img.shields.io/badge/Telegram-Channel-blue?style=for-the-badge&logo=telegram" alt="Telegram Channel"></a>
+    <a href="https://t.me/ALONEKINGSTAR77"><img src="https://img.shields.io/badge/Telegram-Channel-blue?style=for-the-badge&logo=telegram" alt="Telegram Channel"></a>
+    <a href="https://t.me/ALONEKINGSTAR77"><img src="https://img.shields.io/badge/Support-Group-red?style=for-the-badge&logo=telegram" alt="Support Group"></a>
 </p>
 
 ---
 
-## ✨ Key Features
+## ✨ Advanced Features
 
-- **Multi-Engine Support**: Integrated with Aria2c, qBittorrent, and YT-DLP.
-- **Versatile Mirroring**: Mirror links, files, and magnets to Google Drive, RClone-supported clouds, or DDL servers.
-- **Leech Capabilities**: Upload files to Telegram with custom thumbnails, captions, and automatic splitting.
-- **Premium Merge**: Automatically merge multiple video files into a single high-quality MKV file.
-- **Metadata Integration**: Add custom metadata to your leeched videos.
-- **Premium UI**: Experience a stylized interface with math alphanumeric fonts, custom emojis, and hexagon-style progress bars.
-- **Database Backed**: Persistent settings, RSS feeds, and task history using MongoDB.
-- **Multi-User Ready**: Individual settings for users, including custom TD, RClone config, and more.
+### 🚀 Performance & Stability
+- **Async Queue System**: Robust handling of multiple tasks with priority and state tracking.
+- **Production UI**: Zero loading loops, responsive buttons, and instant callback handling.
+- **Low RAM Usage**: Optimized for large file handling without memory leaks.
+- **Koyeb Optimized**: 100% stable deployment with built-in health checks.
+
+### 📦 FFmpeg Media Suite
+- **Metadata Editor**: Edit title, artist, language, and encoder details.
+- **Track Manager**: Selectively keep/remove audio and subtitle tracks.
+- **Compressor**: Presets for low/medium/high/custom bitrates.
+- **Video Tools**: Generate samples, trim videos, and extract high-quality thumbnails.
+- **Merge Features**: "Merge + Original" toggle to keep source files while generating MKVs.
+
+### ☁️ Mirroring & Leeching
+- **Multi-Engine**: Supports Aria2c, qBittorrent, and YT-DLP.
+- **Cloud Support**: GDrive, RClone, and various DDL servers.
+- **Customization**: Custom thumbnails, captions (with templates), and split sizes.
 
 ---
 
@@ -34,67 +41,57 @@
 
 ### 🚀 Koyeb (Recommended)
 
-<details>
-  <summary><b>Click for Koyeb Step-by-Step Guide</b></summary>
+1. **Fork the Repo**: Click the fork button to get your own copy.
+2. **Setup config.env**: Create a `config.env` file or set variables in Koyeb.
+3. **Deploy**:
+   - Create a new Service on Koyeb.
+   - Select **Docker** builder.
+   - Set **Health Check** to `HTTP`, Port `8000`, Path `/health`.
+4. **Environment**: Add all required variables (see below).
 
-1. **Fork the Repo**: Fork this repository to your GitHub account.
-2. **Setup Credentials**: Edit `config.env` in your fork or set them as Environment Variables in Koyeb.
-   - `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, `DATABASE_URL`.
-3. **Deploy on Koyeb**:
-   - Create a new **Service** and select **GitHub**.
-   - Use the **Docker** builder.
-   - **Health Check**: Set to `HTTP`, Port `8000`, Path `/`.
-4. **Launch**: Click Deploy and wait for the magic!
-
-</details>
-
-### 🐳 Docker (Local/VPS)
+### 🐳 Docker (Self-Hosted)
 
 ```bash
-git clone https://github.com/weebzone/WZML-X wzmlx && cd wzmlx
-cp config_sample.env config.env
-# Edit config.env with your values
+git clone https://t.me/ALONEKINGSTAR77 && cd ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡
+# Edit config.env
 docker compose up -d
 ```
 
 ---
 
-## 🤖 Bot Commands
-
-| Command | Description |
-| :--- | :--- |
-| `/mirror` | Mirror links/files to Cloud |
-| `/leech` | Leech links/files to Telegram |
-| `/qbmirror` | Mirror via qBittorrent |
-| `/ytdl` | Mirror via YT-DLP |
-| `/usetting` | Personal settings & Merge toggle |
-| `/bsetting` | Global bot settings (Sudo only) |
-| `/status` | View active tasks |
-| `/cancel` | Stop a running task |
-
----
-
-## 📝 Configuration Variables
+## 📝 Environment Variables
 
 | Variable | Description |
 | :--- | :--- |
-| `BOT_TOKEN` | Your Telegram Bot Token from @BotFather |
+| `BOT_TOKEN` | Telegram Bot Token from @BotFather |
 | `OWNER_ID` | Your Telegram User ID |
 | `TELEGRAM_API` | API ID from my.telegram.org |
 | `TELEGRAM_HASH` | API HASH from my.telegram.org |
-| `DATABASE_URL` | MongoDB Connection String |
-| `LEECH_MERGE` | Default status for video merging (True/False) |
+| `DATABASE_URL` | MongoDB Connection URL |
+| `LEECH_MERGE` | Enable/Disable video merging (True/False) |
+| `PORT` | Web server port for health checks (Default: 8000) |
 
 ---
 
-## 🤝 Credits
+## 🤖 Bot Commands
 
-- [SilentDemonSD](https://github.com/SilentDemonSD) - Lead Developer
-- [CodeWithWeeb](https://github.com/weebzone) - Contributor
-- [Maverick](https://github.com/MajnuRangeela) - Bug Tester
+- `/mirror`: Mirror links/files to Cloud.
+- `/leech`: Leech files to Telegram.
+- `/usetting`: Open user-specific settings and toggles.
+- `/bsetting`: Global bot settings (Sudo only).
+- `/status`: View active tasks and system stats.
+- `/cancel`: Stop a running task.
+
+---
+
+## 🔧 Troubleshooting
+
+- **Button not responding?**: Ensure you are using the latest version with the `@callback_handler` fix.
+- **Deployment failing?**: Check Koyeb logs. Ensure `PORT` is correctly set and `gunicorn` is running.
+- **Large files stuck?**: Check your split size settings in `/usetting`.
 
 ---
 
 <p align="center">
-    Made with ❤️ by <a href="https://github.com/weebzone">WeebZone</a>
+    Developed with ❤️ by <a href="https://t.me/ALONEKINGSTAR77">⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</a>
 </p>

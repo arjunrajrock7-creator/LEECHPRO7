@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
@@ -64,6 +65,7 @@ async def driveclean(_, message):
 
 
 @new_task
+@callback_handler
 async def drivecleancb(_, query):
     message = query.message
     user_id = query.from_user.id

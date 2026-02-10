@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 from aiohttp import ClientSession
@@ -277,6 +278,7 @@ async def torrentSearch(_, message):
 
 
 @new_task
+@callback_handler
 async def torrentSearchUpdate(_, query):
     user_id = query.from_user.id
     message = query.message

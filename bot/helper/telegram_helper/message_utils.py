@@ -90,9 +90,9 @@ async def sendMessage(message, text, buttons=None, photo=None, **kwargs):
             **kwargs,
         )
     except FloodWait as f:
-        LOGGER.warning(str(f))
-        await sleep(f.value * 1.2)
-        return await sendMessage(message, text, buttons, photo)
+        LOGGER.warning(f"FloodWait: {f.value}s")
+        await sleep(f.value + 1)
+        return await sendMessage(message, text, buttons, photo, **kwargs)
     except ReplyMarkupInvalid:
         return await sendMessage(message, text, None, photo)
     except MessageEmpty:
@@ -132,9 +132,9 @@ async def sendCustomMsg(chat_id, text, buttons=None, photo=None, debug=False):
             reply_markup=buttons,
         )
     except FloodWait as f:
-        LOGGER.warning(str(f))
-        await sleep(f.value * 1.2)
-        return await sendCustomMsg(chat_id, text, buttons, photo)
+        LOGGER.warning(f"FloodWait: {f.value}s")
+        await sleep(f.value + 1)
+        return await sendCustomMsg(chat_id, text, buttons, photo, debug)
     except ReplyMarkupInvalid:
         return await sendCustomMsg(chat_id, text, None, photo)
     except Exception as e:

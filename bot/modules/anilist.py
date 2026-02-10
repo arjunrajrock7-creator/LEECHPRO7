@@ -13,6 +13,7 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.bot_utils import get_readable_time
+from bot.helper.telegram_helper.callback_fix import callback_handler
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
@@ -326,6 +327,7 @@ async def anilist(_, msg, aniid=None, u_id=None):
             )
 
 
+@callback_handler
 async def setAnimeButtons(client, query):
     message = query.message
     user_id = query.from_user.id
@@ -445,6 +447,7 @@ async def character(_, message, aniid=None, u_id=None):
             await sendMessage(message, msg)
 
 
+@callback_handler
 async def setCharacButtons(client, query):
     global sptext
     message = query.message
