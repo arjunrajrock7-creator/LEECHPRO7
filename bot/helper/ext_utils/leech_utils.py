@@ -555,9 +555,10 @@ async def merge_videos(path, listener, name):
         if not await aiopath.exists(new_path):
             await mkdir(new_path)
         dest_path = ospath.join(new_path, f"{name}.mkv")
-        with open(f"{path}/input.txt", "w") as f:
+        with open(f"{path}/input.txt", "w", encoding='utf-8') as f:
             for video in videos:
-                f.write(f"file '{video}'\n")
+                video_esc = video.replace("'", "'\\''")
+                f.write(f"file '{video_esc}'\n")
         cmd = [
             bot_cache["pkgs"][2],
             "-f",

@@ -41,69 +41,65 @@ class WZMLStyle:
     MICS_BT = "Mics"
     O_S_BT = "Owner & Sudos"
     CLOSE_BT = "Close"
-    HELP_HEADER = "㊂ <b><i>Help Guide Menu!</i></b>\n\n<b>NOTE: <i>Click on any CMD to see more minor detalis.</i></b>"
+    HELP_HEADER = "✨ <b><u>Hᴇʟᴘ Gᴜɪᴅᴇ Mᴇɴᴜ</u></b>\n\n💡 <b>Nᴏᴛᴇ: <i>Cʟɪᴄᴋ ᴏɴ ᴀɴʏ CMD ᴛᴏ sᴇᴇ ᴅᴇᴛᴀɪʟs.</i></b>"
 
     # async def stats(client, message):
-    BOT_STATS = """⌬ <b><i>BOT STATISTICS :</i></b>
-┖ <b>Bot Uptime :</b> {bot_uptime}
+    BOT_STATS = """⚙️ <b><u>Bᴏᴛ Sᴛᴀᴛɪsᴛɪᴄs</u></b>
+🕒 <b>Uᴘᴛɪᴍᴇ:</b> {bot_uptime}
 
-┎ <b><i>RAM ( MEMORY ) :</i></b>
-┃ {ram_bar} {ram}%
-┖ <b>U :</b> {ram_u} | <b>F :</b> {ram_f} | <b>T :</b> {ram_t}
+📊 <b><u>Rᴀᴍ Usᴀɢᴇ</u></b>
+{ram_bar} {ram}%
+┖ <b>Usᴇᴅ:</b> {ram_u} | <b>Fʀᴇᴇ:</b> {ram_f} | <b>Tᴏᴛᴀʟ:</b> {ram_t}
 
-┎ <b><i>SWAP MEMORY :</i></b>
-┃ {swap_bar} {swap}%
-┖ <b>U :</b> {swap_u} | <b>F :</b> {swap_f} | <b>T :</b> {swap_t}
+🔄 <b><u>Sᴡᴀᴘ Mᴇᴍᴏʀʏ</u></b>
+{swap_bar} {swap}%
+┖ <b>Usᴇᴅ:</b> {swap_u} | <b>Fʀᴇᴇ:</b> {swap_f} | <b>Tᴏᴛᴀʟ:</b> {swap_t}
 
-┎ <b><i>DISK :</i></b>
-┃ {disk_bar} {disk}%
-┃ <b>Total Disk Read :</b> {disk_read}
-┃ <b>Total Disk Write :</b> {disk_write}
-┖ <b>U :</b> {disk_u} | <b>F :</b> {disk_f} | <b>T :</b> {disk_t}
-    
+💽 <b><u>Dɪsᴋ Sᴛᴀᴛs</u></b>
+{disk_bar} {disk}%
+┠ <b>Rᴇᴀᴅ:</b> {disk_read} | <b>Wʀɪᴛᴇ:</b> {disk_write}
+┖ <b>Usᴇᴅ:</b> {disk_u} | <b>Fʀᴇᴇ:</b> {disk_f} | <b>Tᴏᴛᴀʟ:</b> {disk_t}
     """
-    SYS_STATS = """⌬ <b><i>OS SYSTEM :</i></b>
-┠ <b>OS Uptime :</b> {os_uptime}
-┠ <b>OS Version :</b> {os_version}
-┖ <b>OS Arch :</b> {os_arch}
+    SYS_STATS = """🖥 <b><u>Sʏsᴛᴇᴍ Iɴғᴏ</u></b>
+┠ <b>OS Uᴘᴛɪᴍᴇ:</b> {os_uptime}
+┠ <b>OS Vᴇʀsɪᴏɴ:</b> {os_version}
+┖ <b>OS Aʀᴄʜ:</b> {os_arch}
 
-⌬ <b><i>NETWORK STATS :</i></b>
-┠ <b>Upload Data:</b> {up_data}
-┠ <b>Download Data:</b> {dl_data}
-┠ <b>Pkts Sent:</b> {pkt_sent}k
-┠ <b>Pkts Received:</b> {pkt_recv}k
-┖ <b>Total I/O Data:</b> {tl_data}
+🌐 <b><u>Nᴇᴛᴡᴏʀᴋ Sᴛᴀᴛs</u></b>
+┠ <b>Uᴘʟᴏᴀᴅ:</b> {up_data} | <b>Dᴏᴡɴʟᴏᴀᴅ:</b> {dl_data}
+┠ <b>Pᴋᴛs Sᴇɴᴛ:</b> {pkt_sent}ᴋ | <b>Rᴇᴄᴠ:</b> {pkt_recv}ᴋ
+┖ <b>Tᴏᴛᴀʟ I/O:</b> {tl_data}
 
-┎ <b>CPU :</b>
-┃ {cpu_bar} {cpu}%
-┠ <b>CPU Frequency :</b> {cpu_freq}
-┠ <b>System Avg Load :</b> {sys_load}
-┠ <b>P-Core(s) :</b> {p_core} | <b>V-Core(s) :</b> {v_core}
-┠ <b>Total Core(s) :</b> {total_core}
-┖ <b>Usable CPU(s) :</b> {cpu_use}
+💻 <b><u>CPU Usᴀɢᴇ</u></b>
+{cpu_bar} {cpu}%
+┠ <b>Fʀᴇǫᴜᴇɴᴄʏ:</b> {cpu_freq}
+┠ <b>Aᴠɢ Lᴏᴀᴅ:</b> {sys_load}
+┠ <b>Cᴏʀᴇs:</b> {p_core}P + {v_core}V | <b>Tᴏᴛᴀʟ:</b> {total_core}
+┖ <b>Usᴀʙʟᴇ:</b> {cpu_use} CPUs
     """
-    REPO_STATS = """⌬ <b><i>REPO STATISTICS :</i></b>
-┠ <b>Bot Updated :</b> {last_commit}
-┠ <b>Current Version :</b> {bot_version}
-┠ <b>Latest Version :</b> {lat_version}
-┖ <b>Last ChangeLog :</b> {commit_details}
+    REPO_STATS = """📂 <b><u>Rᴇᴘᴏ Iɴғᴏ</u></b>
+┠ <b>Lᴀsᴛ Uᴘᴅᴀᴛᴇ:</b> {last_commit}
+┠ <b>Vᴇʀsɪᴏɴ:</b> {bot_version}
+┠ <b>Lᴀᴛᴇsᴛ:</b> {lat_version}
+┖ <b>CʜᴀɴɢᴇLᴏɢ:</b> {commit_details}
 
-⌬ <b>REMARKS :</b> <code>{remarks}</code>
+📝 <b>Rᴇᴍᴀʀᴋs:</b> <code>{remarks}</code>
     """
-    BOT_LIMITS = """⌬ <b><i>BOT LIMITATIONS :</i></b>
-┠ <b>Direct Limit :</b> {DL} GB
-┠ <b>Torrent Limit :</b> {TL} GB
-┠ <b>GDrive Limit :</b> {GL} GB
-┠ <b>YT-DLP Limit :</b> {YL} GB
-┠ <b>Playlist Limit :</b> {PL}
-┠ <b>Mega Limit :</b> {ML} GB
-┠ <b>Clone Limit :</b> {CL} GB
-┖ <b>Leech Limit :</b> {LL} GB
+    BOT_LIMITS = """🚫 <b><u>Bᴏᴛ Lɪᴍɪᴛᴀᴛɪᴏɴs</u></b>
+┠ <b>Dɪʀᴇᴄᴛ:</b> {DL} Gʙ
+┠ <b>Tᴏʀʀᴇɴᴛ:</b> {TL} Gʙ
+┠ <b>GDʀɪᴠᴇ:</b> {GL} Gʙ
+┠ <b>YT-DLP:</b> {YL} Gʙ
+┠ <b>Pʟᴀʏʟɪsᴛ:</b> {PL}
+┠ <b>Mᴇɢᴀ:</b> {ML} Gʙ
+┠ <b>Cʟᴏɴᴇ:</b> {CL} Gʙ
+┖ <b>Lᴇᴇᴄʜ:</b> {LL} Gʙ
 
-┎ <b>Token Validity :</b> {TV}
-┠ <b>User Time Limit :</b> {UTI} / task
-┠ <b>User Parallel Tasks :</b> {UT}
-┖ <b>Bot Parallel Tasks :</b> {BT}
+🔑 <b><u>Usᴇʀ Lɪᴍɪᴛs</u></b>
+┠ <b>Tᴏᴋᴇɴ Vᴀʟɪᴅɪᴛʏ:</b> {TV}
+┠ <b>Tɪᴍᴇ Gᴀᴘ:</b> {UTI}
+┠ <b>Usᴇʀ Tᴀsᴋs:</b> {UT}
+┖ <b>Bᴏᴛ Tᴀsᴋs:</b> {BT}
     """
     # ---------------------
 
@@ -210,13 +206,13 @@ class WZMLStyle:
     CANCEL = "\n┖ {Cancel}\n\n"
 
     ####------FOOTER--------
-    FOOTER = "⌬ <b><i>Bot Stats</i></b>\n"
-    TASKS = "┠ <b>Tasks:</b> {Tasks}\n"
-    BOT_TASKS = "┠ <b>Tasks:</b> {Tasks}/{Ttask} | <b>AVL:</b> {Free}\n"
+    FOOTER = "🌟 <b><u>Bᴏᴛ Sᴛᴀᴛs</u></b>\n"
+    TASKS = "┠ <b>Tᴀsᴋs:</b> {Tasks}\n"
+    BOT_TASKS = "┠ <b>Tᴀsᴋs:</b> {Tasks}/{Ttask} | <b>AVL:</b> {Free}\n"
     Cpu = "┠ <b>CPU:</b> {cpu}% | "
-    FREE = "<b>F:</b> {free} [{free_p}%]"
+    FREE = "<b>Fʀᴇᴇ:</b> {free} [{free_p}%]"
     Ram = "\n┠ <b>RAM:</b> {ram}% | "
-    uptime = "<b>UPTIME:</b> {uptime}"
+    uptime = "<b>UP:</b> {uptime}"
     DL = "\n┖ <b>DL:</b> {DL}/s | "
     UL = "<b>UL:</b> {UL}/s"
 
