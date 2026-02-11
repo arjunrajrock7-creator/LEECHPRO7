@@ -706,9 +706,13 @@ async def get_stats(event, key="home"):
                     "git log -1 --pretty=format:'<code>%s</code> <b>By</b> %an'", True
                 )
             )[0]
+        repo_url = config_dict.get('UPSTREAM_REPO', 'https://github.com/ALONEKINGSTAR77/WZML')
+        if repo_url.endswith('.git'):
+            repo_url = repo_url[:-4]
+        raw_url = repo_url.replace('github.com', 'raw.githubusercontent.com')
         official_v = (
             await cmd_exec(
-                f"curl -o latestversion.py https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML/{config_dict['UPSTREAM_BRANCH']}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
+                f"curl -o latestversion.py {raw_url}/{config_dict['UPSTREAM_BRANCH']}/bot/version.py -s && python3 latestversion.py && rm latestversion.py",
                 True,
             )
         )[0]
