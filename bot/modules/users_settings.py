@@ -150,6 +150,18 @@ desp_dict = {
         "Set Default Audio track index",
         "Send Default Audio Index. \n<b>Timeout:</b> 60 sec",
     ],
+    "v_bitrate": [
+        "Video Bitrate for compression (e.g., 2M, 500k)",
+        "Send Video Bitrate. \n<b>Timeout:</b> 60 sec",
+    ],
+    "v_watermark": [
+        "Link to image or text for watermark",
+        "Send Watermark Image Link or Text. \n<b>Timeout:</b> 60 sec",
+    ],
+    "v_subsync": [
+        "Subtitle delay in seconds (e.g., 2 or -1.5)",
+        "Send Subtitle Delay. \n<b>Timeout:</b> 60 sec",
+    ],
 }
 fname_dict = {
     "rcc": "RClone",
@@ -162,6 +174,9 @@ fname_dict = {
     "strip_metadata": "Strip Metadata",
     "audio_change": "Audio Change",
     "default_audio": "Default Audio",
+    "v_bitrate": "Video Bitrate",
+    "v_watermark": "Watermark",
+    "v_subsync": "Sub Sync",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -281,13 +296,22 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
     elif key == "audio":
         audio_change = user_dict.get("audio_change", "Default")
         default_audio = user_dict.get("default_audio", "0")
+        v_bitrate = user_dict.get("v_bitrate", "Original")
+        v_watermark = user_dict.get("v_watermark", "Not Set")
+        v_subsync = user_dict.get("v_subsync", "0")
 
         buttons.ibutton(f"{'✅' if audio_change != 'Default' else ''} Audio Change", f"userset {user_id} audio_change edit")
         buttons.ibutton(f"{'✅' if default_audio != '0' else ''} Default Audio", f"userset {user_id} default_audio edit")
+        buttons.ibutton(f"{'✅' if v_bitrate != 'Original' else ''} Video Bitrate", f"userset {user_id} v_bitrate edit")
+        buttons.ibutton(f"{'✅' if v_watermark != 'Not Set' else ''} Watermark", f"userset {user_id} v_watermark edit")
+        buttons.ibutton(f"{'✅' if v_subsync != '0' else ''} Sub Sync", f"userset {user_id} v_subsync edit")
 
         text = BotTheme("AUDIO_SETTING",
                         AUDIO_CHANGE=audio_change,
-                        DEFAULT_AUDIO=default_audio)
+                        DEFAULT_AUDIO=default_audio,
+                        BITRATE=v_bitrate,
+                        WATERMARK=v_watermark,
+                        SUBSYNC=v_subsync)
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
@@ -862,7 +886,7 @@ async def set_custom(client, message, pre_event, key, direct=False):
             except Exception:
                 value = ""
         return_key = "universal"
-    elif key in ["audio_change", "default_audio"]:
+    elif key in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
         return_key = "audio"
     update_user_ldata(user_id, n_key, value)
     await deleteMessage(message)
@@ -1171,11 +1195,14 @@ async def edit_user_settings(client, query):
         "lmeta",
         "audio_change",
         "default_audio",
+        "v_bitrate",
+        "v_watermark",
+        "v_subsync",
     ]:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
-        if data[2] in ["audio_change", "default_audio"]:
+        if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
             return_key = "audio"
         else:
             return_key = "leech" if data[2][0] == "l" else "mirror"

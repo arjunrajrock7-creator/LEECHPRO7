@@ -74,6 +74,8 @@ class MediaUtils:
             "-i", path,
             "-i", watermark_path,
             "-filter_complex", f"overlay={position}",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
             "-c:a", "copy",
             out_path,
             "-y"
@@ -160,7 +162,9 @@ class MediaUtils:
             "-loglevel",
             "error",
             "-i", path,
+            "-c:v", "libx264",
             "-b:v", bitrate,
+            "-preset", "ultrafast",
             "-c:a", "copy",
             out_path,
             "-y"

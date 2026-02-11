@@ -305,7 +305,10 @@ class WZMLStyle:
 🆔<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐭𝐚𝐝𝐚𝐭𝐚 :</b> <code>{LMETA}</code>
 🔗<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐫𝐠𝐞 :</b> <i>{LMERGE}</i>"""
 
-    AUDIO_SETTING = """🎵 <b><u>Audio Change + Default Audio Settings:</u></b>
+    AUDIO_SETTING = """🎬 <b><u>Media Tools Settings:</u></b>
 
 ┌<b>Audio Change:</b> <code>{AUDIO_CHANGE}</code>
-└<b>Default Audio:</b> <code>{DEFAULT_AUDIO}</code>"""
+├<b>Default Audio:</b> <code>{DEFAULT_AUDIO}</code>
+├<b>Video Bitrate:</b> <code>{BITRATE}</code>
+├<b>Video Watermark:</b> <code>{WATERMARK}</code>
+└<b>Subtitle Sync:</b> <code>{SUBSYNC}</code>"""

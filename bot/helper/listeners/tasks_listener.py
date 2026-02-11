@@ -460,6 +460,47 @@ class MirrorLeechListener:
                                 if success:
                                     await move(out_v, v_path)
 
+        if (bitrate := self.user_dict.get("v_bitrate")) and self.isLeech and bitrate != "Original":
+            from bot.helper.ext_utils.media_utils import MediaUtils
+            comp_path = up_path or dl_path
+            if await aiopath.isfile(comp_path) and (await get_document_type(comp_path))[0]:
+                out_path = f"{comp_path}.comp.tmp"
+                success, _ = await MediaUtils.compress_video(comp_path, out_path, bitrate)
+                if success:
+                    await move(out_path, comp_path)
+            elif await aiopath.isdir(comp_path):
+                for dirpath, _, files in await sync_to_async(walk, comp_path):
+                    for file in files:
+                        v_path = ospath.join(dirpath, file)
+                        if (await get_document_type(v_path))[0]:
+                            out_v = f"{v_path}.comp.tmp"
+                            success, _ = await MediaUtils.compress_video(v_path, out_v, bitrate)
+                            if success:
+                                await move(out_v, v_path)
+
+        if (w_path := self.user_dict.get("v_watermark")) and self.isLeech and w_path != "Not Set":
+            from bot.helper.ext_utils.media_utils import MediaUtils
+            from bot.helper.ext_utils.bot_utils import download_image_url
+            wm_target = up_path or dl_path
+            local_w = await download_image_url(w_path) if w_path.startswith("http") else w_path
+            if await aiopath.exists(local_w):
+                if await aiopath.isfile(wm_target) and (await get_document_type(wm_target))[0]:
+                    out_path = f"{wm_target}.wm.tmp"
+                    success, _ = await MediaUtils.add_watermark(wm_target, local_w, out_path)
+                    if success:
+                        await move(out_path, wm_target)
+                elif await aiopath.isdir(wm_target):
+                    for dirpath, _, files in await sync_to_async(walk, wm_target):
+                        for file in files:
+                            v_path = ospath.join(dirpath, file)
+                            if (await get_document_type(v_path))[0]:
+                                out_v = f"{v_path}.wm.tmp"
+                                success, _ = await MediaUtils.add_watermark(v_path, local_w, out_v)
+                                if success:
+                                    await move(out_v, v_path)
+                if local_w.startswith("Images/"):
+                    await aioremove(local_w)
+
         if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE")) and self.isLeech:
             merge_path = up_path or dl_path
             if await aiopath.isdir(merge_path):

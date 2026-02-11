@@ -1,130 +1,59 @@
-<p align="center">
-    <img src="https://graph.org/file/639fe4239b78e5862b302.jpg" alt="⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Logo" width="200">
-</p>
+# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot
 
-<h1 align="center">⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡: Production-Grade Mirror-Leech Bot</h1>
+A powerful Telegram Mirror-Leech Bot based on WZML-X, optimized for Koyeb, Heroku, and VPS deployment.
 
-<p align="center">
-    <i>A high-performance, stable, and feature-rich Telegram bot for professional mirroring, leeching, and media processing.</i>
-</p>
+## ☘️ FEATURES ☘️
+- Mirror direct links, torrents, and media to Google Drive, RClone, or DDL servers.
+- Leech to Telegram with custom settings.
+- **Video Tools Suite:**
+  - Metadata Editor (Global/Task)
+  - Track Selection (Audio/Subtitle)
+  - Video Compressor (Custom Bitrate)
+  - Video Merger (Auto/Manual)
+  - Watermark (Image/Text)
+  - Subtitle Synchronization
+- Custom Progress Bar: 🟥🟥⬜
+- Stylized UI Theme with math fonts and emojis.
+- Highly optimized for Koyeb (100% Success Rate).
 
-<p align="center">
-    <a href="https://t.me/ALONEKINGSTAR77"><img src="https://img.shields.io/badge/Telegram-Channel-blue?style=for-the-badge&logo=telegram" alt="Telegram Channel"></a>
-    <a href="https://t.me/ALONEKINGSTAR77"><img src="https://img.shields.io/badge/Support-Group-red?style=for-the-badge&logo=telegram" alt="Support Group"></a>
-</p>
+## 🚀 DEPLOYMENT 🚀
 
----
+### ☁️ Koyeb
+1. Fork this repository.
+2. Create a new App on Koyeb.
+3. Choose "Web Service".
+4. Select your forked repo.
+5. In the Build Command, enter: `pip3 install -r requirements.txt` (or leave as default if using Docker).
+6. In the Run Command, enter: `python3 -m bot` (or leave as default if using Docker).
+7. Add your Environment Variables from `config.env`.
+8. Deploy!
 
-## ✨ Advanced Features
+### 💜 Heroku
+1. Fork this repository.
+2. Create a new App on Heroku.
+3. Add the Python Buildpack.
+4. Add the FFmpeg and Rclone Buildpacks.
+5. Connect your GitHub and Deploy.
+6. The `Procfile` is already included.
 
-### 🚀 Performance & Stability
-- **Async Queue System**: Robust handling of multiple tasks with priority and state tracking.
-- **Production UI**: Zero loading loops, responsive buttons, and instant callback handling.
-- **Low RAM Usage**: Optimized for large file handling without memory leaks.
-- **Koyeb Optimized**: 100% stable deployment with built-in health checks.
+### 💻 VPS / Local
+1. `git clone https://github.com/ALONEKINGSTAR77/WZML`
+2. `cd WZML`
+3. `pip3 install -r requirements.txt`
+4. Fill `config.env`.
+5. `python3 -m bot`
 
-### 📦 FFmpeg Media Suite
-- **Metadata Editor**: Edit title, artist, language, and encoder details.
-- **Track Manager**: Selectively keep/remove audio and subtitle tracks.
-- **Compressor**: Presets for low/medium/high/custom bitrates.
-- **Video Tools**: Generate samples, trim videos, and extract high-quality thumbnails.
-- **Merge Features**: "Merge + Original" toggle to keep source files while generating MKVs.
+## 🛠 VARIABLES 🛠
+- `API_ID`: Your Telegram API ID.
+- `API_HASH`: Your Telegram API HASH.
+- `BOT_TOKEN`: Your Telegram Bot Token.
+- `OWNER_ID`: Your Telegram User ID.
+- `DATABASE_URL`: Your MongoDB Connection String.
+- `LOG_CHANNEL_ID`: Channel ID for logs.
 
-### ☁️ Mirroring & Leeching
-- **Multi-Engine**: Supports Aria2c, qBittorrent, and YT-DLP.
-- **Cloud Support**: GDrive, RClone, and various DDL servers.
-- **Customization**: Custom thumbnails, captions (with templates), and split sizes.
+## 🤝 SUPPORT 🤝
+Join our support group: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
+Owner: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
 
----
-
-## 🛠 Deployment Guides
-
-### 🚀 Koyeb (Recommended)
-
-1. **Fork the Repo**: Click the fork button to get your own copy.
-2. **Setup config.env**: Create a `config.env` file or set variables in Koyeb.
-3. **Deploy**:
-   - Create a new Service on Koyeb.
-   - Select **Docker** builder.
-   - Set **Health Check** to `HTTP`, Port `8000`, Path `/health`.
-4. **Environment**: Add all required variables (see below).
-
-### 🖥 VPS Deployment (Manual)
-
-1. **Update System**:
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   ```
-2. **Install Dependencies**:
-   ```bash
-   sudo apt install git python3 python3-pip ffmpeg -y
-   ```
-3. **Clone & Install**:
-   ```bash
-   git clone https://github.com/ALONEKINGSTAR77/WZML && cd WZML
-   pip3 install -r requirements.txt
-   ```
-4. **Configure**:
-   - Rename `config_sample.env` to `config.env`.
-   - Fill in your variables.
-5. **Start**:
-   ```bash
-   bash start.sh
-   ```
-
-### 🟣 Heroku Deployment
-
-1. **Create App**: Create a new app on Heroku.
-2. **Add Buildpacks**:
-   - `heroku/python`
-   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
-3. **Configure**: Set all variables from `config.env` in Heroku's **Config Vars**.
-4. **Deploy**: Connect your GitHub repository and click **Deploy Branch**.
-5. **Worker**: Go to the **Resources** tab and enable the `worker` dyno.
-
-### 🐳 Docker (Self-Hosted)
-
-```bash
-git clone https://github.com/ALONEKINGSTAR77/WZML && cd WZML
-# Edit config.env
-docker compose up -d
-```
-
----
-
-## 📝 Environment Variables
-
-| Variable | Description |
-| :--- | :--- |
-| `BOT_TOKEN` | Telegram Bot Token from @BotFather |
-| `OWNER_ID` | Your Telegram User ID |
-| `TELEGRAM_API` | API ID from my.telegram.org |
-| `TELEGRAM_HASH` | API HASH from my.telegram.org |
-| `DATABASE_URL` | MongoDB Connection URL |
-| `LEECH_MERGE` | Enable/Disable video merging (True/False) |
-| `PORT` | Web server port for health checks (Default: 8000) |
-
----
-
-## 🤖 Bot Commands
-
-- `/mirror`: Mirror links/files to Cloud.
-- `/leech`: Leech files to Telegram.
-- `/usetting`: Open user-specific settings and toggles.
-- `/bsetting`: Global bot settings (Sudo only).
-- `/status`: View active tasks and system stats.
-- `/cancel`: Stop a running task.
-
----
-
-## 🔧 Troubleshooting
-
-- **Button not responding?**: Ensure you are using the latest version with the `@callback_handler` fix.
-- **Deployment failing?**: Check Koyeb logs. Ensure `PORT` is correctly set and `gunicorn` is running.
-- **Large files stuck?**: Check your split size settings in `/usetting`.
-
----
-
-<p align="center">
-    Developed with ❤️ by <a href="https://t.me/ALONEKINGSTAR77">⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</a>
-</p>
+## 📜 LICENSE 📜
+This project is licensed under the MIT License.

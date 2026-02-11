@@ -560,7 +560,7 @@ async def merge_videos(path, listener, name, merge_original=False):
                 video_esc = video.replace("'", "'\\''")
                 f.write(f"file '{video_esc}'\n")
         cmd = [
-            bot_cache["pkgs"][2],
+            "ffmpeg",
             "-f",
             "concat",
             "-safe",
