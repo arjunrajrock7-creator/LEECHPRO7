@@ -426,6 +426,40 @@ class MirrorLeechListener:
                             if success:
                                 await move(out_v, v_path)
 
+        if (self.user_dict.get("audio_change") or self.user_dict.get("default_audio")) and self.isLeech:
+            from bot.helper.ext_utils.media_utils import MediaUtils
+            track_path = up_path or dl_path
+            audio_tracks = self.user_dict.get("audio_change")
+            if audio_tracks and audio_tracks != "Default":
+                try:
+                    audio_tracks = [int(i.strip()) for i in audio_tracks.split(",")]
+                except:
+                    audio_tracks = None
+            else:
+                audio_tracks = None
+
+            default_audio = self.user_dict.get("default_audio")
+            if default_audio and default_audio.isdigit():
+                default_audio = int(default_audio)
+            else:
+                default_audio = None
+
+            if audio_tracks is not None or default_audio is not None:
+                if await aiopath.isfile(track_path):
+                    out_path = f"{track_path}.tracks.tmp"
+                    success, _ = await MediaUtils.track_selection(track_path, out_path, audio_tracks=audio_tracks, default_audio=default_audio)
+                    if success:
+                        await move(out_path, track_path)
+                elif await aiopath.isdir(track_path):
+                    for dirpath, _, files in await sync_to_async(walk, track_path):
+                        for file in files:
+                            v_path = ospath.join(dirpath, file)
+                            if (await get_document_type(v_path))[0]:
+                                out_v = f"{v_path}.tracks.tmp"
+                                success, _ = await MediaUtils.track_selection(v_path, out_v, audio_tracks=audio_tracks, default_audio=default_audio)
+                                if success:
+                                    await move(out_v, v_path)
+
         if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE")) and self.isLeech:
             merge_path = up_path or dl_path
             if await aiopath.isdir(merge_path):

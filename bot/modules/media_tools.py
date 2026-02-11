@@ -23,15 +23,19 @@ async def media_tools_callback(client, query):
         buttons.ibutton("Metadata Editor", f"mediatool metadata {data[2]}")
         buttons.ibutton("Track Selection", f"mediatool tracks {data[2]}")
         buttons.ibutton("Compressor", f"mediatool compress {data[2]}")
+        buttons.ibutton("Video + Video", f"mediatool merge {data[2]}")
+        buttons.ibutton("Watermark", f"mediatool watermark {data[2]}")
+        buttons.ibutton("Sub Sync", f"mediatool subsync {data[2]}")
+        buttons.ibutton("Audio Order", f"mediatool audio_order {data[2]}")
         buttons.ibutton("Close", f"mediatool close")
-        await editMessage(query.message, "<b>FFmpeg Media Tools Menu</b>", buttons.build_menu(2))
+        await editMessage(query.message, "☘️ <b>VIDEO TOOLS FEATURES</b> ☘️", buttons.build_menu(2))
     elif action == "close":
         await deleteMessage(query.message)
-    elif action == "metadata":
-        # metadata editor menu
+    elif action in ["metadata", "tracks", "compress", "merge", "watermark", "subsync", "audio_order"]:
+        # Sub menu for each tool
         buttons = ButtonMaker()
         buttons.ibutton("Back", f"mediatool main {data[2]}")
-        await editMessage(query.message, "<b>Metadata Editor - Under Development</b>", buttons.build_menu(1))
+        text = f"<b>{action.replace('_', ' ').title()} Tool</b>\n\n<i>Status: Under Development / Integration</i>"
+        await editMessage(query.message, text, buttons.build_menu(1))
 
-# Register handlers (example)
-# bot.add_handler(CallbackQueryHandler(media_tools_callback, filters=regex("^mediatool")))
+bot.add_handler(CallbackQueryHandler(media_tools_callback, filters=regex("^mediatool")))

@@ -142,6 +142,14 @@ desp_dict = {
         "Upload Merged file along with Original video files",
         "",
     ],
+    "audio_change": [
+        "Set Audio track order or selection. Use comma separated indices (e.g., 1, 0, 2)",
+        "Send Audio Change Indices. \n<b>Timeout:</b> 60 sec",
+    ],
+    "default_audio": [
+        "Set Default Audio track index",
+        "Send Default Audio Index. \n<b>Timeout:</b> 60 sec",
+    ],
 }
 fname_dict = {
     "rcc": "RClone",
@@ -152,6 +160,8 @@ fname_dict = {
     "lmerge": "Leech Merge",
     "merge_original": "Merge + Original",
     "strip_metadata": "Strip Metadata",
+    "audio_change": "Audio Change",
+    "default_audio": "Default Audio",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -179,6 +189,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         buttons.ibutton("Universal Settings", f"userset {user_id} universal")
         buttons.ibutton("Mirror Settings", f"userset {user_id} mirror")
         buttons.ibutton("Leech Settings", f"userset {user_id} leech")
+        buttons.ibutton("Audio Settings", f"userset {user_id} audio")
         if user_dict and any(key in user_dict for key in list(fname_dict.keys())):
             buttons.ibutton("Reset Setting", f"userset {user_id} reset_all")
         buttons.ibutton("Close", f"userset {user_id} close")
@@ -264,6 +275,20 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             SAVE_MODE=save_mode,
             USESS=u_sess,
         )
+        buttons.ibutton("Back", f"userset {user_id} back", "footer")
+        buttons.ibutton("Close", f"userset {user_id} close", "footer")
+        button = buttons.build_menu(2)
+    elif key == "audio":
+        audio_change = user_dict.get("audio_change", "Default")
+        default_audio = user_dict.get("default_audio", "0")
+
+        buttons.ibutton(f"{'✅' if audio_change != 'Default' else ''} Audio Change", f"userset {user_id} audio_change edit")
+        buttons.ibutton(f"{'✅' if default_audio != '0' else ''} Default Audio", f"userset {user_id} default_audio edit")
+
+        text = BotTheme("AUDIO_SETTING",
+                        AUDIO_CHANGE=audio_change,
+                        DEFAULT_AUDIO=default_audio)
+
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
         button = buttons.build_menu(2)
@@ -488,6 +513,8 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"Disable Strip" if strip_metadata == "Enabled" else "Enable Strip",
             f"userset {user_id} strip_metadata",
         )
+
+        buttons.ibutton("Video Tools", f"mediatool main {user_id}")
 
         text = BotTheme(
             "LEECH",
@@ -835,6 +862,8 @@ async def set_custom(client, message, pre_event, key, direct=False):
             except Exception:
                 value = ""
         return_key = "universal"
+    elif key in ["audio_change", "default_audio"]:
+        return_key = "audio"
     update_user_ldata(user_id, n_key, value)
     await deleteMessage(message)
     await update_user_settings(pre_event, key, return_key, msg=message, sdirect=direct)
@@ -932,7 +961,7 @@ async def edit_user_settings(client, query):
     user_dict = user_data.get(user_id, {})
     if user_id != int(data[1]):
         await query.answer("Not Yours!", show_alert=True)
-    elif data[2] in ["universal", "mirror", "leech"]:
+    elif data[2] in ["universal", "mirror", "leech", "audio"]:
         await query.answer()
         await update_user_settings(query, data[2])
     elif data[2] == "doc":
@@ -1140,11 +1169,16 @@ async def edit_user_settings(client, query):
         "msuffix",
         "mremname",
         "lmeta",
+        "audio_change",
+        "default_audio",
     ]:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
-        return_key = "leech" if data[2][0] == "l" else "mirror"
+        if data[2] in ["audio_change", "default_audio"]:
+            return_key = "audio"
+        else:
+            return_key = "leech" if data[2][0] == "l" else "mirror"
         await update_user_settings(query, data[2], return_key, edit_mode)
         if not edit_mode:
             return

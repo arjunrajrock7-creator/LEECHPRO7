@@ -40,6 +40,68 @@ class MediaUtils:
         return rc == 0, stderr
 
     @staticmethod
+    async def merge_videos(video_list, out_path):
+        # uses concat demuxer
+        list_path = f"{out_path}.txt"
+        with open(list_path, "w") as f:
+            for video in video_list:
+                f.write(f"file '{video}'\n")
+
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", list_path,
+            "-c", "copy",
+            out_path,
+            "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        if os.path.exists(list_path):
+            os.remove(list_path)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def add_watermark(path, watermark_path, out_path, position="main_w-overlay_w-10:main_h-overlay_h-10"):
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i", path,
+            "-i", watermark_path,
+            "-filter_complex", f"overlay={position}",
+            "-c:a", "copy",
+            out_path,
+            "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def sync_subtitles(path, sub_path, out_path, delay=0):
+        # delay in seconds
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i", path,
+            "-itsoffset", str(delay),
+            "-i", sub_path,
+            "-map", "0",
+            "-map", "1",
+            "-c", "copy",
+            out_path,
+            "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
     async def track_selection(path, out_path, audio_tracks=None, sub_tracks=None, default_audio=None, default_sub=None):
         # audio_tracks and sub_tracks are lists of stream indices
         cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", path]

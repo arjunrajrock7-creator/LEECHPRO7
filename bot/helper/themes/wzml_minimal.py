@@ -258,7 +258,7 @@ class WZMLStyle:
     # ---------------------
 
     # USER Setting --> user_setting.py
-    USER_SETTING = """✨ <b><u>𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐔𝐬𝐞𝐫 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬</u></b>
+    USER_SETTING = """🌈 <b><u>𝐏𝐫𝐞𝐦𝐢𝐮𝐦 𝐔𝐬𝐞𝐫 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬</u></b>
         
 👤<b> 𝐍𝐚𝐦𝐞 :</b> {NAME} ( <code>{ID}</code> )
 🆔<b> 𝐔𝐬𝐞𝐫𝐧𝐚𝐦𝐞 :</b> {USERNAME}
@@ -268,7 +268,7 @@ class WZMLStyle:
 🛠 <u><b>𝐀𝐯𝐚𝐢𝐥𝐚𝐛𝐥𝐞 𝐀𝐫𝐠𝐬:</b></u>
 • <b>-s</b> or <b>-set</b>: 𝐒𝐞𝐭 𝐃𝐢𝐫𝐞𝐜𝐭𝐥𝐲 𝐯𝐢𝐚 𝐀𝐫𝐠"""
 
-    UNIVERSAL = """🌟 <b><u>𝐔𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐥 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 : {NAME}</u></b>
+    UNIVERSAL = """🎨 <b><u>𝐔𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐥 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 : {NAME}</u></b>
 
 ⚙️<b> YT-DLP 𝐎𝐩𝐭𝐢𝐨𝐧𝐬 :</b> <b><code>{YT}</code></b>
 📅<b> 𝐃𝐚𝐢𝐥𝐲 𝐓𝐚𝐬𝐤𝐬 :</b> <code>{DT}</code> ᴘᴇʀ ᴅ𝐚ʏ
@@ -278,7 +278,7 @@ class WZMLStyle:
 💾<b> 𝐒𝐚𝐯𝐞 𝐌𝐨𝐝𝐞 :</b> <code>{SAVE_MODE}</code>
 📥<b> 𝐔𝐬𝐞𝐫 𝐁𝐨𝐭 PM :</b> <code>{BOT_PM}</code>"""
 
-    MIRROR = """🚀 <b><u>𝐌𝐢𝐫𝐫𝐨𝐫/𝐂𝐥𝐨𝐧𝐞 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 : {NAME}</u></b>
+    MIRROR = """💎 <b><u>𝐌𝐢𝐫𝐫𝐨𝐫/𝐂𝐥𝐨𝐧𝐞 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 : {NAME}</u></b>
 
 📂<b> RClᴏɴᴇ 𝐂𝐨𝐧𝐟𝐢𝐠 :</b> <i>{RCLONE}</i>
 🔼<b> 𝐌𝐢𝐫𝐫𝐨𝐫 𝐏𝐫𝐞𝐟𝐢𝐱 :</b> <code>{MPREFIX}</code>
@@ -289,7 +289,7 @@ class WZMLStyle:
 📑<b> 𝐓𝐨𝐭𝐚𝐥 𝐔𝐬𝐞𝐫 TD(𝐬) :</b> <i>{USERTD}</i>
 📉<b> 𝐃𝐚𝐢𝐥𝐲 𝐌𝐢𝐫𝐫𝐨𝐫 :</b> <code>{DM}</code> ᴘᴇʀ ᴅ𝐚ʏ"""
 
-    LEECH = """⚡ <b><u>𝐋𝐞𝐞𝐜𝐡 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 𝐟𝐨𝐫 {NAME}</u></b>
+    LEECH = """🔥 <b><u>𝐋𝐞𝐞𝐜𝐡 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 𝐟𝐨𝐫 {NAME}</u></b>
 
 📈<b> 𝐃𝐚𝐢𝐥𝐲 𝐋𝐞𝐞𝐜𝐡 : </b><code>{DL}</code> ᴘᴇʀ ᴅ𝐚ʏ
 🏷<b> 𝐋𝐞𝐞𝐜𝐡 𝐓𝐲𝐩𝐞 :</b> <i>{LTYPE}</i>
@@ -304,3 +304,8 @@ class WZMLStyle:
 🧪<b> 𝐋𝐞𝐞𝐜𝐡 𝐑𝐞𝐦𝐧𝐚𝐦𝐞 :</b> <code>{LREMNAME}</code>
 🆔<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐭𝐚𝐝𝐚𝐭𝐚 :</b> <code>{LMETA}</code>
 🔗<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐫𝐠𝐞 :</b> <i>{LMERGE}</i>"""
+
+    AUDIO_SETTING = """🎵 <b><u>Audio Change + Default Audio Settings:</u></b>
+
+┌<b>Audio Change:</b> <code>{AUDIO_CHANGE}</code>
+└<b>Default Audio:</b> <code>{DEFAULT_AUDIO}</code>"""
