@@ -1,69 +1,114 @@
-# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM Mirror-Leech Bot
+# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot Deployment Guide
 
-A high-performance, async-driven Telegram Mirror-Leech Bot optimized for Koyeb, VPS, and Heroku. Featuring a powerful Video Tools Engine and automated processing pipelines.
+Welcome to the official deployment guide for the **⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot**. Follow these steps carefully for a smooth, 100% success rate deployment.
 
-## ☘️ PREMIUM FEATURES ☘️
-- **Advanced Video Tools Engine:**
-  - Metadata Editor (Global/Task-level)
-  - Audio Track Manager (Remove, Swap, Reorder)
-  - Subtitle Manager (Remove, Sync, Reorder)
-  - Video Compressor (Custom Bitrate, Ultrafast encoding)
-  - Watermark Injection (Image/Text)
-  - Intro Video Injection (Prepend segments)
-  - MKV Attachment Manager (Add/Remove files)
-- **Automated ZIP Pipeline:**
-  - Auto Download → Extract → Process (Metadata/Tools) → Sequence Merge → Upload.
-- **Performance Optimization:**
-  - Async task management with priority queue.
-  - CPU Thread Auto-Detection (Optimized for Koyeb).
-  - Watchdog System to prevent stuck FFmpeg tasks.
-- **Premium UI:**
-  - Icon-based modern inline menus.
-  - Zero-delay button responses.
-  - Animated progress bars (🟥🟥⬜).
+---
 
-## 🚀 KOYEB DEPLOYMENT (ZERO FREEZING) 🚀
-1. Fork this repository.
-2. Create a "Web Service" on Koyeb.
-3. Set **Build Command**: `pip3 install -r requirements.txt`.
-4. Set **Run Command**: `python3 -m bot`.
+## 🛠️ Prerequisites
+Before starting, ensure you have:
+- **Telegram API ID & Hash**: Get from [my.telegram.org](https://my.telegram.org).
+- **Bot Token**: Get from [@BotFather](https://t.me/BotFather).
+- **MongoDB Database URL**: Get a free cluster from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+- **Owner ID**: Use [@userinfobot](https://t.me/userinfobot) to get your Telegram ID.
+
+---
+
+## 🚀 1. KOYEB DEPLOYMENT (Recommended)
+Koyeb is highly recommended for its stability and ease of use.
+
+### Step-by-Step:
+1. **Fork this Repository**: Click the 'Fork' button at the top right of this page.
+2. **Create a Koyeb Account**: Sign up at [koyeb.com](https://www.koyeb.com).
+3. **Create a New Service**:
+   - Click **'Create Service'**.
+   - Select **'GitHub'** as the deployment method.
+   - Choose your forked repository.
+4. **Configure Service**:
+   - **Service Type**: Web Service.
+   - **Region**: Choose the closest to you.
+   - **Plan**: Select a plan (Nano/Micro recommended).
 5. **Environment Variables**:
-   - Add all credentials from `config_sample.env`.
-   - Set `FFMPEG_THREADS` to `1` or `2` for small instances to prevent freezing.
-6. The bot includes a built-in health check and watchdog to ensure 100% uptime.
+   - Click **'Add Variable'** for each of these:
+     - `BOT_TOKEN`: Your bot token.
+     - `OWNER_ID`: Your Telegram ID.
+     - `TELEGRAM_API`: Your API ID.
+     - `TELEGRAM_HASH`: Your API Hash.
+     - `DATABASE_URL`: Your MongoDB URL.
+     - `PORT`: `8000` (Crucial for health checks).
+     - `FFMPEG_THREADS`: `1` (Prevents freezing on small instances).
+6. **Port Binding**:
+   - Set Port to **8000**.
+   - Health Check path to **/health**.
+7. **Deploy**: Click **'Deploy'**. Once the status shows "Healthy", your bot is ready!
 
-## 💻 VPS STEP-BY-STEP GUIDE (ERROR-FREE) 💻
-1. **Update System**:
+---
+
+## 💜 2. HEROKU DEPLOYMENT
+Heroku requires buildpacks to handle media processing.
+
+### Step-by-Step:
+1. **Fork this Repository**: Just like the Koyeb method.
+2. **Create a Heroku App**:
+   - Login to Heroku.
+   - Click **'New'** -> **'Create new app'**.
+3. **Add Buildpacks**:
+   - Go to **'Settings'** -> **'Buildpacks'**.
+   - Add `heroku/python`.
+   - Add `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`.
+4. **Config Vars**:
+   - Go to **'Settings'** -> **'Reveal Config Vars'**.
+   - Add all variables listed in the Koyeb section above.
+5. **Deployment Method**:
+   - Go to **'Deploy'** tab.
+   - Select **'GitHub'** and connect your forked repo.
+   - Scroll down and click **'Deploy Branch'**.
+6. **Resources**:
+   - Once deployed, go to **'Resources'**.
+   - Ensure the `web` dyno is turned **ON**.
+
+---
+
+## 💻 3. VPS DEPLOYMENT (Highest Performance)
+The best method for large files and heavy media processing.
+
+### Step-by-Step:
+1. **Update & Install Dependencies**:
    ```bash
    sudo apt update && sudo apt upgrade -y
-   ```
-2. **Install Dependencies**:
-   ```bash
    sudo apt install git python3 python3-pip ffmpeg mkvtoolnix -y
    ```
-3. **Clone & Setup**:
+2. **Clone the Repository**:
    ```bash
    git clone https://github.com/ALONEKINGSTAR77/WZML hemanth-bot
    cd hemanth-bot
+   ```
+3. **Install Requirements**:
+   ```bash
    pip3 install -r requirements.txt
    ```
-4. **Configuration**:
-   - Rename `config_sample.env` to `config.env`.
-   - Fill in your variables (API_ID, BOT_TOKEN, etc.).
-5. **Run**:
-   ```bash
-   python3 -m bot
-   ```
-   *(Recommended: Use `tmux` or `pm2` for long-running sessions)*
+4. **Setup Environment Variables**:
+   - Copy the sample file: `cp config_sample.env config.env`
+   - Edit the file: `nano config.env`
+   - Fill in your `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, and `DATABASE_URL`.
+   - Press `Ctrl+O` then `Enter` to save, and `Ctrl+X` to exit.
+5. **Run the Bot**:
+   - **Standard Run**: `python3 -m bot`
+   - **Recommended Run (using screen)**:
+     ```bash
+     screen -S bot
+     python3 -m bot
+     ```
+     *(Press `Ctrl+A+D` to detach and keep it running in background)*
 
-## 🛠 ADVANCED VARIABLES 🛠
-- `FFMPEG_THREADS`: Number of CPU threads FFmpeg should use. Leave empty for auto-detection.
-- `FFMPEG_TIMEOUT`: Max time (seconds) for an encoding task. Default is 7200.
-- `auto_merge_zip`: Toggle this in User Settings to enable the ZIP pipeline automation.
+---
 
-## 🤝 SUPPORT 🤝
+## 🛠️ TROUBLESHOOTING
+- **"Missing Token"**: Ensure `config.env` is correctly placed or environment variables are set in the dashboard.
+- **Button not responding**: Check if the bot has admin rights in the log channel.
+- **FFmpeg error**: Ensure you added the FFmpeg buildpack (Heroku) or installed it (VPS).
+
+---
+
+## 🤝 SUPPORT
 Join our support group: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
 Owner: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
-
-## 📜 LICENSE 📜
-MIT License. Optimized for high-speed operation and stability.
