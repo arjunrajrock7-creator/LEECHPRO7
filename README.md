@@ -49,10 +49,43 @@
    - Set **Health Check** to `HTTP`, Port `8000`, Path `/health`.
 4. **Environment**: Add all required variables (see below).
 
+### 🖥 VPS Deployment (Manual)
+
+1. **Update System**:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+2. **Install Dependencies**:
+   ```bash
+   sudo apt install git python3 python3-pip ffmpeg -y
+   ```
+3. **Clone & Install**:
+   ```bash
+   git clone https://github.com/ALONEKINGSTAR77/WZML && cd WZML
+   pip3 install -r requirements.txt
+   ```
+4. **Configure**:
+   - Rename `config_sample.env` to `config.env`.
+   - Fill in your variables.
+5. **Start**:
+   ```bash
+   bash start.sh
+   ```
+
+### 🟣 Heroku Deployment
+
+1. **Create App**: Create a new app on Heroku.
+2. **Add Buildpacks**:
+   - `heroku/python`
+   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
+3. **Configure**: Set all variables from `config.env` in Heroku's **Config Vars**.
+4. **Deploy**: Connect your GitHub repository and click **Deploy Branch**.
+5. **Worker**: Go to the **Resources** tab and enable the `worker` dyno.
+
 ### 🐳 Docker (Self-Hosted)
 
 ```bash
-git clone https://t.me/ALONEKINGSTAR77 && cd ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡
+git clone https://github.com/ALONEKINGSTAR77/WZML && cd WZML
 # Edit config.env
 docker compose up -d
 ```
