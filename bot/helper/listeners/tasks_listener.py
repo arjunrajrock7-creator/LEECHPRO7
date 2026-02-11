@@ -628,17 +628,6 @@ class MirrorLeechListener:
         if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE") or (self.extract and self.user_dict.get("auto_merge_zip"))) and self.isLeech:
             merge_path = up_path or dl_path
             if await aiopath.isdir(merge_path):
-                # Ensure all files have metadata before merge if needed
-                if metadata := self.user_dict.get("lmeta") or config_dict["METADATA"]:
-                    for dirpath, _, files in await sync_to_async(walk, merge_path):
-                        for file in files:
-                            v_f = ospath.join(dirpath, file)
-                            if (await get_document_type(v_f))[0]:
-                                out_v = f"{v_f}.meta.tmp"
-                                # Using edit_metadata from fs_utils which accepts 5 args
-                                from bot.helper.ext_utils.fs_utils import edit_metadata as fs_edit_metadata
-                                await fs_edit_metadata(self, dirpath, v_f, out_v, metadata)
-
                 async with download_dict_lock:
                     download_dict[self.uid] = MergeStatus(name, size, gid, self)
                 merge_original = self.user_dict.get("merge_original")

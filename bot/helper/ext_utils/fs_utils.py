@@ -287,7 +287,7 @@ async def edit_metadata(
     if code == 0:
         listener.seed = False
         await clean_target(media_file)
-        await move(outfile, base_dir)
+        await move(outfile, media_file)
     else:
         await clean_target(outfile)
         LOGGER.error(

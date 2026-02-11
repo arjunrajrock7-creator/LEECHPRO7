@@ -320,6 +320,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         v_watermark = user_dict.get("v_watermark", "Not Set")
         v_subsync = user_dict.get("v_subsync", "0")
         auto_merge_zip = "Enabled" if user_dict.get("auto_merge_zip", False) else "Disabled"
+        lmerge = "Enabled" if user_dict.get("lmerge", False) else "Disabled"
         v_intro = user_dict.get("v_intro", "None")
         v_intro_sub = user_dict.get("v_intro_sub", "None")
         v_attach = "Set" if user_dict.get("v_attach") else "Not Set"
@@ -329,6 +330,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         buttons.ibutton(f"{'✅' if v_bitrate != 'Original' else ''} Video Bitrate", f"userset {user_id} v_bitrate edit")
         buttons.ibutton(f"{'✅' if v_watermark != 'Not Set' else ''} Watermark", f"userset {user_id} v_watermark edit")
         buttons.ibutton(f"{'✅' if v_subsync != '0' else ''} Sub Sync", f"userset {user_id} v_subsync edit")
+        buttons.ibutton(f"{'✅' if lmerge == 'Enabled' else ''} Leech Merge", f"userset {user_id} lmerge")
         buttons.ibutton(f"{'✅' if auto_merge_zip == 'Enabled' else ''} Auto Merge ZIP", f"userset {user_id} auto_merge_zip")
         buttons.ibutton(f"{'✅' if v_intro != 'None' else ''} Intro Video", f"userset {user_id} v_intro edit")
         buttons.ibutton(f"{'✅' if v_intro_sub != 'None' else ''} Intro Subtitle", f"userset {user_id} v_intro_sub edit")
@@ -340,7 +342,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                         BITRATE=v_bitrate,
                         WATERMARK=v_watermark,
                         SUBSYNC=v_subsync,
-                        AMERGE=auto_merge_zip,
+                        AMERGE=f"L: {lmerge} | Z: {auto_merge_zip}",
                         INTRO=f"V: {v_intro} | S: {v_intro_sub}",
                         ATTACH=v_attach)
 
@@ -544,22 +546,13 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"userset {user_id} lmeta",
         )
 
-        lmerge = (
-            "Enabled" if user_dict.get("lmerge", False) else "Disabled"
-        )
-        buttons.ibutton(
-            f"Disable Merge" if lmerge == "Enabled" else "Enable Merge",
-            f"userset {user_id} lmerge",
-        )
-
         merge_original = (
             "Enabled" if user_dict.get("merge_original", False) else "Disabled"
         )
-        if lmerge == "Enabled":
-            buttons.ibutton(
-                f"Disable Original" if merge_original == "Enabled" else "Enable Original",
-                f"userset {user_id} merge_original",
-            )
+        buttons.ibutton(
+            f"Disable Original" if merge_original == "Enabled" else "Enable Original",
+            f"userset {user_id} merge_original",
+        )
 
         strip_metadata = (
             "Enabled" if user_dict.get("strip_metadata", False) else "Disabled"
@@ -1115,7 +1108,9 @@ async def edit_user_settings(client, query):
         update_user_ldata(user_id, data[2], not user_dict.get(data[2], False))
         if data[2] in ["td_mode"]:
             await update_user_settings(query, "user_tds", "mirror")
-        elif data[2] == "lmerge":
+        elif data[2] in ["lmerge", "auto_merge_zip"]:
+            await update_user_settings(query, "audio")
+        elif data[2] == "merge_original":
             await update_user_settings(query, "leech")
         else:
             await update_user_settings(query, "universal")
