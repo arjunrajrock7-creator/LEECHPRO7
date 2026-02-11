@@ -18,4 +18,3 @@ bot.session
 user.session
 terabox.txt
 rclone.conf
-config.env
