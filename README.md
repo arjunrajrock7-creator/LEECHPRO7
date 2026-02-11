@@ -1,59 +1,69 @@
-# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot
+# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM Mirror-Leech Bot
 
-A powerful Telegram Mirror-Leech Bot based on WZML-X, optimized for Koyeb, Heroku, and VPS deployment.
+A high-performance, async-driven Telegram Mirror-Leech Bot optimized for Koyeb, VPS, and Heroku. Featuring a powerful Video Tools Engine and automated processing pipelines.
 
-## ☘️ FEATURES ☘️
-- Mirror direct links, torrents, and media to Google Drive, RClone, or DDL servers.
-- Leech to Telegram with custom settings.
-- **Video Tools Suite:**
-  - Metadata Editor (Global/Task)
-  - Track Selection (Audio/Subtitle)
-  - Video Compressor (Custom Bitrate)
-  - Video Merger (Auto/Manual)
-  - Watermark (Image/Text)
-  - Subtitle Synchronization
-- Custom Progress Bar: 🟥🟥⬜
-- Stylized UI Theme with math fonts and emojis.
-- Highly optimized for Koyeb (100% Success Rate).
+## ☘️ PREMIUM FEATURES ☘️
+- **Advanced Video Tools Engine:**
+  - Metadata Editor (Global/Task-level)
+  - Audio Track Manager (Remove, Swap, Reorder)
+  - Subtitle Manager (Remove, Sync, Reorder)
+  - Video Compressor (Custom Bitrate, Ultrafast encoding)
+  - Watermark Injection (Image/Text)
+  - Intro Video Injection (Prepend segments)
+  - MKV Attachment Manager (Add/Remove files)
+- **Automated ZIP Pipeline:**
+  - Auto Download → Extract → Process (Metadata/Tools) → Sequence Merge → Upload.
+- **Performance Optimization:**
+  - Async task management with priority queue.
+  - CPU Thread Auto-Detection (Optimized for Koyeb).
+  - Watchdog System to prevent stuck FFmpeg tasks.
+- **Premium UI:**
+  - Icon-based modern inline menus.
+  - Zero-delay button responses.
+  - Animated progress bars (🟥🟥⬜).
 
-## 🚀 DEPLOYMENT 🚀
-
-### ☁️ Koyeb
+## 🚀 KOYEB DEPLOYMENT (ZERO FREEZING) 🚀
 1. Fork this repository.
-2. Create a new App on Koyeb.
-3. Choose "Web Service".
-4. Select your forked repo.
-5. In the Build Command, enter: `pip3 install -r requirements.txt` (or leave as default if using Docker).
-6. In the Run Command, enter: `python3 -m bot` (or leave as default if using Docker).
-7. Add your Environment Variables from `config.env`.
-8. Deploy!
+2. Create a "Web Service" on Koyeb.
+3. Set **Build Command**: `pip3 install -r requirements.txt`.
+4. Set **Run Command**: `python3 -m bot`.
+5. **Environment Variables**:
+   - Add all credentials from `config_sample.env`.
+   - Set `FFMPEG_THREADS` to `1` or `2` for small instances to prevent freezing.
+6. The bot includes a built-in health check and watchdog to ensure 100% uptime.
 
-### 💜 Heroku
-1. Fork this repository.
-2. Create a new App on Heroku.
-3. Add the Python Buildpack.
-4. Add the FFmpeg and Rclone Buildpacks.
-5. Connect your GitHub and Deploy.
-6. The `Procfile` is already included.
+## 💻 VPS STEP-BY-STEP GUIDE (ERROR-FREE) 💻
+1. **Update System**:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+2. **Install Dependencies**:
+   ```bash
+   sudo apt install git python3 python3-pip ffmpeg mkvtoolnix -y
+   ```
+3. **Clone & Setup**:
+   ```bash
+   git clone https://github.com/ALONEKINGSTAR77/WZML hemanth-bot
+   cd hemanth-bot
+   pip3 install -r requirements.txt
+   ```
+4. **Configuration**:
+   - Rename `config_sample.env` to `config.env`.
+   - Fill in your variables (API_ID, BOT_TOKEN, etc.).
+5. **Run**:
+   ```bash
+   python3 -m bot
+   ```
+   *(Recommended: Use `tmux` or `pm2` for long-running sessions)*
 
-### 💻 VPS / Local
-1. `git clone https://github.com/ALONEKINGSTAR77/WZML`
-2. `cd WZML`
-3. `pip3 install -r requirements.txt`
-4. Fill `config.env`.
-5. `python3 -m bot`
-
-## 🛠 VARIABLES 🛠
-- `API_ID`: Your Telegram API ID.
-- `API_HASH`: Your Telegram API HASH.
-- `BOT_TOKEN`: Your Telegram Bot Token.
-- `OWNER_ID`: Your Telegram User ID.
-- `DATABASE_URL`: Your MongoDB Connection String.
-- `LOG_CHANNEL_ID`: Channel ID for logs.
+## 🛠 ADVANCED VARIABLES 🛠
+- `FFMPEG_THREADS`: Number of CPU threads FFmpeg should use. Leave empty for auto-detection.
+- `FFMPEG_TIMEOUT`: Max time (seconds) for an encoding task. Default is 7200.
+- `auto_merge_zip`: Toggle this in User Settings to enable the ZIP pipeline automation.
 
 ## 🤝 SUPPORT 🤝
 Join our support group: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
 Owner: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
 
 ## 📜 LICENSE 📜
-This project is licensed under the MIT License.
+MIT License. Optimized for high-speed operation and stability.

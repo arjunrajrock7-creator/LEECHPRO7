@@ -29,27 +29,33 @@ async def media_tools_callback(client, query):
     if action == "main":
         buttons = ButtonMaker()
 
-        lmeta = "✅" if user_dict.get("lmeta") else "❌"
-        buttons.ibutton(f"{lmeta} Metadata Editor", f"mediatool metadata {uid}")
+        lmeta = "🏷️" if user_dict.get("lmeta") else "🔘"
+        buttons.ibutton(f"{lmeta} Metadata", f"mediatool metadata {uid}")
 
-        tracks = "✅" if user_dict.get("audio_change") or user_dict.get("default_audio") else "❌"
-        buttons.ibutton(f"{tracks} Track Selection", f"mediatool tracks {uid}")
+        tracks = "🎵" if user_dict.get("audio_change") or user_dict.get("default_audio") else "🔘"
+        buttons.ibutton(f"{tracks} Tracks", f"mediatool tracks {uid}")
 
-        compress = "✅" if user_dict.get("v_bitrate") else "❌"
-        buttons.ibutton(f"{compress} Compressor", f"mediatool compress {uid}")
+        compress = "🗜️" if user_dict.get("v_bitrate") else "🔘"
+        buttons.ibutton(f"{compress} Compress", f"mediatool compress {uid}")
 
-        merge = "✅" if user_dict.get("lmerge") else "❌"
-        buttons.ibutton(f"{merge} Video + Video", f"mediatool merge {uid}")
+        merge = "🔗" if user_dict.get("lmerge") or user_dict.get("auto_merge_zip") else "🔘"
+        buttons.ibutton(f"{merge} Merge", f"mediatool merge {uid}")
 
-        watermark = "✅" if user_dict.get("v_watermark") else "❌"
+        watermark = "🖼️" if user_dict.get("v_watermark") else "🔘"
         buttons.ibutton(f"{watermark} Watermark", f"mediatool watermark {uid}")
 
-        subsync = "✅" if user_dict.get("v_subsync") else "❌"
+        subsync = "⏳" if user_dict.get("v_subsync") else "🔘"
         buttons.ibutton(f"{subsync} Sub Sync", f"mediatool subsync {uid}")
 
-        buttons.ibutton("Back to Settings", f"userset {uid} leech")
-        buttons.ibutton("Close", f"mediatool close")
-        await editMessage(query.message, "☘️ <b>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ VIDEO TOOLS</b> ☘️\n\n<i>Configure your global video processing settings below:</i>", buttons.build_menu(2))
+        intro = "🎬" if user_dict.get("v_intro") else "🔘"
+        buttons.ibutton(f"{intro} Intro Video", f"mediatool intro {uid}")
+
+        attach = "📎" if user_dict.get("v_attach") else "🔘"
+        buttons.ibutton(f"{attach} Attachments", f"mediatool attach {uid}")
+
+        buttons.ibutton("🔙 Back to Settings", f"userset {uid} leech")
+        buttons.ibutton("🛑 Close", f"mediatool close")
+        await editMessage(query.message, "☘️ <b>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM VIDEO TOOLS</b> ☘️\n\n<i>Select a tool to configure:</i>", buttons.build_menu(2))
 
     elif action == "close":
         await deleteMessage(query.message)
@@ -94,8 +100,22 @@ async def media_tools_callback(client, query):
     elif action == "subsync":
         val = user_dict.get("v_subsync", "0")
         buttons = ButtonMaker()
-        buttons.ibutton("Edit Sub Sync", f"userset {uid} v_subsync edit")
-        buttons.ibutton("Back", f"mediatool main {uid}")
+        buttons.ibutton("⚙️ Edit Sub Sync", f"userset {uid} v_subsync edit")
+        buttons.ibutton("🔙 Back", f"mediatool main {uid}")
         await editMessage(query.message, f"<b>Subtitle Sync</b>\n\n<b>Delay:</b> <code>{val}s</code>\n\nPositive for delay, negative for advance.", buttons.build_menu(1))
+
+    elif action == "intro":
+        val = user_dict.get("v_intro", "None")
+        buttons = ButtonMaker()
+        buttons.ibutton("⚙️ Edit Intro Link", f"userset {uid} v_intro edit")
+        buttons.ibutton("🔙 Back", f"mediatool main {uid}")
+        await editMessage(query.message, f"<b>Intro Injection</b>\n\n<b>Current:</b> <code>{val}</code>\n\nPrepend an intro video to all your tasks.", buttons.build_menu(1))
+
+    elif action == "attach":
+        val = user_dict.get("v_attach", "None")
+        buttons = ButtonMaker()
+        buttons.ibutton("⚙️ Edit Attachments", f"userset {uid} v_attach edit")
+        buttons.ibutton("🔙 Back", f"mediatool main {uid}")
+        await editMessage(query.message, f"<b>MKV Attachments</b>\n\n<b>Current:</b> <code>{val}</code>\n\nFiles to be attached to MKV container (comma separated links).", buttons.build_menu(1))
 
 bot.add_handler(CallbackQueryHandler(media_tools_callback, filters=regex("^mediatool")))

@@ -10,7 +10,7 @@ from aiofiles.os import path as aiopath, remove as aioremove, listdir, makedirs
 from os import walk, path as ospath
 from html import escape
 from aioshutil import move
-from asyncio import create_subprocess_exec, sleep, Event
+from asyncio import create_subprocess_exec, sleep, Event, wait_for, TimeoutError
 from pyrogram.enums import ChatType
 
 from bot import (
@@ -60,6 +60,7 @@ from bot.helper.ext_utils.leech_utils import (
     get_document_type,
     merge_videos,
 )
+from bot.helper.ext_utils.media_utils import MediaUtils
 from bot.helper.ext_utils.exceptions import NotSupportedExtractionArchive
 from bot.helper.ext_utils.task_manager import start_from_queued
 from bot.helper.mirror_utils.status_utils.extract_status import ExtractStatus
@@ -164,6 +165,22 @@ class MirrorLeechListener:
         self.source_msg = ""
         self.__setModeEng()
         self.__parseSource()
+
+    async def run_ffmpeg_with_watchdog(self, cmd, timeout=7200):
+        # Default timeout 2 hours
+        try:
+            self.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
+            await wait_for(self.suproc.wait(), timeout=timeout)
+            return self.suproc.returncode == 0, ""
+        except TimeoutError:
+            if self.suproc:
+                try:
+                    self.suproc.kill()
+                except:
+                    pass
+            return False, "FFmpeg process timed out (watchdog)"
+        except Exception as e:
+            return False, str(e)
 
     async def clean(self):
         try:
@@ -409,7 +426,6 @@ class MirrorLeechListener:
                 up_path = dl_path
 
         if self.user_dict.get("strip_metadata") and self.isLeech:
-            from bot.helper.ext_utils.media_utils import MediaUtils
             meta_path = up_path or dl_path
             if await aiopath.isfile(meta_path):
                 out_path = f"{meta_path}.tmp"
@@ -426,8 +442,86 @@ class MirrorLeechListener:
                             if success:
                                 await move(out_v, v_path)
 
+        if self.isLeech:
+            curr_path = up_path or dl_path
+
+            # 1. Attachment Manager
+            if self.user_dict.get("v_attach"):
+                attach_files = self.user_dict["v_attach"].split(",")
+                if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
+                    out_p = f"{curr_path}.attach.tmp"
+                    success, _ = await MediaUtils.attachment_manager(curr_path, out_p, attach_files=attach_files)
+                    if success:
+                        await move(out_p, curr_path)
+                elif await aiopath.isdir(curr_path):
+                    for dirpath, _, files in await sync_to_async(walk, curr_path):
+                        for file in files:
+                            v_p = ospath.join(dirpath, file)
+                            if (await get_document_type(v_p))[0]:
+                                out_v = f"{v_p}.attach.tmp"
+                                success, _ = await MediaUtils.attachment_manager(v_p, out_v, attach_files=attach_files)
+                                if success:
+                                    await move(out_v, v_p)
+
+            # 2. Intro Injection
+            if intro_link := self.user_dict.get("v_intro"):
+                from bot.helper.ext_utils.bot_utils import download_image_url
+                local_intro = await download_image_url(intro_link)
+                if await aiopath.exists(local_intro):
+                    if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
+                        out_p = f"{curr_path}.intro.tmp"
+                        success, _ = await MediaUtils.inject_intro_video(curr_path, local_intro, out_p)
+                        if success:
+                            await move(out_p, curr_path)
+                    elif await aiopath.isdir(curr_path):
+                        for dirpath, _, files in await sync_to_async(walk, curr_path):
+                            for file in files:
+                                v_p = ospath.join(dirpath, file)
+                                if (await get_document_type(v_p))[0]:
+                                    out_v = f"{v_p}.intro.tmp"
+                                    success, _ = await MediaUtils.inject_intro_video(v_p, local_intro, out_v)
+                                    if success:
+                                        await move(out_v, v_p)
+                    await aioremove(local_intro)
+
+            # 3. Intro Subtitle Injection
+            if intro_sub := self.user_dict.get("v_intro_sub"):
+                if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
+                    out_p = f"{curr_path}.insub.tmp"
+                    # Create a temporary .srt file
+                    sub_file = f"{curr_path}.intro.srt"
+                    with open(sub_file, "w", encoding="utf-8") as f:
+                        f.write("1\n00:00:00,000 --> 00:00:10,000\n" + intro_sub + "\n")
+
+                    cmd = [
+                        "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", curr_path,
+                        "-i", sub_file, "-map", "0", "-map", "1", "-c", "copy",
+                        "-disposition:s:last", "default", out_p, "-y"
+                    ]
+                    success, err = await self.run_ffmpeg_with_watchdog(cmd)
+                    if success:
+                        await move(out_p, curr_path)
+                    await aioremove(sub_file)
+                elif await aiopath.isdir(curr_path):
+                    for dirpath, _, files in await sync_to_async(walk, curr_path):
+                        for file in files:
+                            v_p = ospath.join(dirpath, file)
+                            if (await get_document_type(v_p))[0]:
+                                out_v = f"{v_p}.insub.tmp"
+                                sub_file = f"{v_p}.intro.srt"
+                                with open(sub_file, "w", encoding="utf-8") as f:
+                                    f.write("1\n00:00:00,000 --> 00:00:10,000\n" + intro_sub + "\n")
+                                cmd = [
+                                    "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", v_p,
+                                    "-i", sub_file, "-map", "0", "-map", "1", "-c", "copy",
+                                    "-disposition:s:last", "default", out_v, "-y"
+                                ]
+                                success, err = await self.run_ffmpeg_with_watchdog(cmd)
+                                if success:
+                                    await move(out_v, v_p)
+                                await aioremove(sub_file)
+
         if (self.user_dict.get("audio_change") or self.user_dict.get("default_audio")) and self.isLeech:
-            from bot.helper.ext_utils.media_utils import MediaUtils
             track_path = up_path or dl_path
             audio_tracks = self.user_dict.get("audio_change")
             if audio_tracks and audio_tracks != "Default":
@@ -461,49 +555,90 @@ class MirrorLeechListener:
                                     await move(out_v, v_path)
 
         if (bitrate := self.user_dict.get("v_bitrate")) and self.isLeech and bitrate != "Original":
-            from bot.helper.ext_utils.media_utils import MediaUtils
             comp_path = up_path or dl_path
+            threads = MediaUtils.get_optimal_threads()
             if await aiopath.isfile(comp_path) and (await get_document_type(comp_path))[0]:
                 out_path = f"{comp_path}.comp.tmp"
-                success, _ = await MediaUtils.compress_video(comp_path, out_path, bitrate)
+                cmd = [
+                    "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", comp_path,
+                    "-c:v", "libx264", "-b:v", bitrate, "-preset", "ultrafast",
+                    "-threads", threads, "-c:a", "copy", out_path, "-y"
+                ]
+                success, err = await self.run_ffmpeg_with_watchdog(cmd)
                 if success:
                     await move(out_path, comp_path)
+                else:
+                    LOGGER.error(f"Compression failed: {err}")
             elif await aiopath.isdir(comp_path):
                 for dirpath, _, files in await sync_to_async(walk, comp_path):
                     for file in files:
                         v_path = ospath.join(dirpath, file)
                         if (await get_document_type(v_path))[0]:
                             out_v = f"{v_path}.comp.tmp"
-                            success, _ = await MediaUtils.compress_video(v_path, out_v, bitrate)
+                            cmd = [
+                                "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", v_path,
+                                "-c:v", "libx264", "-b:v", bitrate, "-preset", "ultrafast",
+                                "-threads", threads, "-c:a", "copy", out_v, "-y"
+                            ]
+                            success, err = await self.run_ffmpeg_with_watchdog(cmd)
                             if success:
                                 await move(out_v, v_path)
+                            else:
+                                LOGGER.error(f"Compression failed for {file}: {err}")
 
         if (w_path := self.user_dict.get("v_watermark")) and self.isLeech and w_path != "Not Set":
-            from bot.helper.ext_utils.media_utils import MediaUtils
             from bot.helper.ext_utils.bot_utils import download_image_url
             wm_target = up_path or dl_path
             local_w = await download_image_url(w_path) if w_path.startswith("http") else w_path
+            threads = MediaUtils.get_optimal_threads()
             if await aiopath.exists(local_w):
                 if await aiopath.isfile(wm_target) and (await get_document_type(wm_target))[0]:
                     out_path = f"{wm_target}.wm.tmp"
-                    success, _ = await MediaUtils.add_watermark(wm_target, local_w, out_path)
+                    cmd = [
+                        "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", wm_target,
+                        "-i", local_w, "-filter_complex", "overlay=main_w-overlay_w-10:main_h-overlay_h-10",
+                        "-c:v", "libx264", "-preset", "ultrafast", "-threads", threads,
+                        "-c:a", "copy", out_path, "-y"
+                    ]
+                    success, err = await self.run_ffmpeg_with_watchdog(cmd)
                     if success:
                         await move(out_path, wm_target)
+                    else:
+                        LOGGER.error(f"Watermark failed: {err}")
                 elif await aiopath.isdir(wm_target):
                     for dirpath, _, files in await sync_to_async(walk, wm_target):
                         for file in files:
                             v_path = ospath.join(dirpath, file)
                             if (await get_document_type(v_path))[0]:
                                 out_v = f"{v_path}.wm.tmp"
-                                success, _ = await MediaUtils.add_watermark(v_path, local_w, out_v)
+                                cmd = [
+                                    "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", v_path,
+                                    "-i", local_w, "-filter_complex", "overlay=main_w-overlay_w-10:main_h-overlay_h-10",
+                                    "-c:v", "libx264", "-preset", "ultrafast", "-threads", threads,
+                                    "-c:a", "copy", out_v, "-y"
+                                ]
+                                success, err = await self.run_ffmpeg_with_watchdog(cmd)
                                 if success:
                                     await move(out_v, v_path)
+                                else:
+                                    LOGGER.error(f"Watermark failed for {file}: {err}")
                 if local_w.startswith("Images/"):
                     await aioremove(local_w)
 
-        if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE")) and self.isLeech:
+        if (self.user_dict.get("lmerge") or config_dict.get("LEECH_MERGE") or (self.extract and self.user_dict.get("auto_merge_zip"))) and self.isLeech:
             merge_path = up_path or dl_path
             if await aiopath.isdir(merge_path):
+                # Ensure all files have metadata before merge if needed
+                if metadata := self.user_dict.get("lmeta") or config_dict["METADATA"]:
+                    for dirpath, _, files in await sync_to_async(walk, merge_path):
+                        for file in files:
+                            v_f = ospath.join(dirpath, file)
+                            if (await get_document_type(v_f))[0]:
+                                out_v = f"{v_f}.meta.tmp"
+                                # Using edit_metadata from fs_utils which accepts 5 args
+                                from bot.helper.ext_utils.fs_utils import edit_metadata as fs_edit_metadata
+                                await fs_edit_metadata(self, dirpath, v_f, out_v, metadata)
+
                 async with download_dict_lock:
                     download_dict[self.uid] = MergeStatus(name, size, gid, self)
                 merge_original = self.user_dict.get("merge_original")

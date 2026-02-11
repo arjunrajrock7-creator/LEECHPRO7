@@ -1,9 +1,20 @@
 import os
 import asyncio
-from bot import LOGGER, bot_cache
+import multiprocessing
+from bot import LOGGER, bot_cache, config_dict
 from bot.helper.ext_utils.bot_utils import cmd_exec
 
 class MediaUtils:
+    @staticmethod
+    def get_optimal_threads():
+        if threads := config_dict.get("FFMPEG_THREADS"):
+            return str(threads)
+        try:
+            cores = multiprocessing.cpu_count()
+            return str(max(1, cores - 1))
+        except:
+            return "1"
+
     @staticmethod
     async def get_streams(path):
         cmd = [
@@ -40,6 +51,43 @@ class MediaUtils:
         return rc == 0, stderr
 
     @staticmethod
+    async def attachment_manager(path, out_path, attach_files=None, remove_attachments=False):
+        # attach_files is a list of file paths
+        cmd = ["mkvmerge", "-o", out_path]
+        if remove_attachments:
+            cmd.append("--no-attachments")
+        cmd.append(path)
+        if attach_files:
+            for file in attach_files:
+                if os.path.exists(file):
+                    cmd.extend(["--attach-file", file])
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def inject_intro_video(path, intro_path, out_path):
+        # use filter complex to join intro and main video
+        threads = MediaUtils.get_optimal_threads()
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i", intro_path,
+            "-i", path,
+            "-filter_complex", "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]",
+            "-map", "[v]",
+            "-map", "[a]",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-threads", threads,
+            out_path,
+            "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
     async def merge_videos(video_list, out_path):
         # uses concat demuxer
         list_path = f"{out_path}.txt"
@@ -66,6 +114,7 @@ class MediaUtils:
 
     @staticmethod
     async def add_watermark(path, watermark_path, out_path, position="main_w-overlay_w-10:main_h-overlay_h-10"):
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
@@ -76,6 +125,7 @@ class MediaUtils:
             "-filter_complex", f"overlay={position}",
             "-c:v", "libx264",
             "-preset", "ultrafast",
+            "-threads", threads,
             "-c:a", "copy",
             out_path,
             "-y"
@@ -156,6 +206,7 @@ class MediaUtils:
 
     @staticmethod
     async def compress_video(path, out_path, bitrate="1M"):
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
@@ -165,6 +216,7 @@ class MediaUtils:
             "-c:v", "libx264",
             "-b:v", bitrate,
             "-preset", "ultrafast",
+            "-threads", threads,
             "-c:a", "copy",
             out_path,
             "-y"

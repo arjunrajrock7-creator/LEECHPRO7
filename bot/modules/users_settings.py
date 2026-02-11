@@ -162,6 +162,22 @@ desp_dict = {
         "Subtitle delay in seconds (e.g., 2 or -1.5)",
         "Send Subtitle Delay. \n<b>Timeout:</b> 60 sec",
     ],
+    "auto_merge_zip": [
+        "Automatically merge all video files extracted from a ZIP/Archive",
+        "",
+    ],
+    "v_intro": [
+        "Link to a video file to be injected as intro to all Leeched videos",
+        "Send Intro Video Link. \n<b>Timeout:</b> 60 sec",
+    ],
+    "v_intro_sub": [
+        "Text to be added as an intro subtitle track to MKV files",
+        "Send Intro Subtitle Text. \n<b>Timeout:</b> 60 sec",
+    ],
+    "v_attach": [
+        "Files to be attached to MKV files (e.g., XML, JPG, TXT)",
+        "Send files or links to be attached. \n<b>Timeout:</b> 60 sec",
+    ],
 }
 fname_dict = {
     "rcc": "RClone",
@@ -177,6 +193,10 @@ fname_dict = {
     "v_bitrate": "Video Bitrate",
     "v_watermark": "Watermark",
     "v_subsync": "Sub Sync",
+    "auto_merge_zip": "Auto Merge ZIP",
+    "v_intro": "Intro Video",
+    "v_intro_sub": "Intro Subtitle",
+    "v_attach": "MKV Attachments",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -299,19 +319,30 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         v_bitrate = user_dict.get("v_bitrate", "Original")
         v_watermark = user_dict.get("v_watermark", "Not Set")
         v_subsync = user_dict.get("v_subsync", "0")
+        auto_merge_zip = "Enabled" if user_dict.get("auto_merge_zip", False) else "Disabled"
+        v_intro = user_dict.get("v_intro", "None")
+        v_intro_sub = user_dict.get("v_intro_sub", "None")
+        v_attach = "Set" if user_dict.get("v_attach") else "Not Set"
 
         buttons.ibutton(f"{'✅' if audio_change != 'Default' else ''} Audio Change", f"userset {user_id} audio_change edit")
         buttons.ibutton(f"{'✅' if default_audio != '0' else ''} Default Audio", f"userset {user_id} default_audio edit")
         buttons.ibutton(f"{'✅' if v_bitrate != 'Original' else ''} Video Bitrate", f"userset {user_id} v_bitrate edit")
         buttons.ibutton(f"{'✅' if v_watermark != 'Not Set' else ''} Watermark", f"userset {user_id} v_watermark edit")
         buttons.ibutton(f"{'✅' if v_subsync != '0' else ''} Sub Sync", f"userset {user_id} v_subsync edit")
+        buttons.ibutton(f"{'✅' if auto_merge_zip == 'Enabled' else ''} Auto Merge ZIP", f"userset {user_id} auto_merge_zip")
+        buttons.ibutton(f"{'✅' if v_intro != 'None' else ''} Intro Video", f"userset {user_id} v_intro edit")
+        buttons.ibutton(f"{'✅' if v_intro_sub != 'None' else ''} Intro Subtitle", f"userset {user_id} v_intro_sub edit")
+        buttons.ibutton(f"{'✅' if v_attach == 'Set' else ''} Attachments", f"userset {user_id} v_attach edit")
 
         text = BotTheme("AUDIO_SETTING",
                         AUDIO_CHANGE=audio_change,
                         DEFAULT_AUDIO=default_audio,
                         BITRATE=v_bitrate,
                         WATERMARK=v_watermark,
-                        SUBSYNC=v_subsync)
+                        SUBSYNC=v_subsync,
+                        AMERGE=auto_merge_zip,
+                        INTRO=f"V: {v_intro} | S: {v_intro_sub}",
+                        ATTACH=v_attach)
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
@@ -1054,7 +1085,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "universal")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata"]:
+    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata", "auto_merge_zip"]:
         handler_dict[user_id] = False
         if (
             data[2] == "save_mode"
@@ -1198,11 +1229,14 @@ async def edit_user_settings(client, query):
         "v_bitrate",
         "v_watermark",
         "v_subsync",
+        "v_intro",
+        "v_intro_sub",
+        "v_attach",
     ]:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
-        if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
+        if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync", "v_intro", "v_intro_sub", "v_attach"]:
             return_key = "audio"
         else:
             return_key = "leech" if data[2][0] == "l" else "mirror"

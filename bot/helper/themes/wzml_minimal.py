@@ -311,4 +311,7 @@ class WZMLStyle:
 ├<b>Default Audio:</b> <code>{DEFAULT_AUDIO}</code>
 ├<b>Video Bitrate:</b> <code>{BITRATE}</code>
 ├<b>Video Watermark:</b> <code>{WATERMARK}</code>
-└<b>Subtitle Sync:</b> <code>{SUBSYNC}</code>"""
+├<b>Subtitle Sync:</b> <code>{SUBSYNC}</code>
+├<b>Auto Merge ZIP:</b> <code>{AMERGE}</code>
+├<b>Intro Video:</b> <code>{INTRO}</code>
+└<b>MKV Attachments:</b> <code>{ATTACH}</code>"""
