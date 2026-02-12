@@ -159,7 +159,7 @@ async def chat_info(channel_id):
 
 async def sendMultiMessage(chat_ids, text, buttons=None, photo=None):
     msg_dict = {}
-    for channel_id in chat_ids.split():
+    for channel_id in str(chat_ids).split():
         channel_id, *topic_id = channel_id.split(":")
         topic_id = int(topic_id[0]) if len(topic_id) else None
         chat = await chat_info(channel_id)
@@ -532,7 +532,7 @@ async def open_dump_btns(message):
 async def forcesub(message, ids, button=None):
     join_button = {}
     _msg = ""
-    for channel_id in ids.split():
+    for channel_id in str(ids).split():
         chat = await chat_info(channel_id)
         try:
             await chat.get_member(message.from_user.id)

@@ -120,7 +120,7 @@ class MirrorLeechListener:
         self.message = message
         self.uid = message.id
         self.excep_chat = bool(
-            str(message.chat.id) in config_dict["EXCEP_CHATS"].split()
+            str(message.chat.id) in str(config_dict["EXCEP_CHATS"]).split()
         )
         self.extract = extract
         self.compress = compress

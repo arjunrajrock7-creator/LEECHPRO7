@@ -324,8 +324,8 @@ async def restart_notification():
 
 
 async def log_check():
-    if config_dict["LEECH_LOG_ID"]:
-        for chat_id in config_dict["LEECH_LOG_ID"].split():
+    if leech_log_id := config_dict.get("LEECH_LOG_ID"):
+        for chat_id in str(leech_log_id).split():
             chat_id, *topic_id = chat_id.split(":")
             try:
                 try:

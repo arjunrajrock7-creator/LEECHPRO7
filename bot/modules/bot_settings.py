@@ -454,19 +454,9 @@ async def load_config():
         FSUB_IDS = ""
 
     LINKS_LOG_ID = environ.get("LINKS_LOG_ID", "")
-    LINKS_LOG_ID = "" if len(LINKS_LOG_ID) == 0 else int(LINKS_LOG_ID)
-
     MIRROR_LOG_ID = environ.get("MIRROR_LOG_ID", "")
-    if len(MIRROR_LOG_ID) == 0:
-        MIRROR_LOG_ID = ""
-
     LEECH_LOG_ID = environ.get("LEECH_LOG_ID", "")
-    if len(LEECH_LOG_ID) == 0:
-        LEECH_LOG_ID = ""
-
     EXCEP_CHATS = environ.get("EXCEP_CHATS", "")
-    if len(EXCEP_CHATS) == 0:
-        EXCEP_CHATS = ""
 
     USER_MAX_TASKS = environ.get("USER_MAX_TASKS", "")
     USER_MAX_TASKS = int(USER_MAX_TASKS) if USER_MAX_TASKS.isdigit() else ""
@@ -929,7 +919,7 @@ async def edit_variable(_, message, pre_message, key):
     elif key == "DOWNLOAD_DIR":
         if not value.endswith("/"):
             value += "/"
-    elif key in ["LINKS_LOG_ID", "RSS_CHAT"]:
+    elif key in ["RSS_CHAT"]:
         value = int(value)
     elif key == "STATUS_UPDATE_INTERVAL":
         value = int(value)
@@ -995,7 +985,7 @@ async def edit_variable(_, message, pre_message, key):
             "drive_id": config_dict["GDRIVE_ID"],
             "index_link": value,
         }
-    elif value.isdigit():
+    elif value.isdigit() and key not in ["LEECH_LOG_ID", "MIRROR_LOG_ID", "LINKS_LOG_ID", "FSUB_IDS", "EXCEP_CHATS"]:
         value = int(value)
     config_dict[key] = value
     await update_buttons(pre_message, key, "editvar", False)

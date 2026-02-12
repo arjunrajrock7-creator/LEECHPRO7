@@ -214,17 +214,9 @@ if len(EXTENSION_FILTER) > 0:
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
 LINKS_LOG_ID = environ.get("LINKS_LOG_ID", "")
-LINKS_LOG_ID = "" if len(LINKS_LOG_ID) == 0 else int(LINKS_LOG_ID)
-
 MIRROR_LOG_ID = environ.get("MIRROR_LOG_ID", "")
-MIRROR_LOG_ID = int(MIRROR_LOG_ID) if len(MIRROR_LOG_ID) != 0 else ""
-
 LEECH_LOG_ID = environ.get("LEECH_LOG_ID", "")
-LEECH_LOG_ID = int(LEECH_LOG_ID) if len(LEECH_LOG_ID) != 0 else ""
-
 EXCEP_CHATS = environ.get("EXCEP_CHATS", "")
-if len(EXCEP_CHATS) == 0:
-    EXCEP_CHATS = ""
 
 
 def wztgClient(*args, **kwargs):
