@@ -150,8 +150,8 @@ async def load_config():
         RCLONE_FLAGS = ""
 
     AUTHORIZED_CHATS = environ.get("AUTHORIZED_CHATS", "")
-    if len(AUTHORIZED_CHATS) != 0:
-        aid = AUTHORIZED_CHATS.split()
+    if len(str(AUTHORIZED_CHATS)) != 0:
+        aid = str(AUTHORIZED_CHATS).split()
         for id_ in aid:
             chat_id, *topic_ids = id_.split(":")
             chat_id = int(chat_id)
@@ -162,20 +162,20 @@ async def load_config():
                 )
 
     SUDO_USERS = environ.get("SUDO_USERS", "")
-    if len(SUDO_USERS) != 0:
-        aid = SUDO_USERS.split()
+    if len(str(SUDO_USERS)) != 0:
+        aid = str(SUDO_USERS).split()
         for id_ in aid:
             user_data[int(id_.strip())] = {"is_sudo": True}
 
     BLACKLIST_USERS = environ.get("BLACKLIST_USERS", "")
-    if len(BLACKLIST_USERS) != 0:
-        aid = BLACKLIST_USERS.split()
+    if len(str(BLACKLIST_USERS)) != 0:
+        aid = str(BLACKLIST_USERS).split()
         for id_ in aid:
             user_data[int(id_.strip())] = {"is_blacklist": True}
 
     EXTENSION_FILTER = environ.get("EXTENSION_FILTER", "")
-    if len(EXTENSION_FILTER) > 0:
-        fx = EXTENSION_FILTER.split()
+    if len(str(EXTENSION_FILTER)) > 0:
+        fx = str(EXTENSION_FILTER).split()
         GLOBAL_EXTENSION_FILTER.clear()
         GLOBAL_EXTENSION_FILTER.extend(["aria2", "!qB"])
         for x in fx:
