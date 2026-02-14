@@ -235,7 +235,7 @@ function s_validate() {
         </a>
       </div>
       <div class="social">
-        <a href="https://www.github.com/ALONEKINGSTAR77/WZML"><i class="fab fa-github"></i></a>
+        <a href="https://www.github.com/ALONEKINGSTAR77/WZML-X"><i class="fab fa-github"></i></a>
         <a href="https://t.me/krn_adhikari"><i class="fab fa-telegram"></i></a>
       </div>
     </header>
@@ -627,7 +627,7 @@ section span{
         </a>
       </div>
       <div class="social">
-        <a href="https://www.github.com/ALONEKINGSTAR77/WZML"><i class="fab fa-github"></i></a>
+        <a href="https://www.github.com/ALONEKINGSTAR77/WZML-X"><i class="fab fa-github"></i></a>
         <a href="https://t.me/ALONEKINGSTAR77"><i class="fab fa-telegram"></i></a>
       </div>
     </header>

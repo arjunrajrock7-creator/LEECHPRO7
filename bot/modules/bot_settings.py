@@ -73,7 +73,7 @@ default_values = {
     "IMG_PAGE": 1,
     "AUTHOR_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
     "AUTHOR_URL": "https://t.me/ALONEKINGSTAR77",
-    "TITLE_NAME": "WZ Mirror/Leech X",
+    "TITLE_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡-X",
     "GD_INFO": "Uploaded by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
 }
 bool_vars = [
@@ -490,7 +490,7 @@ async def load_config():
 
     IMG_SEARCH = environ.get("IMG_SEARCH", "")
     IMG_SEARCH = (
-        IMG_SEARCH.replace("'", "")
+        str(IMG_SEARCH).replace("'", "")
         .replace('"', "")
         .replace("[", "")
         .replace("]", "")
@@ -502,7 +502,7 @@ async def load_config():
 
     IMAGES = environ.get("IMAGES", "")
     IMAGES = (
-        IMAGES.replace("'", "")
+        str(IMAGES).replace("'", "")
         .replace('"', "")
         .replace("[", "")
         .replace("]", "")

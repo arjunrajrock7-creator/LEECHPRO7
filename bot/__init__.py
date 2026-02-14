@@ -509,7 +509,7 @@ if len(BOT_THEME) == 0:
 
 IMAGES = environ.get("IMAGES", "")
 IMAGES = (
-    IMAGES.replace("'", "")
+    str(IMAGES).replace("'", "")
     .replace('"', "")
     .replace("[", "")
     .replace("]", "")
@@ -520,7 +520,7 @@ if IMAGES:
 
 IMG_SEARCH = environ.get("IMG_SEARCH", "")
 IMG_SEARCH = (
-    IMG_SEARCH.replace("'", "")
+    str(IMG_SEARCH).replace("'", "")
     .replace('"', "")
     .replace("[", "")
     .replace("]", "")

@@ -4,6 +4,45 @@ Welcome to the official deployment guide for the **⚡𝗛𝗘𝗠𝗔𝗡𝗧�
 
 ---
 
+## 📱 DaRemote / Mobile VPS Deployment Guide (100% Success)
+
+If you are using **DaRemote** or any SSH client on mobile, follow these exact steps:
+
+### 1. Prepare your VPS
+Ensure you have a VPS with Ubuntu 20.04 or higher.
+
+### 2. Connect via DaRemote
+- Open **DaRemote** app.
+- Add your VPS details (IP, Username, Password/Key).
+- Connect to the terminal.
+
+### 3. Run the Auto-Deploy Command
+Copy and paste this single command into your terminal:
+```bash
+wget -q https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML-X/master/deploy_vps.sh -O deploy_vps.sh && chmod +x deploy_vps.sh && ./deploy_vps.sh
+```
+
+### 4. Configure your Credentials
+After the script runs, you need to edit your `config.env`:
+```bash
+nano config.env
+```
+- Fill in your `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, and `DATABASE_URL`.
+- Press `Ctrl+O` then `Enter` to save.
+- Press `Ctrl+X` to exit.
+
+### 5. Restart the Bot
+```bash
+docker-compose up --build -d
+```
+
+### 6. Monitor Logs
+```bash
+docker logs -f wzmlx_bot
+```
+
+---
+
 ## 🛠️ Prerequisites
 Before starting, ensure you have:
 - **Telegram API ID & Hash**: Get from [my.telegram.org](https://my.telegram.org).

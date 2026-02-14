@@ -706,7 +706,7 @@ async def get_stats(event, key="home"):
                     "git log -1 --pretty=format:'<code>%s</code> <b>By</b> %an'", True
                 )
             )[0]
-        repo_url = config_dict.get('UPSTREAM_REPO', 'https://github.com/ALONEKINGSTAR77/WZML')
+        repo_url = config_dict.get('UPSTREAM_REPO', 'https://github.com/ALONEKINGSTAR77/WZML-X')
         if repo_url.endswith('.git'):
             repo_url = repo_url[:-4]
         raw_url = repo_url.replace('github.com', 'raw.githubusercontent.com')

@@ -195,7 +195,7 @@ Get from https://my.telegram.org</i>.
         session_string = await pyro_client.export_session_string()
         await pyro_client.send_message(
             "self",
-            f"⌬ <b><u>Pyrogram Session Generated :</u></b>\n\n<code>{session_string}</code>\n\n<b>Via <a href='https://github.com/ALONEKINGSTAR77/WZML'>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</a> [ @ALONEKINGSTAR77 ]</b>",
+            f"⌬ <b><u>Pyrogram Session Generated :</u></b>\n\n<code>{session_string}</code>\n\n<b>Via <a href='https://github.com/ALONEKINGSTAR77/WZML-X'>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</a> [ @ALONEKINGSTAR77 ]</b>",
             disable_web_page_preview=True,
         )
         await pyro_client.disconnect()
