@@ -4,6 +4,17 @@ Welcome to the official deployment guide for the **⚡𝗛𝗘𝗠𝗔𝗡𝗧�
 
 ---
 
+## 🚀 ULTRA HIGH-PERFORMANCE ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot
+
+This bot is fully optimized for **Ultra High Speed** mode with async execution, multi-threading, and enhanced error handling.
+
+### ⚠️ Performance Features
+- **Async Execution**: Powered by `pyrofork` and `asyncio` for zero-lag interactions.
+- **Multi-Threading**: Optimized FFmpeg and Aria2 threads for 2x faster processing.
+- **Memory Optimized**: Automatic cache cleaning and lazy module loading.
+- **Watchdog Timer**: Prevents FFmpeg hangs and process freezes.
+- **Health Checks**: Integrated `/health` endpoint for 100% Koyeb/Heroku uptime.
+
 ## 📱 DaRemote / Mobile VPS Deployment Guide (100% Success)
 
 If you are using **DaRemote** or any SSH client on mobile, follow these exact steps:
