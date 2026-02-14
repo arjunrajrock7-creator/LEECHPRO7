@@ -874,6 +874,18 @@ else:
     for k, v in list(qb_opt.items()):
         if v in ["", "*"]:
             del qb_opt[k]
+    qb_opt.update({
+        'max_active_downloads': 10,
+        'max_active_uploads': 1,
+        'max_active_torrents': 11,
+        'enable_os_cache': True,
+        'utp_enabled': True,
+        'up_limit': 1,
+        'dl_limit': 0,
+        'send_buffer_watermark': 4096,
+        'send_buffer_low_watermark': 1024,
+        'send_buffer_watermark_factor': 50
+    })
     qb_client.app_set_preferences(qb_opt)
 
 log_info("Creating client from BOT_TOKEN")

@@ -8,12 +8,14 @@ Welcome to the official deployment guide for the **⚡𝗛𝗘𝗠𝗔𝗡𝗧�
 
 This bot is fully optimized for **Ultra High Speed** mode with async execution, multi-threading, and enhanced error handling.
 
-### ⚠️ Performance Features
-- **Async Execution**: Powered by `pyrofork` and `asyncio` for zero-lag interactions.
-- **Multi-Threading**: Optimized FFmpeg and Aria2 threads for 2x faster processing.
-- **Memory Optimized**: Automatic cache cleaning and lazy module loading.
-- **Watchdog Timer**: Prevents FFmpeg hangs and process freezes.
-- **Health Checks**: Integrated `/health` endpoint for 100% Koyeb/Heroku uptime.
+### ⚡ ULTRA PERFORMANCE & MAX SPEED
+- **Async Turbo**: Powered by `uvloop` and `pyrofork` for near-zero latency.
+- **High-Speed Aria2**: 16 parallel connections, 256MB disk cache, and optimized buffer sizes.
+- **Multi-Threaded 7z**: Extraction and compression use all available CPU cores (`-mmt=on`).
+- **Parallel Uploads**: 2000+ threadpool workers for concurrent processing.
+- **Auto-Optimized qBit**: High-performance buffer settings for high-speed torrenting.
+- **FFmpeg Ultrafast**: All video tools use the `ultrafast` preset with auto-thread scaling.
+- **Watchdog Timer**: Automated process management to prevent hangs and freezes.
 
 ## 📱 DaRemote / Mobile VPS Deployment Guide (100% Success)
 

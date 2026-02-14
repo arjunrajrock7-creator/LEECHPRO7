@@ -67,7 +67,7 @@ class MediaUtils:
     @staticmethod
     async def inject_intro_video(path, intro_path, out_path):
         # use filter complex to join intro and main video
-        threads = MediaUtils.get_optimal_threads()
+        threads = "0"
         cmd = [
             "ffmpeg",
             "-hide_banner",
@@ -80,7 +80,7 @@ class MediaUtils:
             "-map", "[a]",
             "-c:v", "libx264",
             "-preset", "ultrafast",
-            "-threads", threads,
+            "-threads", "0",
             out_path,
             "-y"
         ]
@@ -114,7 +114,7 @@ class MediaUtils:
 
     @staticmethod
     async def add_watermark(path, watermark_path, out_path, position="main_w-overlay_w-10:main_h-overlay_h-10"):
-        threads = MediaUtils.get_optimal_threads()
+        threads = "0"
         cmd = [
             "ffmpeg",
             "-hide_banner",
@@ -125,7 +125,7 @@ class MediaUtils:
             "-filter_complex", f"overlay={position}",
             "-c:v", "libx264",
             "-preset", "ultrafast",
-            "-threads", threads,
+            "-threads", "0",
             "-c:a", "copy",
             out_path,
             "-y"
@@ -206,7 +206,7 @@ class MediaUtils:
 
     @staticmethod
     async def compress_video(path, out_path, bitrate="1M"):
-        threads = MediaUtils.get_optimal_threads()
+        threads = "0"
         cmd = [
             "ffmpeg",
             "-hide_banner",
@@ -216,7 +216,7 @@ class MediaUtils:
             "-c:v", "libx264",
             "-b:v", bitrate,
             "-preset", "ultrafast",
-            "-threads", threads,
+            "-threads", "0",
             "-c:a", "copy",
             out_path,
             "-y"

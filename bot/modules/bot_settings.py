@@ -1107,7 +1107,7 @@ async def update_private_file(_, message, pre_message):
                 await aiormtree("rclone_sa")
             await (
                 await create_subprocess_exec(
-                    "7z", "x", "-o.", "-aoa", "accounts.zip", "accounts/*.json"
+                    "7z", "-mmt=on", "x", "-o.", "-aoa", "accounts.zip", "accounts/*.json"
                 )
             ).wait()
             await (

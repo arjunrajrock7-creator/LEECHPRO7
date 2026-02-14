@@ -354,7 +354,7 @@ class MirrorLeechListener:
                                     else dirpath
                                 )
                                 cmd = [
-                                    "7z",
+                                    "7z", "-mmt=on",
                                     "x",
                                     f"-p{pswd}",
                                     f_path,
@@ -393,7 +393,7 @@ class MirrorLeechListener:
                         self.newDir = f"{self.dir}10000"
                         up_path = up_path.replace(self.dir, self.newDir)
                     cmd = [
-                        "7z",
+                        "7z", "-mmt=on",
                         "x",
                         f"-p{pswd}",
                         dl_path,
@@ -562,7 +562,7 @@ class MirrorLeechListener:
                 cmd = [
                     "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", comp_path,
                     "-c:v", "libx264", "-b:v", bitrate, "-preset", "ultrafast",
-                    "-threads", threads, "-c:a", "copy", out_path, "-y"
+                    "-threads", "0", "-c:a", "copy", out_path, "-y"
                 ]
                 success, err = await self.run_ffmpeg_with_watchdog(cmd)
                 if success:
@@ -578,7 +578,7 @@ class MirrorLeechListener:
                             cmd = [
                                 "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", v_path,
                                 "-c:v", "libx264", "-b:v", bitrate, "-preset", "ultrafast",
-                                "-threads", threads, "-c:a", "copy", out_v, "-y"
+                                    "-threads", "0", "-c:a", "copy", out_v, "-y"
                             ]
                             success, err = await self.run_ffmpeg_with_watchdog(cmd)
                             if success:
@@ -679,7 +679,7 @@ class MirrorLeechListener:
                 user_dict.get("split_size", False) or config_dict["LEECH_SPLIT_SIZE"]
             )
             cmd = [
-                "7z",
+                "7z", "-mmt=on",
                 f"-v{LEECH_SPLIT_SIZE}b",
                 "a",
                 "-mx=0",
