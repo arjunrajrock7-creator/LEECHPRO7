@@ -25,9 +25,9 @@ fi
 
 # Ensure config.env exists
 if [ ! -f "config.env" ]; then
-    echo "⚠️ config.env not found! Creating from sample..."
-    cp config_sample.env config.env
-    echo "‼️ PLEASE EDIT config.env WITH YOUR CREDENTIALS ‼️"
+    echo "⚠️ config.env not found!"
+    echo "‼️ PLEASE CREATE config.env WITH YOUR CREDENTIALS ‼️"
+    exit 1
 fi
 
 # Build and Start
