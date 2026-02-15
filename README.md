@@ -58,23 +58,26 @@ Before deployment, ensure you have the following variables ready:
    ```
    *Note: Ensure your `config.env` is present in the root directory.*
 
-### ☁️ Heroku Deployment
-1. **Create a New App**: Go to the Heroku Dashboard and create a new application.
-2. **Add Buildpacks**: In the "Settings" tab, add the following buildpacks:
-   - `heroku/python`
-   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
-3. **Configure Environment Variables**: In the "Settings" tab, click "Reveal Config Vars" and add:
-   - `BOT_TOKEN`: Your Telegram Bot Token.
-   - `OWNER_ID`: Your Telegram User ID.
-   - `TELEGRAM_API`: Your App ID from my.telegram.org.
-   - `TELEGRAM_HASH`: Your App Hash from my.telegram.org.
-   - `DATABASE_URL`: Your MongoDB connection string.
-   - `UPSTREAM_REPO`: (Optional) Your GitHub fork URL.
-   - `PORT`: 8000 (Heroku will automatically assign a port, but the bot defaults to 8000 if not specified).
-4. **Deploy Code**:
-   - Connect your GitHub repository in the "Deploy" tab.
-   - Select the branch and click "Deploy Branch".
-5. **Enable Dynos**: In the "Resources" tab, ensure the `web` or `worker` dyno is switched ON.
+### ☁️ Heroku Deployment (Dockerfile Method)
+1. **Install Heroku CLI**: Make sure you have the Heroku CLI installed on your machine.
+2. **Login to Heroku**:
+   ```bash
+   heroku login
+   heroku container:login
+   ```
+3. **Create a New App**:
+   ```bash
+   heroku create your-app-name
+   ```
+4. **Setup Config Vars**:
+   - Go to Heroku Dashboard -> Settings -> Reveal Config Vars.
+   - Add all mandatory variables from `config.env`.
+5. **Push and Release Container**:
+   ```bash
+   heroku container:push web -a your-app-name
+   heroku container:release web -a your-app-name
+   ```
+6. **Alternative (Buildpacks)**: If you prefer not using Docker, add `heroku/python` and `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git` buildpacks.
 
 ### 📱 Termux (Android Mobile)
 1. **Install Packages**:
@@ -100,4 +103,7 @@ You can set manual commands in `/usersettings` -> **Leech** -> **FFmpeg CMDS**.
 Join our community for updates and support: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
 
 ---
+---
+**Note:** This repository is pre-configured with a `config.env` file for a 100% success rate deployment on Heroku using the Dockerfile.
+
 **Powered by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡**
