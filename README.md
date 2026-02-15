@@ -1,14 +1,70 @@
-# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot
+# 🎼 New ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡-X 🚀
 
-A powerful, high-performance Telegram bot to mirror, leech, and process media files with FFmpeg. Optimized for speed and reliability.
+📚 Library : Pyrofork
+🌎 Language : Python 3
+🛡 Database : MongoDB
+🛠 Version : 2.0
 
-## 🚀 Key Features
-- **Mirror & Leech**: Support for GDrive, RClone, and direct Telegram uploads.
-- **🔀 Video Merging**: Automatically merge multiple videos into a single high-quality MKV.
-- **🗜️ Advanced Compression**: Aggressive yet high-quality video compression tools.
-- **⌨️ Custom FFmpeg Commands**: Set your own FFmpeg parameters directly from the bot settings.
-- **⚡ Performance Boosted**: Async architecture, multi-threading, and hardware acceleration enabled.
-- **📱 Multi-Platform Deployment**: Support for VPS, Heroku, Docker, and Termux.
+🥶 Feature : M/L All Your Links | Files | Torrents to Aria2, qBit, Google Drive Support ⚡️
+
+💎 User Settings ⚙️ :
+
+┌ Thumbnail
+├ Prefix
+├ Suffix
+├ Remname
+├ Caption
+├ Auto Rename
+├ File Type -> Document or Media
+└ Metadata Editor
+
+🚀 Metadata Edit All Upload ‼️
+
+┌ Remove Exists Metadata
+├ General Metadata Tag
+├ Video Metadata Tag
+├ Audio Metadata Tag
+└ Subtitle Video Tag
+
+🚀 Attachment Upload ‼️
+
+┌ Name
+└ Url
+
+🚀 Merge Video Update ‼️
+
+┌ Merge : Enabled / Disabled
+└ Merge + Original Files : Enabled / Disabled
+
+- Merge video from GD/Torrent/Magnet 🪩
+- Merge from zip with unzip cmd 🤡
+
+🚀 File Merge Format ‼️
+
+/l -i <count> -m <filename> -n
+
+⁍ Rename file : -n
+⁍ Zip files or Links : -z
+⁍ Download bulk links : -b
+⁍ Download multi links : -i
+⁍ Join Multiple Files : -j
+⁍ Extract/Unzip files from Archive : -e
+⁍ Download multi links within same upload directory : -m
+
+🕯 Note : QB commands only for torrents !
+
+❤️‍🔥 Auto Rename Feature Update Successfully! 😇
+
+✍️ Description : File Autorename is the Custom rename on the Files Uploaded by the bot.
+
+➡️ Example Auto Rename:
+{season} - Season Number
+{episode} - Episode Number
+{size} - File Size
+{quality} - Quality
+
+💎 Simple Auto Rename :
+Stranger Things (2025) {season} {episode} - {quality} - NF WEB-DL - AVC - [Tamil +Telugu +Hindi + Eng] - H.264 (DDP5.1 - 192Kbps) - {size} - ESub
 
 ---
 

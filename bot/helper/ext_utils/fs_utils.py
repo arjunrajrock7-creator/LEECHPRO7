@@ -227,6 +227,15 @@ async def join_files(path):
 async def edit_metadata(
     listener, base_dir: str, media_file: str, outfile: str, metadata: str = ""
 ):
+    user_id = listener.message.from_user.id
+    user_dict = user_data.get(user_id, {})
+
+    # Individual tags if provided in user settings, else use the general metadata string
+    gen_meta = user_dict.get("lmeta_gen") or metadata
+    video_meta = user_dict.get("lmeta_video") or gen_meta
+    audio_meta = user_dict.get("lmeta_audio") or gen_meta
+    sub_meta = user_dict.get("lmeta_sub") or gen_meta
+
     cmd = [
         bot_cache["pkgs"][2],
         "-hide_banner",
@@ -235,55 +244,38 @@ async def edit_metadata(
         "-ignore_unknown",
         "-i",
         media_file,
-        "-metadata",
-        f"title={metadata}",
-        "-metadata:s:v",
-        f"title={metadata}",
-        "-metadata",
-        "Comment=",
-        "-metadata",
-        "Copyright=",
-        "-metadata",
-        f"AUTHOR=Zyradaex",
-        "-metadata",
-        "Encoded by=",
-        "-metadata",
-        "SYNOPSIS=",
-        "-metadata",
-        "ARTIST=",
-        "-metadata",
-        "PURL=",
-        "-metadata",
-        "Encoded_by=",
-        "-metadata",
-        "Description=",
-        "-metadata",
-        "description=",
-        "-metadata",
-        "SUMMARY=",
-        "-metadata",
-        "WEBSITE=",
-        "-metadata:s:a",
-        f"title={metadata}",
-        "-metadata:s:s",
-        f"title={metadata}",
-        "-map",
-        "0:v:0?",
-        "-map",
-        "0:a:?",
-        "-map",
-        "0:s:?",
-        "-c:v",
-        "copy",
-        "-c:a",
-        "copy",
-        "-c:s",
-        "copy",
-        "-threads",
-        "0",
+    ]
+
+    if user_dict.get("remove_metadata", True):
+        cmd.extend(["-map_metadata", "-1"])
+
+    cmd.extend([
+        "-metadata", f"title={gen_meta}",
+        "-metadata:s:v", f"title={video_meta}",
+        "-metadata:s:a", f"title={audio_meta}",
+        "-metadata:s:s", f"title={sub_meta}",
+        "-metadata", "Comment=",
+        "-metadata", "Copyright=",
+        "-metadata", f"AUTHOR={gen_meta}",
+        "-metadata", "Encoded by=",
+        "-metadata", "SYNOPSIS=",
+        "-metadata", "ARTIST=",
+        "-metadata", "PURL=",
+        "-metadata", "Encoded_by=",
+        "-metadata", "Description=",
+        "-metadata", "description=",
+        "-metadata", "SUMMARY=",
+        "-metadata", "WEBSITE=",
+        "-map", "0:v:0?",
+        "-map", "0:a:?",
+        "-map", "0:s:?",
+        "-c:v", "copy",
+        "-c:a", "copy",
+        "-c:s", "copy",
+        "-threads", "0",
         outfile,
         "-y",
-    ]
+    ])
     listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
     code = await listener.suproc.wait()
     if code == 0:

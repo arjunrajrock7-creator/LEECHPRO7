@@ -446,22 +446,43 @@ class MirrorLeechListener:
             curr_path = up_path or dl_path
 
             # 1. Attachment Manager
-            if self.user_dict.get("v_attach"):
-                attach_files = self.user_dict["v_attach"].split(",")
-                if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
-                    out_p = f"{curr_path}.attach.tmp"
-                    success, _ = await MediaUtils.attachment_manager(curr_path, out_p, attach_files=attach_files)
-                    if success:
-                        await move(out_p, curr_path)
-                elif await aiopath.isdir(curr_path):
-                    for dirpath, _, files in await sync_to_async(walk, curr_path):
-                        for file in files:
-                            v_p = ospath.join(dirpath, file)
-                            if (await get_document_type(v_p))[0]:
-                                out_v = f"{v_p}.attach.tmp"
-                                success, _ = await MediaUtils.attachment_manager(v_p, out_v, attach_files=attach_files)
-                                if success:
-                                    await move(out_v, v_p)
+            if attach_list := self.user_dict.get("v_attach"):
+                from bot.helper.ext_utils.bot_utils import download_image_url
+                attach_files = []
+                for item in attach_list.split(","):
+                    item = item.strip()
+                    if ":" in item and item.startswith("http"): # url only
+                         local_at = await download_image_url(item)
+                         if local_at: attach_files.append(local_at)
+                    elif ":" in item: # name:url
+                        name, url = item.split(":", 1)
+                        local_at = await download_image_url(url.strip())
+                        if local_at:
+                            final_at = ospath.join(ospath.dirname(local_at), name.strip())
+                            await move(local_at, final_at)
+                            attach_files.append(final_at)
+                    else:
+                        local_at = await download_image_url(item)
+                        if local_at: attach_files.append(local_at)
+
+                if attach_files:
+                    if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
+                        out_p = f"{curr_path}.attach.tmp"
+                        success, _ = await MediaUtils.attachment_manager(curr_path, out_p, attach_files=attach_files)
+                        if success:
+                            await move(out_p, curr_path)
+                    elif await aiopath.isdir(curr_path):
+                        for dirpath, _, files in await sync_to_async(walk, curr_path):
+                            for file in files:
+                                v_p = ospath.join(dirpath, file)
+                                if (await get_document_type(v_p))[0]:
+                                    out_v = f"{v_p}.attach.tmp"
+                                    success, _ = await MediaUtils.attachment_manager(v_p, out_v, attach_files=attach_files)
+                                    if success:
+                                        await move(out_v, v_p)
+                    for at in attach_files:
+                        if await aiopath.exists(at):
+                            await aioremove(at)
 
             # 2. Intro Injection
             if intro_link := self.user_dict.get("v_intro"):

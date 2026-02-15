@@ -63,9 +63,16 @@ async def media_tools_callback(client, query):
     elif action == "metadata":
         val = user_dict.get("lmeta", "Default")
         buttons = ButtonMaker()
-        buttons.ibutton("Edit Metadata", f"userset {uid} lmeta edit")
+        buttons.ibutton("General Tag", f"userset {uid} lmeta edit")
+        buttons.ibutton("Video Tag", f"userset {uid} lmeta_video edit")
+        buttons.ibutton("Audio Tag", f"userset {uid} lmeta_audio edit")
+        buttons.ibutton("Subtitle Tag", f"userset {uid} lmeta_sub edit")
+
+        rm_meta = "Enabled" if user_dict.get("remove_metadata", True) else "Disabled"
+        buttons.ibutton(f"Remove Exists: {rm_meta}", f"userset {uid} remove_metadata")
+
         buttons.ibutton("Back", f"mediatool main {uid}")
-        await editMessage(query.message, f"<b>Metadata Editor</b>\n\n<b>Current:</b> <code>{val}</code>\n\nMetadata will be applied to all your leeched video files.", buttons.build_menu(1))
+        await editMessage(query.message, f"<b>Metadata Editor</b>\n\n<b>Current General:</b> <code>{val}</code>\n\nMetadata will be applied to all your leeched video files.", buttons.build_menu(2))
 
     elif action == "tracks":
         ac = user_dict.get("audio_change", "Default")

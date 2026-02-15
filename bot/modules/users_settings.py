@@ -74,6 +74,10 @@ desp_dict = {
         "Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot",
         'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
     ],
+    "lautorename": [
+        "Leech Filename Autorename is the Custom rename on the Files Uploaded by the bot",
+        'Send Leech Filename Autorename. Documentation Here : <a href="https://t.me/ALONEKINGSTAR77/77">Click Me</a> \n<b>Timeout:</b> 60 sec',
+    ],
     "ldump": [
         "Leech Files User Dump for Personal Use as a Storage.",
         "Send Leech Dump Channel ID\n➲ <b>Format:</b> \ntitle chat_id/@username\ntitle2 chat_id2/@username2. \n\n<b>NOTE:</b>Make Bot Admin in the Channel else it will not accept\n<b>Timeout:</b> 60 sec",
@@ -126,12 +130,28 @@ desp_dict = {
         "Your Channel Name that will be used while editing metadata of the Video File",
         "Send Metadata Text for Leeching Files.\n<b>Timeout:</b> 60 Sec.",
     ],
+    "lmeta_video": [
+        "Video Tag that will be used while editing metadata of the Video File",
+        "Send Video Metadata Text.\n<b>Timeout:</b> 60 Sec.",
+    ],
+    "lmeta_audio": [
+        "Audio Tag that will be used while editing metadata of the Video File",
+        "Send Audio Metadata Text.\n<b>Timeout:</b> 60 Sec.",
+    ],
+    "lmeta_sub": [
+        "Subtitle Tag that will be used while editing metadata of the Video File",
+        "Send Subtitle Metadata Text.\n<b>Timeout:</b> 60 Sec.",
+    ],
     "media_presets": [
         "Predefined FFmpeg operations for media files",
         "Configure presets for tracks, compression and more",
     ],
     "strip_metadata": [
         "Remove all metadata from media files during processing",
+        "",
+    ],
+    "remove_metadata": [
+        "Remove existing metadata before applying new ones",
         "",
     ],
     "lmerge": [
@@ -189,9 +209,13 @@ fname_dict = {
     "lsuffix": "Suffix",
     "lremname": "Remname",
     "lmeta": "Metadata",
+    "lmeta_video": "Video Tag",
+    "lmeta_audio": "Audio Tag",
+    "lmeta_sub": "Subtitle Tag",
     "lmerge": "Leech Merge",
     "merge_original": "Merge + Original",
     "strip_metadata": "Strip Metadata",
+    "remove_metadata": "Remove Metadata",
     "audio_change": "Audio Change",
     "default_audio": "Default Audio",
     "v_bitrate": "Video Bitrate",
@@ -207,6 +231,7 @@ fname_dict = {
     "mremname": "Remname",
     "ldump": "User Dump",
     "lcaption": "Caption",
+    "lautorename": "Auto Rename",
     "thumb": "Thumbnail",
     "yt_opt": "YT-DLP Options",
     "usess": "User Session",
@@ -538,6 +563,21 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"userset {user_id} lremname",
         )
 
+        lautorename = (
+            "Not Exists"
+            if (
+                val := user_dict.get(
+                    "lautorename", config_dict.get("LEECH_FILENAME_AUTORENAME", "")
+                )
+            )
+            == ""
+            else val
+        )
+        buttons.ibutton(
+            f"{'✅️' if lautorename != 'Not Exists' else ''} Auto Rename",
+            f"userset {user_id} lautorename",
+        )
+
         buttons.ibutton("Leech Dump", f"userset {user_id} ldump")
         ldump = "Not Exists" if (val := user_dict.get("ldump", "")) == "" else len(val)
 
@@ -568,6 +608,14 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"userset {user_id} strip_metadata",
         )
 
+        remove_metadata = (
+            "Enabled" if user_dict.get("remove_metadata", True) else "Disabled"
+        )
+        buttons.ibutton(
+            f"Disable Remove" if remove_metadata == "Enabled" else "Enable Remove",
+            f"userset {user_id} remove_metadata",
+        )
+
         lmerge = user_dict.get("lmerge", False)
         buttons.ibutton(f"🔀 MERGE: {'ENABLE ✅' if lmerge else 'DISABLE ❌'}", f"userset {user_id} lmerge")
         buttons.ibutton("⌨️ FFmpeg CMDS", f"userset {user_id} ffmpeg_cmds")
@@ -587,6 +635,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             LSUFFIX=escape(lsuffix),
             LDUMP=ldump,
             LREMNAME=escape(lremname),
+            LAUTORENAME=escape(lautorename),
             LMETA=escape(lmeta),
             LMERGE=lmerge,
         )
@@ -664,7 +713,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 buttons.ibutton(
                     "Enable Media Group", f"userset {user_id} mgroup", "header"
                 )
-        elif key in ["lprefix", "lremname", "lsuffix", "lcaption", "ldump", "lmeta"]:
+        elif key in ["lprefix", "lremname", "lsuffix", "lcaption", "ldump", "lmeta", "lautorename"]:
             set_exist = (
                 "Not Exists"
                 if (
@@ -801,6 +850,7 @@ async def user_settings(client, message):
                     "lprefix",
                     "lsuffix",
                     "lremname",
+                    "lautorename",
                     "lcaption",
                     "ldump",
                     "yt_opt",
@@ -1095,7 +1145,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "universal")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata", "auto_merge_zip"]:
+    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata", "remove_metadata", "auto_merge_zip"]:
         handler_dict[user_id] = False
         if (
             data[2] == "save_mode"
@@ -1127,7 +1177,7 @@ async def edit_user_settings(client, query):
             await update_user_settings(query, "user_tds", "mirror")
         elif data[2] in ["lmerge", "auto_merge_zip"]:
             await update_user_settings(query, "audio")
-        elif data[2] == "merge_original":
+        elif data[2] in ["merge_original", "remove_metadata"]:
             await update_user_settings(query, "leech")
         else:
             await update_user_settings(query, "universal")
@@ -1230,12 +1280,16 @@ async def edit_user_settings(client, query):
         "lprefix",
         "lsuffix",
         "lremname",
+            "lautorename",
         "lcaption",
         "ldump",
         "mprefix",
         "msuffix",
         "mremname",
         "lmeta",
+        "lmeta_video",
+        "lmeta_audio",
+        "lmeta_sub",
         "audio_change",
         "default_audio",
         "v_bitrate",
@@ -1265,9 +1319,13 @@ async def edit_user_settings(client, query):
         "dlprefix",
         "dlsuffix",
         "dlremname",
+        "dlautorename",
         "dlcaption",
         "dldump",
         "dlmeta",
+        "dlmeta_video",
+        "dlmeta_audio",
+        "dlmeta_sub",
         "dffmpeg_cmds",
     ]:
         handler_dict[user_id] = False

@@ -406,6 +406,26 @@ async def split_file(
     return True
 
 
+def get_season_episode(filename):
+    match = re_search(r'[Ss](\d+)[Ee](\d+)', filename)
+    if match:
+        return match.group(1), match.group(2)
+    match = re_search(r'(\d+)x(\d+)', filename)
+    if match:
+        return match.group(1), match.group(2)
+    match = re_search(r'[Ee]pisode\s*(\d+)', filename, re_IGNORECASE)
+    if match:
+        return "", match.group(1)
+    return "", ""
+
+
+def get_quality(filename):
+    match = re_search(r'(\d{3,4}p)', filename, re_IGNORECASE)
+    if match:
+        return match.group(1)
+    return ""
+
+
 async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     user_dict = user_data.get(user_id, {})
     ftag, ctag = ("m", "MIRROR") if isMirror else ("l", "LEECH")
@@ -429,9 +449,27 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
         if (val := user_dict.get("lcaption", "")) == ""
         else val
     )
+    lautorename = (
+        config_dict["LEECH_FILENAME_AUTORENAME"]
+        if (val := user_dict.get("lautorename", "")) == ""
+        else val
+    )
 
     prefile_ = file_
     file_ = re_sub(r"www\S+", "", file_)
+
+    if lautorename and not isMirror:
+        ext = ospath.splitext(file_)[1]
+        season, episode = get_season_episode(file_)
+        quality = get_quality(file_)
+        size = get_readable_file_size(await aiopath.getsize(ospath.join(dirpath, file_))) if dirpath else ""
+        file_ = lautorename.format(
+            season=season,
+            episode=episode,
+            quality=quality,
+            size=size
+        ) + ext
+        LOGGER.info(f"Auto Renamed : {file_}")
 
     if remname:
         if not remname.startswith("|"):
