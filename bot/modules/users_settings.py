@@ -178,6 +178,10 @@ desp_dict = {
         "Files to be attached to MKV files (e.g., XML, JPG, TXT)",
         "Send files or links to be attached. \n<b>Timeout:</b> 60 sec",
     ],
+    "ffmpeg_cmds": [
+        "Set manual FFmpeg commands to be applied during video processing.",
+        "Send manual FFmpeg commands. \n<b>Example:</b> -c:v libx264 -preset fast -crf 23 \n<b>Timeout:</b> 60 sec",
+    ],
 }
 fname_dict = {
     "rcc": "RClone",
@@ -197,6 +201,7 @@ fname_dict = {
     "v_intro": "Intro Video",
     "v_intro_sub": "Intro Subtitle",
     "v_attach": "MKV Attachments",
+    "ffmpeg_cmds": "FFmpeg CMDS",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -563,6 +568,9 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             f"userset {user_id} strip_metadata",
         )
 
+        lmerge = user_dict.get("lmerge", False)
+        buttons.ibutton(f"🔀 MERGE: {'ENABLE ✅' if lmerge else 'DISABLE ❌'}", f"userset {user_id} lmerge")
+        buttons.ibutton("⌨️ FFmpeg CMDS", f"userset {user_id} ffmpeg_cmds")
         buttons.ibutton("Video Tools", f"mediatool main {user_id}")
 
         text = BotTheme(
@@ -722,6 +730,9 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 tds_mode = "Force Disabled"
             text += f"➲ <b>User TD Mode :</b> {tds_mode}\n"
             text += f"➲ <b>{fname_dict[key]} :</b> {set_exist}\n\n"
+        elif key == "ffmpeg_cmds":
+            set_exist = "Not Exists" if (val := user_dict.get(key, "")) == "" else val
+            text += f"➲ <b>FFmpeg CMDS :</b> <code>{escape(set_exist)}</code>\n\n"
         else:
             return
         text += f"➲ <b>Description :</b> <i>{desp_dict[key][0]}</i>"
@@ -794,6 +805,7 @@ async def user_settings(client, message):
                     "ldump",
                     "yt_opt",
                     "lmeta",
+                    "ffmpeg_cmds",
                 ]
                 and reply_to.text
             ):
@@ -819,6 +831,8 @@ async def user_settings(client, message):
     /cmd -s lmeta
 ➲ <b>YT-DLP Options :</b>
     /cmd -s yt_opt
+➲ <b>FFmpeg CMDS :</b>
+    /cmd -s ffmpeg_cmds
 ➲ <b>Leech User Dump :</b>
     /cmd -s ldump""",
         )
@@ -913,6 +927,8 @@ async def set_custom(client, message, pre_event, key, direct=False):
         return_key = "universal"
     elif key in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
         return_key = "audio"
+    elif key == "ffmpeg_cmds":
+        return_key = "leech"
     update_user_ldata(user_id, n_key, value)
     await deleteMessage(message)
     await update_user_settings(pre_event, key, return_key, msg=message, sdirect=direct)
@@ -1228,12 +1244,15 @@ async def edit_user_settings(client, query):
         "v_intro",
         "v_intro_sub",
         "v_attach",
+        "ffmpeg_cmds",
     ]:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
         if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync", "v_intro", "v_intro_sub", "v_attach"]:
             return_key = "audio"
+        elif data[2] == "ffmpeg_cmds":
+            return_key = "leech"
         else:
             return_key = "leech" if data[2][0] == "l" else "mirror"
         await update_user_settings(query, data[2], return_key, edit_mode)
@@ -1249,6 +1268,7 @@ async def edit_user_settings(client, query):
         "dlcaption",
         "dldump",
         "dlmeta",
+        "dffmpeg_cmds",
     ]:
         handler_dict[user_id] = False
         await query.answer()

@@ -636,6 +636,24 @@ class MirrorLeechListener:
                 if self.suproc == "cancelled":
                     return
 
+        if (custom_ffmpeg := self.user_dict.get("ffmpeg_cmds")) and self.isLeech:
+            process_path = up_path or dl_path
+            LOGGER.info(f"Applying custom FFmpeg commands: {custom_ffmpeg}")
+            if await aiopath.isfile(process_path) and (await get_document_type(process_path))[0]:
+                out_path = f"{process_path}.custom.tmp"
+                success, _ = await MediaUtils.apply_custom_ffmpeg(process_path, out_path, custom_ffmpeg)
+                if success:
+                    await move(out_path, process_path)
+            elif await aiopath.isdir(process_path):
+                for dirpath, _, files in await sync_to_async(walk, process_path):
+                    for file in files:
+                        v_path = ospath.join(dirpath, file)
+                        if (await get_document_type(v_path))[0]:
+                            out_v = f"{v_path}.custom.tmp"
+                            success, _ = await MediaUtils.apply_custom_ffmpeg(v_path, out_v, custom_ffmpeg)
+                            if success:
+                                await move(out_v, v_path)
+
         if metadata := self.user_dict.get("lmeta") or config_dict["METADATA"]:
             meta_path = up_path or dl_path
             self.newDir = f"{self.dir}10000"

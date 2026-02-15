@@ -279,6 +279,8 @@ async def edit_metadata(
         "copy",
         "-c:s",
         "copy",
+        "-threads",
+        "0",
         outfile,
         "-y",
     ]

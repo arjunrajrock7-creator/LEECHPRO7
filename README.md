@@ -1,67 +1,93 @@
 # ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot
 
-This is a powerful, high-performance Mirror-Leech bot designed to run on Heroku, Koyeb, VPS, and mobile platforms.
+A powerful, high-performance Telegram bot to mirror, leech, and process media files with FFmpeg. Optimized for speed and reliability.
 
-## 🚀 Deployment Guide
-
-### ☁️ Deployment on Koyeb (Recommended)
-1. **Create Account:** Sign up at [Koyeb](https://www.koyeb.com/).
-2. **New Service:** Click "Create Service", select "GitHub".
-3. **Repository:** Choose your forked repository.
-4. **Environment Variables:**
-   - Add `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, `DATABASE_URL`.
-   - The bot will automatically bind to the correct port.
-5. **Deploy:** Click "Deploy".
-
-### 💜 Deployment on Heroku
-1. **Create App:** Go to Heroku Dashboard and create a new app.
-2. **Buildpacks:**
-   - `heroku/python`
-   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
-3. **Config Vars:** Fill in the variables from `config.env`.
-4. **Deploy:** Use Heroku CLI or GitHub integration.
-
-### 🖥️ Deployment on VPS (Ubuntu/Debian)
-1. **Update System:**
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   ```
-2. **Install Docker:**
-   ```bash
-   curl -fsSL https://get.docker.com -o get-docker.sh
-   sh get-docker.sh
-   ```
-3. **Clone Repo:**
-   ```bash
-   git clone https://github.com/ALONEKINGSTAR77/WZML-X.git
-   cd WZML-X
-   ```
-4. **Configure:** Edit `config.env` with your values.
-5. **Start:**
-   ```bash
-   docker-compose up --build -d
-   ```
-
-### 📱 Deployment on DaRemote (Mobile)
-1. **Open DaRemote:** Add your VPS server.
-2. **Terminal:** Follow the VPS steps above.
-3. **One-Tap Setup:** Use the `deploy_vps.sh` script for even faster setup.
-   ```bash
-   bash deploy_vps.sh
-   ```
-
-## 🛠️ Video Tools usage
-- Use `/usersettings` or `/uset` to access your personal settings.
-- Navigate to **Audio Settings** or **Video Tools**.
-- Configure Metadata, Merging, Bitrate, Watermark, and more.
-- These settings will be applied automatically to all your tasks.
-
-## ❓ Troubleshooting
-- **Button Loading:** If buttons show a loading circle, ensure the bot is not under heavy flood wait. We have implemented an auto-answer fix.
-- **Heroku Crash:** Check your `PORT` binding. The bot is optimized to use Heroku's dynamic port.
-- **FFmpeg Errors:** Ensure `FFMPEG_THREADS` is set appropriately for your VPS (usually 2-4). On PaaS, leave it empty.
+## 🚀 Key Features
+- **Mirror & Leech**: Support for GDrive, RClone, and direct Telegram uploads.
+- **🔀 Video Merging**: Automatically merge multiple videos into a single high-quality MKV.
+- **🗜️ Advanced Compression**: Aggressive yet high-quality video compression tools.
+- **⌨️ Custom FFmpeg Commands**: Set your own FFmpeg parameters directly from the bot settings.
+- **⚡ Performance Boosted**: Async architecture, multi-threading, and hardware acceleration enabled.
+- **📱 Multi-Platform Deployment**: Support for VPS, Heroku, Docker, and Termux.
 
 ---
-### 🛡️ Support & Community
-- **Support Group**: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
-- **Updates**: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
+
+## 🛠️ Environment Variables Setup
+
+Before deployment, ensure you have the following variables ready:
+
+| Variable | Description |
+|----------|-------------|
+| `BOT_TOKEN` | Your Telegram Bot Token from @BotFather |
+| `OWNER_ID` | Your Telegram User ID |
+| `TELEGRAM_API` | Your App ID from my.telegram.org |
+| `TELEGRAM_HASH` | Your App Hash from my.telegram.org |
+| `DATABASE_URL` | Your MongoDB connection string |
+| `UPSTREAM_REPO` | (Optional) Your GitHub fork URL for auto-updates |
+
+---
+
+## 📦 Deployment Guides
+
+### 🖥️ VPS Deployment (Ubuntu/Debian)
+1. **Update and Install Dependencies**:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   sudo apt install git python3 python3-pip ffmpeg -y
+   ```
+2. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/ALONEKINGSTAR77/WZML-X.git && cd WZML-X
+   ```
+3. **Install Requirements**:
+   ```bash
+   pip3 install -r requirements.txt
+   ```
+4. **Setup config.env**:
+   - Create a `config.env` file and fill in your variables.
+5. **Start the Bot**:
+   ```bash
+   python3 -m bot
+   ```
+
+### 🐳 Docker Deployment (Recommended)
+1. **Build & Run**:
+   ```bash
+   docker build -t hemanth-bot .
+   docker run -p 8000:8000 hemanth-bot
+   ```
+   *Note: Ensure your `config.env` is present in the root directory.*
+
+### ☁️ Heroku Deployment
+1. **Create App** in Heroku dashboard.
+2. **Add Buildpacks**:
+   - `heroku/python`
+   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
+3. **Connect GitHub** and deploy branch.
+4. **Setup Config Vars** in Heroku settings.
+
+### 📱 Termux (Android Mobile)
+1. **Install Packages**:
+   ```bash
+   pkg update && pkg upgrade
+   pkg install git python ffmpeg
+   ```
+2. **Follow VPS steps** (2 to 5).
+
+---
+
+## ⚙️ FFmpeg Command Usage
+You can set manual commands in `/usersettings` -> **Leech** -> **FFmpeg CMDS**.
+- **Example**: `-c:v libx265 -crf 25 -preset fast`
+- These commands will be applied to all video files processed by the bot.
+
+## ❓ Troubleshooting
+- **Freezing/Infinite Loading**: Ensure your VPS has enough RAM and CPU for FFmpeg tasks.
+- **Database Errors**: Check if your MongoDB IP whitelist allows access from your bot's IP.
+- **Merge Failures**: Ensure all video files are valid and not corrupted.
+
+## 🤝 Support
+Join our community for updates and support: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
+
+---
+**Powered by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡**

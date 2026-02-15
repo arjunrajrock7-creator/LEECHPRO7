@@ -9,11 +9,7 @@ class MediaUtils:
     def get_optimal_threads():
         if threads := config_dict.get("FFMPEG_THREADS"):
             return str(threads)
-        try:
-            cores = multiprocessing.cpu_count()
-            return str(max(1, cores - 1))
-        except:
-            return "1"
+        return "0"
 
     @staticmethod
     async def get_streams(path):
@@ -32,18 +28,24 @@ class MediaUtils:
             LOGGER.error(f"FFprobe failed for {path}: {stderr}")
             return []
         import json
-        return json.loads(stdout).get("streams", [])
+        try:
+            return json.loads(stdout).get("streams", [])
+        except:
+            return []
 
     @staticmethod
     async def strip_metadata(path, out_path):
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-i", path,
             "-map_metadata", "-1",
             "-c", "copy",
+            "-threads", threads,
             out_path,
             "-y"
         ]
@@ -52,7 +54,6 @@ class MediaUtils:
 
     @staticmethod
     async def attachment_manager(path, out_path, attach_files=None, remove_attachments=False):
-        # attach_files is a list of file paths
         cmd = ["mkvmerge", "-o", out_path]
         if remove_attachments:
             cmd.append("--no-attachments")
@@ -66,13 +67,13 @@ class MediaUtils:
 
     @staticmethod
     async def inject_intro_video(path, intro_path, out_path):
-        # use filter complex to join intro and main video
-        threads = "0"
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-i", intro_path,
             "-i", path,
             "-filter_complex", "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[v][a]",
@@ -80,7 +81,7 @@ class MediaUtils:
             "-map", "[a]",
             "-c:v", "libx264",
             "-preset", "ultrafast",
-            "-threads", "0",
+            "-threads", threads,
             out_path,
             "-y"
         ]
@@ -88,44 +89,89 @@ class MediaUtils:
         return rc == 0, stderr
 
     @staticmethod
-    async def merge_videos(video_list, out_path):
-        # uses concat demuxer
+    async def merge_videos(video_list, out_path, user_ffmpeg_cmds=None):
+        """
+        Optimized video merging using concat demuxer if possible,
+        or transcoding with ultrafast preset if necessary/requested.
+        """
+        threads = MediaUtils.get_optimal_threads()
         list_path = f"{out_path}.txt"
-        with open(list_path, "w") as f:
+        with open(list_path, "w", encoding='utf-8') as f:
             for video in video_list:
-                f.write(f"file '{video}'\n")
+                f.write(f"file '{os.path.abspath(video)}'\n")
 
+        # Default to stream copy for speed and quality preservation
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-f", "concat",
             "-safe", "0",
             "-i", list_path,
             "-c", "copy",
+            "-threads", threads,
             out_path,
             "-y"
         ]
+
+        # If user has custom FFmpeg commands, we might need to transcode
+        if user_ffmpeg_cmds:
+            # Re-build command for transcoding if user specifies encoding params
+            cmd = [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-f", "concat",
+                "-safe", "0",
+                "-i", list_path
+            ]
+            cmd.extend(user_ffmpeg_cmds.split())
+            cmd.extend(["-threads", threads, out_path, "-y"])
+
         _, stderr, rc = await cmd_exec(cmd)
+
+        # If concat copy fails, try transcoding with ultrafast preset as fallback
+        if rc != 0 and not user_ffmpeg_cmds:
+            LOGGER.warning(f"Concat copy failed, falling back to transcoding for merge: {stderr}")
+            cmd = [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-f", "concat",
+                "-safe", "0",
+                "-i", list_path,
+                "-c:v", "libx264",
+                "-preset", "ultrafast",
+                "-c:a", "aac",
+                "-threads", threads,
+                out_path,
+                "-y"
+            ]
+            _, stderr, rc = await cmd_exec(cmd)
+
         if os.path.exists(list_path):
             os.remove(list_path)
         return rc == 0, stderr
 
     @staticmethod
     async def add_watermark(path, watermark_path, out_path, position="main_w-overlay_w-10:main_h-overlay_h-10"):
-        threads = "0"
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-i", path,
             "-i", watermark_path,
             "-filter_complex", f"overlay={position}",
             "-c:v", "libx264",
             "-preset", "ultrafast",
-            "-threads", "0",
+            "-threads", threads,
             "-c:a", "copy",
             out_path,
             "-y"
@@ -135,18 +181,20 @@ class MediaUtils:
 
     @staticmethod
     async def sync_subtitles(path, sub_path, out_path, delay=0):
-        # delay in seconds
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-i", path,
             "-itsoffset", str(delay),
             "-i", sub_path,
             "-map", "0",
             "-map", "1",
             "-c", "copy",
+            "-threads", threads,
             out_path,
             "-y"
         ]
@@ -155,9 +203,9 @@ class MediaUtils:
 
     @staticmethod
     async def track_selection(path, out_path, audio_tracks=None, sub_tracks=None, default_audio=None, default_sub=None):
-        # audio_tracks and sub_tracks are lists of stream indices
-        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", path]
-        cmd.extend(["-map", "0:v:0"]) # Always keep first video track
+        threads = MediaUtils.get_optimal_threads()
+        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto", "-i", path]
+        cmd.extend(["-map", "0:v:0"])
         if audio_tracks:
             for track in audio_tracks:
                 cmd.extend(["-map", f"0:a:{track}"])
@@ -170,7 +218,7 @@ class MediaUtils:
         else:
             cmd.extend(["-map", "0:s?"])
 
-        cmd.extend(["-c", "copy"])
+        cmd.extend(["-c", "copy", "-threads", threads])
 
         if default_audio is not None:
             cmd.extend([f"-disposition:a:{default_audio}", "default"])
@@ -183,7 +231,6 @@ class MediaUtils:
 
     @staticmethod
     async def add_intro_subtrack(path, sub_path, out_path):
-        # basic mkvmerge intro sub
         cmd = [
             "mkvmerge",
             "-o", out_path,
@@ -196,45 +243,77 @@ class MediaUtils:
 
     @staticmethod
     async def edit_metadata(path, out_path, metadata):
-        # metadata is a dict like {'title': '...', 'artist': '...'}
-        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", path]
+        threads = MediaUtils.get_optimal_threads()
+        cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto", "-i", path]
         for key, value in metadata.items():
             cmd.extend(["-metadata", f"{key}={value}"])
-        cmd.extend(["-c", "copy", out_path, "-y"])
+        cmd.extend(["-c", "copy", "-threads", threads, out_path, "-y"])
         _, stderr, rc = await cmd_exec(cmd)
         return rc == 0, stderr
 
     @staticmethod
-    async def compress_video(path, out_path, bitrate="1M"):
-        threads = "0"
+    async def compress_video(path, out_path, bitrate=None, user_ffmpeg_cmds=None):
+        """
+        Aggressive yet high-quality video compression using libx265 (if possible) or libx264.
+        Default to libx264 with ultrafast preset for maximum speed as requested.
+        """
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
-            "-i", path,
-            "-c:v", "libx264",
-            "-b:v", bitrate,
-            "-preset", "ultrafast",
-            "-threads", "0",
-            "-c:a", "copy",
-            out_path,
-            "-y"
+            "-hwaccel", "auto",
+            "-i", path
         ]
+
+        if user_ffmpeg_cmds:
+            cmd.extend(user_ffmpeg_cmds.split())
+        else:
+            if not bitrate:
+                bitrate = "1M"
+            cmd.extend([
+                "-c:v", "libx264",
+                "-b:v", bitrate,
+                "-preset", "ultrafast",
+                "-c:a", "aac",
+                "-b:a", "128k"
+            ])
+
+        cmd.extend(["-threads", threads, out_path, "-y"])
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def apply_custom_ffmpeg(path, out_path, user_ffmpeg_cmds):
+        threads = MediaUtils.get_optimal_threads()
+        cmd = [
+            "ffmpeg",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-hwaccel", "auto",
+            "-i", path
+        ]
+        cmd.extend(user_ffmpeg_cmds.split())
+        cmd.extend(["-threads", threads, out_path, "-y"])
         _, stderr, rc = await cmd_exec(cmd)
         return rc == 0, stderr
 
     @staticmethod
     async def take_sample(path, out_path, duration=30):
+        threads = MediaUtils.get_optimal_threads()
         cmd = [
             "ffmpeg",
             "-hide_banner",
             "-loglevel",
             "error",
+            "-hwaccel", "auto",
             "-ss", "00:00:00",
             "-i", path,
             "-t", str(duration),
             "-c", "copy",
+            "-threads", threads,
             out_path,
             "-y"
         ]

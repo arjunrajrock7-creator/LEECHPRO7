@@ -22,6 +22,7 @@ from bot.helper.ext_utils.bot_utils import (
 )
 from bot.helper.ext_utils.fs_utils import ARCH_EXT, get_mime_type
 from bot.helper.ext_utils.telegraph_helper import telegraph
+from bot.helper.ext_utils.media_utils import MediaUtils
 
 
 async def is_multi_streams(path):
@@ -43,7 +44,10 @@ async def is_multi_streams(path):
     except Exception as e:
         LOGGER.error(f"Get Video Streams: {e}. Mostly File not found!")
         return False
-    fields = eval(result[0]).get("streams")
+    try:
+        fields = json.loads(result[0]).get("streams")
+    except:
+        return False
     if fields is None:
         LOGGER.error(f"get_video_streams: {result}")
         return False
@@ -77,7 +81,10 @@ async def get_media_info(path, metadata=False):
     except Exception as e:
         LOGGER.error(f"Media Info: {e}. Mostly File not found!")
         return (0, "", "", "") if metadata else (0, None, None)
-    ffresult = eval(result[0])
+    try:
+        ffresult = json.loads(result[0])
+    except:
+        return (0, "", "", "") if metadata else (0, None, None)
     fields = ffresult.get("format")
     if fields is None:
         LOGGER.error(f"Media Info Sections: {result}")
@@ -88,7 +95,7 @@ async def get_media_info(path, metadata=False):
         if (streams := ffresult.get("streams")) and streams[0].get(
             "codec_type"
         ) == "video":
-            qual = int(streams[0].get("height"))
+            qual = int(streams[0].get("height") or 0)
             qual = f"{480 if qual <= 480 else 540 if qual <= 540 else 720 if qual <= 720 else 1080 if qual <= 1080 else 2160 if qual <= 2160 else 4320 if qual <= 4320 else 8640}p"
             for stream in streams:
                 if stream.get("codec_type") == "audio" and (
@@ -143,7 +150,10 @@ async def get_document_type(path):
     except Exception as e:
         LOGGER.error(f"Get Document Type: {e}. Mostly File not found!")
         return is_video, is_audio, is_image
-    fields = eval(result[0]).get("streams")
+    try:
+        fields = json.loads(result[0]).get("streams")
+    except:
+        return is_video, is_audio, is_image
     if fields is None:
         LOGGER.error(f"get_document_type: {result}")
         return is_video, is_audio, is_image
@@ -160,6 +170,7 @@ async def get_audio_thumb(audio_file):
     if not await aiopath.exists(des_dir):
         await mkdir(des_dir)
     des_dir = ospath.join(des_dir, f"{time()}.jpg")
+    threads = MediaUtils.get_optimal_threads()
     cmd = [
         "ffmpeg",
         "-hide_banner",
@@ -170,6 +181,7 @@ async def get_audio_thumb(audio_file):
         "-an",
         "-vcodec",
         "copy",
+        "-threads", threads,
         des_dir,
     ]
     status = await create_subprocess_exec(*cmd, stderr=PIPE)
@@ -190,6 +202,7 @@ async def take_ss(video_file, duration=None, total=1, gen_ss=False):
     if duration == 0:
         duration = 3
     duration = duration - (duration * 2 / 100)
+    threads = MediaUtils.get_optimal_threads()
     cmd = [
         "ffmpeg",
         "-hide_banner",
@@ -203,6 +216,7 @@ async def take_ss(video_file, duration=None, total=1, gen_ss=False):
         "thumbnail",
         "-frames:v",
         "1",
+        "-threads", threads,
         des_dir,
     ]
     tstamps = {}
@@ -266,6 +280,7 @@ async def split_file(
         and "equal_splits" not in user_dict
     ) and not inLoop:
         split_size = ((size + parts - 1) // parts) + 1000
+    threads = MediaUtils.get_optimal_threads()
     if (await get_document_type(path))[0]:
         if multi_streams:
             multi_streams = await is_multi_streams(path)
@@ -296,6 +311,7 @@ async def split_file(
                 "-2",
                 "-c",
                 "copy",
+                "-threads", threads,
                 out_path,
             ]
             if not multi_streams:
@@ -547,48 +563,31 @@ async def merge_videos(path, listener, name, merge_original=False):
     videos = []
     for dirpath, _, files in await sync_to_async(walk, path):
         for file in files:
-            if (await get_document_type(ospath.join(dirpath, file)))[0]:
-                videos.append(ospath.join(dirpath, file))
+            v_p = ospath.join(dirpath, file)
+            if (await get_document_type(v_p))[0]:
+                videos.append(v_p)
     if len(videos) > 1:
         videos = natsorted(videos)
         new_path = f"{path}10000"
         if not await aiopath.exists(new_path):
             await mkdir(new_path)
         dest_path = ospath.join(new_path, f"{name}.mkv")
-        with open(f"{path}/input.txt", "w", encoding='utf-8') as f:
-            for video in videos:
-                video_esc = video.replace("'", "'\\''")
-                f.write(f"file '{video_esc}'\n")
-        cmd = [
-            "ffmpeg",
-            "-f",
-            "concat",
-            "-safe",
-            "0",
-            "-i",
-            f"{path}/input.txt",
-            "-clever_packets_check",
-            "1",
-            "-c",
-            "copy",
-            dest_path,
-            "-y",
-        ]
-        listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
-        code = await listener.suproc.wait()
-        if code == 0:
+
+        user_ffmpeg_cmds = user_data.get(listener.user_id, {}).get("ffmpeg_cmds")
+
+        success, err = await MediaUtils.merge_videos(videos, dest_path, user_ffmpeg_cmds)
+
+        if success:
             if not merge_original:
                 for video in videos:
                     await aioremove(video)
-            await aioremove(f"{path}/input.txt")
             await move(dest_path, path)
             await rmdir(new_path)
             return True
         else:
-            err = (await listener.suproc.stderr.read()).decode().strip()
             LOGGER.error(f"Error while merging videos. Name: {name} stderr: {err}")
-            await aioremove(f"{path}/input.txt")
-            await aioremove(dest_path)
+            if await aiopath.exists(dest_path):
+                await aioremove(dest_path)
             await rmdir(new_path)
             return False
     return False
