@@ -1,166 +1,67 @@
-# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot Deployment Guide
+# ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot
 
-Welcome to the official deployment guide for the **⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Mirror-Leech Bot**. Follow these steps carefully for a smooth, 100% success rate deployment.
+This is a powerful, high-performance Mirror-Leech bot designed to run on Heroku, Koyeb, VPS, and mobile platforms.
 
----
+## 🚀 Deployment Guide
 
-## 🚀 ULTRA HIGH-PERFORMANCE ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Bot
+### ☁️ Deployment on Koyeb (Recommended)
+1. **Create Account:** Sign up at [Koyeb](https://www.koyeb.com/).
+2. **New Service:** Click "Create Service", select "GitHub".
+3. **Repository:** Choose your forked repository.
+4. **Environment Variables:**
+   - Add `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, `DATABASE_URL`.
+   - The bot will automatically bind to the correct port.
+5. **Deploy:** Click "Deploy".
 
-This bot is fully optimized for **Ultra High Speed** mode with async execution, multi-threading, and enhanced error handling.
+### 💜 Deployment on Heroku
+1. **Create App:** Go to Heroku Dashboard and create a new app.
+2. **Buildpacks:**
+   - `heroku/python`
+   - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
+3. **Config Vars:** Fill in the variables from `config.env`.
+4. **Deploy:** Use Heroku CLI or GitHub integration.
 
-### ⚡ ULTRA PERFORMANCE & MAX SPEED
-- **Async Turbo**: Powered by `uvloop` and `pyrofork` for near-zero latency.
-- **High-Speed Aria2**: 16 parallel connections, 256MB disk cache, and optimized buffer sizes.
-- **Multi-Threaded 7z**: Extraction and compression use all available CPU cores (`-mmt=on`).
-- **Parallel Uploads**: 2000+ threadpool workers for concurrent processing.
-- **Auto-Optimized qBit**: High-performance buffer settings for high-speed torrenting.
-- **FFmpeg Ultrafast**: All video tools use the `ultrafast` preset with auto-thread scaling.
-- **Watchdog Timer**: Automated process management to prevent hangs and freezes.
-
-## 📱 DaRemote / Mobile VPS Deployment Guide (100% Success)
-
-If you are using **DaRemote** or any SSH client on mobile, follow these exact steps:
-
-### 1. Prepare your VPS
-Ensure you have a VPS with Ubuntu 20.04 or higher.
-
-### 2. Connect via DaRemote
-- Open **DaRemote** app.
-- Add your VPS details (IP, Username, Password/Key).
-- Connect to the terminal.
-
-### 3. Run the Auto-Deploy Command
-Copy and paste this single command into your terminal:
-```bash
-wget -q https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML-X/master/deploy_vps.sh -O deploy_vps.sh && chmod +x deploy_vps.sh && ./deploy_vps.sh
-```
-
-### 4. Configure your Credentials
-After the script runs, you need to edit your `config.env`:
-```bash
-nano config.env
-```
-- Fill in your `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, and `DATABASE_URL`.
-- Press `Ctrl+O` then `Enter` to save.
-- Press `Ctrl+X` to exit.
-
-### 5. Restart the Bot
-```bash
-docker-compose up --build -d
-```
-
-### 6. Monitor Logs
-```bash
-docker logs -f wzmlx_bot
-```
-
----
-
-## 🛠️ Prerequisites
-Before starting, ensure you have:
-- **Telegram API ID & Hash**: Get from [my.telegram.org](https://my.telegram.org).
-- **Bot Token**: Get from [@BotFather](https://t.me/BotFather).
-- **MongoDB Database URL**: Get a free cluster from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-- **Owner ID**: Use [@userinfobot](https://t.me/userinfobot) to get your Telegram ID.
-
----
-
-## 🚀 1. KOYEB DEPLOYMENT (Recommended)
-Koyeb is highly recommended for its stability and ease of use.
-
-### Step-by-Step:
-1. **Fork this Repository**: Click the 'Fork' button at the top right of this page.
-2. **Create a Koyeb Account**: Sign up at [koyeb.com](https://www.koyeb.com).
-3. **Create a New Service**:
-   - Click **'Create Service'**.
-   - Select **'GitHub'** as the deployment method.
-   - Choose your forked repository.
-4. **Configure Service**:
-   - **Service Type**: Web Service.
-   - **Region**: Choose the closest to you.
-   - **Plan**: Select a plan (Nano/Micro recommended).
-5. **Environment Variables**:
-   - Click **'Add Variable'** for each of these:
-     - `BOT_TOKEN`: Your bot token.
-     - `OWNER_ID`: Your Telegram ID.
-     - `TELEGRAM_API`: Your API ID.
-     - `TELEGRAM_HASH`: Your API Hash.
-     - `DATABASE_URL`: Your MongoDB URL.
-     - `PORT`: `8000` (Crucial for health checks).
-     - `FFMPEG_THREADS`: `1` (Prevents freezing on small instances).
-6. **Port Binding**:
-   - Set Port to **8000**.
-   - Health Check path to **/health**.
-7. **Deploy**: Click **'Deploy'**. Once the status shows "Healthy", your bot is ready!
-
----
-
-## 💜 2. HEROKU DEPLOYMENT
-Heroku requires buildpacks to handle media processing.
-
-### Step-by-Step:
-1. **Fork this Repository**: Just like the Koyeb method.
-2. **Create a Heroku App**:
-   - Login to Heroku.
-   - Click **'New'** -> **'Create new app'**.
-3. **Add Buildpacks**:
-   - Go to **'Settings'** -> **'Buildpacks'**.
-   - Add `heroku/python`.
-   - Add `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`.
-4. **Config Vars**:
-   - Go to **'Settings'** -> **'Reveal Config Vars'**.
-   - Add all variables listed in the Koyeb section above.
-5. **Deployment Method**:
-   - Go to **'Deploy'** tab.
-   - Select **'GitHub'** and connect your forked repo.
-   - Scroll down and click **'Deploy Branch'**.
-6. **Resources**:
-   - Once deployed, go to **'Resources'**.
-   - Ensure the `web` dyno is turned **ON**.
-
----
-
-## 💻 3. VPS DEPLOYMENT (Highest Performance)
-The best method for large files and heavy media processing.
-
-### Step-by-Step:
-1. **Update & Install Dependencies**:
+### 🖥️ Deployment on VPS (Ubuntu/Debian)
+1. **Update System:**
    ```bash
    sudo apt update && sudo apt upgrade -y
-   sudo apt install git python3 python3-pip ffmpeg mkvtoolnix -y
    ```
-2. **Clone the Repository**:
+2. **Install Docker:**
    ```bash
-   git clone https://github.com/ALONEKINGSTAR77/WZML hemanth-bot
-   cd hemanth-bot
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sh get-docker.sh
    ```
-3. **Install Requirements**:
+3. **Clone Repo:**
    ```bash
-   pip3 install -r requirements.txt
+   git clone https://github.com/ALONEKINGSTAR77/WZML-X.git
+   cd WZML-X
    ```
-4. **Setup Environment Variables**:
-   - Copy the sample file: `cp config_sample.env config.env`
-   - Edit the file: `nano config.env`
-   - Fill in your `BOT_TOKEN`, `OWNER_ID`, `TELEGRAM_API`, `TELEGRAM_HASH`, and `DATABASE_URL`.
-   - Press `Ctrl+O` then `Enter` to save, and `Ctrl+X` to exit.
-5. **Run the Bot**:
-   - **Standard Run**: `python3 -m bot`
-   - **Recommended Run (using screen)**:
-     ```bash
-     screen -S bot
-     python3 -m bot
-     ```
-     *(Press `Ctrl+A+D` to detach and keep it running in background)*
+4. **Configure:** Edit `config.env` with your values.
+5. **Start:**
+   ```bash
+   docker-compose up --build -d
+   ```
+
+### 📱 Deployment on DaRemote (Mobile)
+1. **Open DaRemote:** Add your VPS server.
+2. **Terminal:** Follow the VPS steps above.
+3. **One-Tap Setup:** Use the `deploy_vps.sh` script for even faster setup.
+   ```bash
+   bash deploy_vps.sh
+   ```
+
+## 🛠️ Video Tools usage
+- Use `/usersettings` or `/uset` to access your personal settings.
+- Navigate to **Audio Settings** or **Video Tools**.
+- Configure Metadata, Merging, Bitrate, Watermark, and more.
+- These settings will be applied automatically to all your tasks.
+
+## ❓ Troubleshooting
+- **Button Loading:** If buttons show a loading circle, ensure the bot is not under heavy flood wait. We have implemented an auto-answer fix.
+- **Heroku Crash:** Check your `PORT` binding. The bot is optimized to use Heroku's dynamic port.
+- **FFmpeg Errors:** Ensure `FFMPEG_THREADS` is set appropriately for your VPS (usually 2-4). On PaaS, leave it empty.
 
 ---
-
-## 🛠️ TROUBLESHOOTING
-- **"Missing Token"**: Ensure `config.env` is correctly placed or environment variables are set in the dashboard.
-- **Button not responding**: Check if the bot has admin rights in the log channel.
-- **FFmpeg error**: Ensure you added the FFmpeg buildpack (Heroku) or installed it (VPS).
-
----
-
-## 🤝 SUPPORT
-Join our support group: [⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ Updates](https://t.me/ALONEKINGSTAR77)
-Owner: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
+### 🛡️ Support & Community
+- **Support Group**: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)
+- **Updates**: [@ALONEKINGSTAR77](https://t.me/ALONEKINGSTAR77)

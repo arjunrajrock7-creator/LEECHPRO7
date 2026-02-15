@@ -78,4 +78,6 @@ class ButtonMaker:
                     for i in range(0, len(self.__footer_button), f_cols)
                 ]
             )
+        if not menu:
+            return None
         return InlineKeyboardMarkup(menu)

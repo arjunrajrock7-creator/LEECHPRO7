@@ -52,7 +52,11 @@ getLogger("httpx").setLevel(ERROR)
 
 LOGGER = getLogger(__name__)
 
+# Capture system PORT before loading config.env
+sys_port = environ.get("PORT")
 load_dotenv("config.env", override=True)
+if sys_port:
+    environ["PORT"] = sys_port
 
 Interval = []
 QbInterval = []
