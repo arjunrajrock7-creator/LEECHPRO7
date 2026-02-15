@@ -79,13 +79,19 @@ Before deployment, ensure you have the following variables ready:
    ```
 6. **Alternative (Buildpacks)**: If you prefer not using Docker, add `heroku/python` and `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git` buildpacks.
 
-### 📱 Termux (Android Mobile)
-1. **Install Packages**:
+### 📱 Mobile SSH Deployment (DaRemote/Termius)
+1. **Prepare your VPS**: Ensure you have a Linux VPS (Ubuntu/Debian recommended).
+2. **One-Click Deployment**: Run the following command in your mobile SSH client:
    ```bash
-   pkg update && pkg upgrade
-   pkg install git python ffmpeg
+   wget https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML-X/master/deploy_vps.sh && bash deploy_vps.sh
    ```
-2. **Follow VPS steps** (2 to 5).
+3. **What it does**: This script automates everything:
+   - Updates your system.
+   - Installs Docker and Docker-Compose.
+   - Clones the repository.
+   - Sets up a sample `config.env`.
+   - Starts the bot in the background using Docker.
+4. **Final Step**: After running the script, edit your `config.env` using `nano config.env`, add your credentials, and restart with `docker-compose restart`.
 
 ---
 
