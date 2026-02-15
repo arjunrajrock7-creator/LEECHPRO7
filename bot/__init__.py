@@ -6,7 +6,7 @@ from inspect import signature
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pyrogram import Client as tgClient, enums, utils as pyroutils
 from pymongo import MongoClient
-from asyncio import Lock
+from asyncio import Lock, new_event_loop, set_event_loop
 from dotenv import load_dotenv, dotenv_values
 from threading import Thread
 from time import sleep, time
@@ -33,6 +33,8 @@ from uvloop import install
 # faulthandler_enable()
 
 install()
+bot_loop = new_event_loop()
+set_event_loop(bot_loop)
 setdefaulttimeout(600)
 
 pyroutils.MIN_CHAT_ID = -999999999999
@@ -242,7 +244,8 @@ if len(USER_SESSION_STRING) != 0:
             session_string=USER_SESSION_STRING,
             parse_mode=enums.ParseMode.HTML,
             no_updates=True,
-        ).start()
+        )
+        bot_loop.run_until_complete(user.start())
         IS_PREMIUM_USER = user.me.is_premium
     except Exception as e:
         log_error(f"Failed making client from USER_SESSION_STRING : {e}")
@@ -900,7 +903,7 @@ bot = wztgClient(
     bot_token=BOT_TOKEN,
     workers=1000,
     parse_mode=enums.ParseMode.HTML,
-).start()
-bot_loop = bot.loop
+)
+bot_loop.run_until_complete(bot.start())
 bot_name = bot.me.username
 scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)

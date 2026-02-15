@@ -59,12 +59,22 @@ Before deployment, ensure you have the following variables ready:
    *Note: Ensure your `config.env` is present in the root directory.*
 
 ### ☁️ Heroku Deployment
-1. **Create App** in Heroku dashboard.
-2. **Add Buildpacks**:
+1. **Create a New App**: Go to the Heroku Dashboard and create a new application.
+2. **Add Buildpacks**: In the "Settings" tab, add the following buildpacks:
    - `heroku/python`
    - `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git`
-3. **Connect GitHub** and deploy branch.
-4. **Setup Config Vars** in Heroku settings.
+3. **Configure Environment Variables**: In the "Settings" tab, click "Reveal Config Vars" and add:
+   - `BOT_TOKEN`: Your Telegram Bot Token.
+   - `OWNER_ID`: Your Telegram User ID.
+   - `TELEGRAM_API`: Your App ID from my.telegram.org.
+   - `TELEGRAM_HASH`: Your App Hash from my.telegram.org.
+   - `DATABASE_URL`: Your MongoDB connection string.
+   - `UPSTREAM_REPO`: (Optional) Your GitHub fork URL.
+   - `PORT`: 8000 (Heroku will automatically assign a port, but the bot defaults to 8000 if not specified).
+4. **Deploy Code**:
+   - Connect your GitHub repository in the "Deploy" tab.
+   - Select the branch and click "Deploy Branch".
+5. **Enable Dynos**: In the "Resources" tab, ensure the `web` or `worker` dyno is switched ON.
 
 ### 📱 Termux (Android Mobile)
 1. **Install Packages**:
