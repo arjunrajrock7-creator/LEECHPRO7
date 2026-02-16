@@ -32,12 +32,12 @@ fi
 docker-compose down || true
 
 # Check if directory exists, if not clone
-if [ ! -d "WZML-X" ]; then
+if [ ! -d "LEECHPRO7" ]; then
     echo "📥 Cloning repository..."
-    git clone https://github.com/ALONEKINGSTAR77/WZML-X.git
-    cd WZML-X
+    git clone https://github.com/arjunrajrock7-creator/LEECHPRO7.git
+    cd LEECHPRO7
 else
-    cd WZML-X
+    cd LEECHPRO7
     echo "🔄 Pulling latest changes..."
     git pull
 fi
@@ -55,4 +55,4 @@ docker-compose up --build -d
 
 echo "✅ Deployment Successful!"
 echo "📡 Bot is running in the background."
-echo "📜 Use 'docker logs -f wzmlx_bot' to see logs."
+echo "📜 Use 'docker logs -f leechpro7_bot' to see logs."

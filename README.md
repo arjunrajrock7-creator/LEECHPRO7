@@ -104,7 +104,7 @@ Before deployment, ensure you have the following variables ready:
    ```
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/ALONEKINGSTAR77/WZML-X.git && cd WZML-X
+   git clone https://github.com/arjunrajrock7-creator/LEECHPRO7.git && cd LEECHPRO7
    ```
 3. **Install Requirements**:
    ```bash
@@ -150,7 +150,7 @@ Before deployment, ensure you have the following variables ready:
 1. **Prepare your VPS**: Ensure you have a Linux VPS (Ubuntu/Debian recommended).
 2. **One-Click Deployment**: Run the following command in your mobile SSH client:
    ```bash
-   wget https://raw.githubusercontent.com/ALONEKINGSTAR77/WZML-X/master/deploy_vps.sh && bash deploy_vps.sh
+   wget https://raw.githubusercontent.com/arjunrajrock7-creator/LEECHPRO7/master/deploy_vps.sh && bash deploy_vps.sh
    ```
 3. **What it does**: This script automates everything:
    - Updates your system.

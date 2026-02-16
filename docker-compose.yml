@@ -2,7 +2,7 @@ version: "3.3"
 services:
   app:
     build: .
-    container_name: wzmlx_bot
+    container_name: leechpro7_bot
     restart: always
     environment:
       - PORT=8000
