@@ -1012,7 +1012,10 @@ class MirrorLeechListener:
                     for dlup, dlink in link.items():
                         buttons.ubutton(BotTheme("DDL_LINK", Serv=dlup), dlink)
                 elif link and (
-                    user_id == OWNER_ID or not config_dict["DISABLE_DRIVE_LINK"]
+                    user_id == OWNER_ID
+                    or not self.user_dict.get(
+                        "disable_drive_link", config_dict["DISABLE_DRIVE_LINK"]
+                    )
                 ):
                     buttons.ubutton(BotTheme("CLOUD_LINK"), link)
                 else:

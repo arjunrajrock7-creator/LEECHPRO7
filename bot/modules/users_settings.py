@@ -90,6 +90,14 @@ desp_dict = {
         "Mirror Filename Suffix is the End Part attached with the Filename of the Mirrored/Cloned Files",
         "Send Mirror Filename Suffix. \n<b>Timeout:</b> 60 sec",
     ],
+    "token_pickle": [
+        "Google Drive Token is used for Authorizing your own Google Drive Account.",
+        "Send token.pickle. \n<b>Timeout:</b> 60 sec",
+    ],
+    "mega_creds": [
+        "MEGA Credentials (Email and Password) used for MEGA Downloads/Uploads.",
+        "Send MEGA Credentials in format: <code>email:password</code>. \n<b>Timeout:</b> 60 sec",
+    ],
     "mremname": [
         "Mirror Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Mirrored/Cloned Files",
         "Send Mirror Filename Remname. \n<b>Timeout:</b> 60 sec",
@@ -229,6 +237,8 @@ fname_dict = {
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
+    "token_pickle": "Drive Token",
+    "mega_creds": "Mega",
     "ldump": "User Dump",
     "lcaption": "Caption",
     "lautorename": "Auto Rename",
@@ -438,6 +448,16 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         user_tds = len(val) if (val := user_dict.get("user_tds", False)) else 0
         buttons.ibutton("User TDs", f"userset {user_id} user_tds")
 
+        token_path = f"tokens/{user_id}.pickle"
+        tokenmsg = "Exists" if await aiopath.exists(token_path) else "Not Exists"
+        buttons.ibutton(f"{'✅️' if tokenmsg == 'Exists' else ''} Drive Token", f"userset {user_id} token_pickle")
+
+        mega_creds = "Exists" if user_dict.get("mega_creds") else "Not Exists"
+        buttons.ibutton(f"{'✅️' if mega_creds == 'Exists' else ''} Mega", f"userset {user_id} mega_creds")
+
+        drive_link = "Enabled" if not user_dict.get("disable_drive_link", config_dict["DISABLE_DRIVE_LINK"]) else "Disabled"
+        buttons.ibutton(f"Drive Link: {'ENABLE' if drive_link == 'Enabled' else 'DISABLE'}", f"userset {user_id} drive_link")
+
         text = BotTheme(
             "MIRROR",
             NAME=name,
@@ -449,6 +469,9 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             MSUFFIX=escape(msuffix),
             TMODE=tds_mode,
             USERTD=user_tds,
+            TOKEN=tokenmsg,
+            MEGA=mega_creds,
+            DRIVE_LINK=drive_link,
         )
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
@@ -909,6 +932,10 @@ async def set_custom(client, message, pre_event, key, direct=False):
         value = ddl_dict
         n_key = "ddl_servers"
         return_key = "ddl_servers"
+    elif key == "token_pickle":
+        return_key = "mirror"
+    elif key == "mega_creds":
+        return_key = "mirror"
     elif key == "user_tds":
         user_tds = user_dict.get(key, {})
         for td_item in value.split("\n"):
@@ -1016,6 +1043,21 @@ async def add_rclone(client, message, pre_event):
     await update_user_settings(pre_event, "rcc", "mirror")
     if DATABASE_URL:
         await DbManger().update_user_doc(user_id, "rclone", des_dir)
+
+
+async def add_token_pickle(client, message, pre_event):
+    user_id = message.from_user.id
+    handler_dict[user_id] = False
+    path = f"{getcwd()}/tokens/"
+    if not await aiopath.isdir(path):
+        await mkdir(path)
+    des_dir = ospath.join(path, f"{user_id}.pickle")
+    await message.download(file_name=des_dir)
+    update_user_ldata(user_id, "token_pickle", f"tokens/{user_id}.pickle")
+    await deleteMessage(message)
+    await update_user_settings(pre_event, "token_pickle", "mirror")
+    if DATABASE_URL:
+        await DbManger().update_user_doc(user_id, "token_pickle", des_dir)
 
 
 async def leech_split_size(client, message, pre_event):
@@ -1244,6 +1286,15 @@ async def edit_user_settings(client, query):
         pfunc = partial(add_rclone, pre_event=query)
         rfunc = partial(update_user_settings, query, data[2], "mirror")
         await event_handler(client, query, pfunc, rfunc, document=True)
+    elif data[2] == "token_pickle":
+        await query.answer()
+        edit_mode = len(data) == 4
+        await update_user_settings(query, data[2], "mirror", edit_mode)
+        if not edit_mode:
+            return
+        pfunc = partial(add_token_pickle, pre_event=query)
+        rfunc = partial(update_user_settings, query, data[2], "mirror")
+        await event_handler(client, query, pfunc, rfunc, document=True)
     elif data[2] == "drcc":
         handler_dict[user_id] = False
         if await aiopath.exists(rclone_path):
@@ -1256,6 +1307,19 @@ async def edit_user_settings(client, query):
         else:
             await query.answer("Old Settings", show_alert=True)
             await update_user_settings(query)
+    elif data[2] == "dtoken_pickle":
+        handler_dict[user_id] = False
+        token_path = f"tokens/{user_id}.pickle"
+        if await aiopath.exists(token_path):
+            await query.answer()
+            await aioremove(token_path)
+            update_user_ldata(user_id, "token_pickle", "")
+            await update_user_settings(query, "token_pickle", "mirror")
+            if DATABASE_URL:
+                await DbManger().update_user_doc(user_id, "token_pickle")
+        else:
+            await query.answer("Old Settings", show_alert=True)
+            await update_user_settings(query, "mirror")
     elif data[2] in ["ddl_servers", "user_tds", "gofile", "streamtape"]:
         handler_dict[user_id] = False
         await query.answer()
@@ -1334,7 +1398,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "leech")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["dmprefix", "dmsuffix", "dmremname", "duser_tds"]:
+    elif data[2] in ["dmprefix", "dmsuffix", "dmremname", "duser_tds", "dmega_creds"]:
         handler_dict[user_id] = False
         await query.answer()
         update_user_ldata(user_id, data[2][1:], {} if data[2] == "duser_tds" else "")

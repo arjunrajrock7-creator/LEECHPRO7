@@ -22,7 +22,7 @@ async def deletefile(_, message):
     if is_gdrive_link(link):
         LOGGER.info(link)
         drive = GoogleDriveHelper()
-        msg = await sync_to_async(drive.deletefile, link)
+        msg = await sync_to_async(drive.deletefile, link, message.from_user.id)
     else:
         msg = (
             "Send Gdrive link along with command or by replying to the link by command"

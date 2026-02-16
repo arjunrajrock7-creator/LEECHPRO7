@@ -93,6 +93,10 @@ class GoogleDriveHelper:
             credentials = service_account.Credentials.from_service_account_file(
                 f"accounts/{json_files[self.__sa_index]}", scopes=self.__OAUTH_SCOPE
             )
+        elif self.__user_id and ospath.exists(f"tokens/{self.__user_id}.pickle"):
+            LOGGER.info(f"Authorize with tokens/{self.__user_id}.pickle")
+            with open(f"tokens/{self.__user_id}.pickle", "rb") as f:
+                credentials = pload(f)
         elif ospath.exists("token.pickle"):
             LOGGER.info("Authorize with token.pickle")
             with open("token.pickle", "rb") as f:
@@ -104,10 +108,17 @@ class GoogleDriveHelper:
     def __alt_authorize(self):
         if not self.__alt_auth:
             self.__alt_auth = True
-            if ospath.exists("token.pickle"):
+            credentials = None
+            if self.__user_id and ospath.exists(f"tokens/{self.__user_id}.pickle"):
+                LOGGER.info(f"Authorize with tokens/{self.__user_id}.pickle")
+                with open(f"tokens/{self.__user_id}.pickle", "rb") as f:
+                    credentials = pload(f)
+            elif ospath.exists("token.pickle"):
                 LOGGER.info("Authorize with token.pickle")
                 with open("token.pickle", "rb") as f:
                     credentials = pload(f)
+
+            if credentials:
                 return build(
                     "drive", "v3", credentials=credentials, cache_discovery=False
                 )
@@ -227,7 +238,9 @@ class GoogleDriveHelper:
             self.__processed_bytes += chunk_size
             self.__total_time += self.__update_interval
 
-    def deletefile(self, link: str):
+    def deletefile(self, link: str, userId=None):
+        if userId:
+            self.__user_id = userId
         try:
             file_id = self.getIdFromUrl(link)
         except (KeyError, IndexError):
@@ -751,6 +764,8 @@ class GoogleDriveHelper:
         itemType="",
         userId=None,
     ):
+        if userId:
+            self.__user_id = userId
         msg = f"""<figure><img src='{config_dict["COVER_IMAGE"]}'></figure>"""
         fileName = self.__escapes(str(fileName))
         contents_no = 0
@@ -845,7 +860,9 @@ class GoogleDriveHelper:
 
         return telegraph_content, contents_no
 
-    def count(self, link):
+    def count(self, link, userId=None):
+        if userId:
+            self.__user_id = userId
         try:
             file_id = self.getIdFromUrl(link)
         except (KeyError, IndexError):

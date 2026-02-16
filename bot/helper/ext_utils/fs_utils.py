@@ -12,7 +12,7 @@ from sys import exit as sexit
 from bot import bot_cache
 
 from .exceptions import NotSupportedExtractionArchive
-from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client, GLOBAL_EXTENSION_FILTER
+from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client, GLOBAL_EXTENSION_FILTER, user_data
 from bot.helper.ext_utils.bot_utils import sync_to_async, cmd_exec
 
 ARCH_EXT = [

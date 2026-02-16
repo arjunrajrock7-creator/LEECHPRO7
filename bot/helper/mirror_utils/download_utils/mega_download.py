@@ -140,8 +140,14 @@ class AsyncExecutor:
 
 
 async def add_mega_download(mega_link, path, listener, name):
-    MEGA_EMAIL = config_dict["MEGA_EMAIL"]
-    MEGA_PASSWORD = config_dict["MEGA_PASSWORD"]
+    user_id = listener.message.from_user.id
+    user_dict = user_data.get(user_id, {})
+    mega_creds = user_dict.get('mega_creds', '')
+    if mega_creds and ":" in mega_creds:
+        MEGA_EMAIL, MEGA_PASSWORD = mega_creds.split(":", 1)
+    else:
+        MEGA_EMAIL = config_dict["MEGA_EMAIL"]
+        MEGA_PASSWORD = config_dict["MEGA_PASSWORD"]
 
     executor = AsyncExecutor()
     api = MegaApi(None, None, None, "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡")

@@ -27,7 +27,7 @@ from bot.helper.ext_utils.task_manager import (
 
 
 async def add_gd_download(link, path, listener, newname, org_link):
-    drive = GoogleDriveHelper()
+    drive = GoogleDriveHelper(listener=listener)
     name, mime_type, size, _, _ = await sync_to_async(drive.count, link)
     if is_share_link(org_link):
         cget().request(

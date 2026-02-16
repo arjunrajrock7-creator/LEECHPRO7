@@ -287,6 +287,9 @@ class WZMLStyle:
 🔌<b> DDL 𝐒𝐞𝐫𝐯𝐞𝐫(𝐬) :</b> <i>{DDL_SERVER}</i>
 ⚡<b> 𝐔𝐬𝐞𝐫 TD 𝐌𝐨𝐝𝐞 :</b> <i>{TMODE}</i>
 📑<b> 𝐓𝐨𝐭𝐚𝐥 𝐔𝐬𝐞𝐫 TD(𝐬) :</b> <i>{USERTD}</i>
+🔑<b> 𝐃𝐫𝐢𝐯𝐞 𝐓𝐨𝐤𝐞𝐧 :</b> <i>{TOKEN}</i>
+☁️<b> 𝐌𝐄𝐆𝐀 𝐂𝐫𝐞𝐝𝐬 :</b> <i>{MEGA}</i>
+🌐<b> 𝐃𝐫𝐢𝐯𝐞 𝐋𝐢𝐧𝐤 :</b> <i>{DRIVE_LINK}</i>
 📉<b> 𝐃𝐚𝐢𝐥𝐲 𝐌𝐢𝐫𝐫𝐨𝐫 :</b> <code>{DM}</code> ᴘᴇʀ ᴅ𝐚ʏ"""
 
     LEECH = """🔥 <b><u>𝐋𝐞𝐞𝐜𝐡 𝐒𝐞𝐭𝐭𝐢𝐧𝐠𝐬 𝐟𝐨𝐫 {NAME}</u></b>
@@ -302,6 +305,7 @@ class WZMLStyle:
 ➖<b> 𝐋𝐞𝐞𝐜𝐡 𝐒𝐮𝐟𝐟𝐢𝐱 :</b> <code>{LSUFFIX}</code>
 📂<b> 𝐋𝐞𝐞𝐜𝐡 𝐃𝐮𝐦𝐩𝐬 :</b> <code>{LDUMP}</code>
 🧪<b> 𝐋𝐞𝐞𝐜𝐡 𝐑𝐞𝐦𝐧𝐚𝐦𝐞 :</b> <code>{LREMNAME}</code>
+✍️<b> 𝐀𝐮𝐭𝐨 𝐑𝐞𝐧𝐚𝐦𝐞 :</b> <code>{LAUTORENAME}</code>
 🆔<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐭𝐚𝐝𝐚𝐭𝐚 :</b> <code>{LMETA}</code>
 🔗<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐫𝐠𝐞 :</b> <i>{LMERGE}</i>"""
 
