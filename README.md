@@ -68,6 +68,17 @@ Stranger Things (2025) {season} {episode} - {quality} - NF WEB-DL - AVC - [Tamil
 
 ---
 
+## ⚡ Ultra Speed Boost Features
+
+- **Parallel Processing**: Optimized Gunicorn with multiple workers and threads for high concurrency.
+- **CPU Optimization**: Automatic FFmpeg thread detection using all available CPU cores.
+- **High-Speed Networking**: TCP optimization and BBR congestion control enabled in VPS deployment.
+- **Multi-Threaded 7z**: Maximum compression and extraction speed using all CPU cores.
+- **Aria2 & qBit Tweaks**: Pre-configured for ultra-high-speed downloads with optimized buffers and connection limits.
+- **Fast Merging**: Instant MKV merging using stream copy (`-c copy`) whenever possible.
+
+---
+
 ## 🛠️ Environment Variables Setup
 
 Before deployment, ensure you have the following variables ready:
@@ -114,7 +125,7 @@ Before deployment, ensure you have the following variables ready:
    ```
    *Note: Ensure your `config.env` is present in the root directory.*
 
-### ☁️ Heroku Deployment (Dockerfile Method)
+### ☁️ Heroku Deployment (High Performance)
 1. **Install Heroku CLI**: Make sure you have the Heroku CLI installed on your machine.
 2. **Login to Heroku**:
    ```bash
@@ -135,7 +146,7 @@ Before deployment, ensure you have the following variables ready:
    ```
 6. **Alternative (Buildpacks)**: If you prefer not using Docker, add `heroku/python` and `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git` buildpacks.
 
-### 📱 Mobile SSH Deployment (DaRemote/Termius)
+### 📱 Mobile & DaRemote Deployment (High Speed)
 1. **Prepare your VPS**: Ensure you have a Linux VPS (Ubuntu/Debian recommended).
 2. **One-Click Deployment**: Run the following command in your mobile SSH client:
    ```bash

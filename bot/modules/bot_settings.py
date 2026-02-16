@@ -415,7 +415,7 @@ async def load_config():
         BASE_URL = ""
     if BASE_URL or environ.get("PORT"):
         await create_subprocess_shell(
-            f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent"
+            f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent --workers 4 --threads 4"
         )
 
     UPSTREAM_REPO = environ.get("UPSTREAM_REPO", "")
@@ -962,7 +962,7 @@ async def edit_variable(_, message, pre_message, key):
         if config_dict["BASE_URL"] or environ.get("PORT"):
             await (await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")).wait()
             await create_subprocess_shell(
-                f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent"
+                f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent --workers 4 --threads 4"
             )
     elif key == "EXTENSION_FILTER":
         fx = value.split()
@@ -1280,7 +1280,7 @@ async def edit_bot_settings(client, query):
                     await create_subprocess_exec("pkill", "-9", "-f", "gunicorn")
                 ).wait()
                 await create_subprocess_shell(
-                    f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent"
+                    f"gunicorn web.wserver:app --bind 0.0.0.0:{value} --worker-class gevent --workers 4 --threads 4"
                 )
         elif data[2] == "GDRIVE_ID":
             if "Main" in list_drives_dict:

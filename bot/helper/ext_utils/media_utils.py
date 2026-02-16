@@ -9,7 +9,7 @@ class MediaUtils:
     def get_optimal_threads():
         if threads := config_dict.get("FFMPEG_THREADS"):
             return str(threads)
-        return "0"
+        return str(multiprocessing.cpu_count())
 
     @staticmethod
     async def get_streams(path):
