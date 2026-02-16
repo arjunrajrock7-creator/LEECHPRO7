@@ -96,69 +96,61 @@ Before deployment, ensure you have the following variables ready:
 
 ## 📦 Deployment Guides
 
-### 🖥️ VPS Deployment (Ubuntu/Debian)
-1. **Update and Install Dependencies**:
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   sudo apt install git python3 python3-pip ffmpeg -y
-   ```
-2. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/arjunrajrock7-creator/LEECHPRO7.git && cd LEECHPRO7
-   ```
-3. **Install Requirements**:
-   ```bash
-   pip3 install -r requirements.txt
-   ```
-4. **Setup config.env**:
-   - Create a `config.env` file and fill in your variables.
-5. **Start the Bot**:
-   ```bash
-   python3 -m bot
-   ```
-
-### 🐳 Docker Deployment (Recommended)
-1. **Build & Run**:
-   ```bash
-   docker build -t hemanth-bot .
-   docker run -p 8000:8000 hemanth-bot
-   ```
-   *Note: Ensure your `config.env` is present in the root directory.*
+### ☁️ Koyeb Deployment (100% Success)
+1. **Login to Koyeb**: Go to [Koyeb](https://app.koyeb.com/).
+2. **Create a New Service**: Select 'GitHub' or 'Docker'.
+3. **GitHub Method**:
+   - Connect your GitHub and select the `LEECHPRO7` repository.
+   - Select **Docker** as the builder.
+   - In **Environment Variables**, add all mandatory keys from `config.env`.
+   - Set the **Port** to `8000`.
+   - Deploy.
+4. **Docker Method**:
+   - Use the image: `mysterysd/wzmlx:latest` or build your own.
+   - Set the **Command** to `bash start.sh`.
+   - Configure variables and port `8000`.
 
 ### ☁️ Heroku Deployment (High Performance)
-1. **Install Heroku CLI**: Make sure you have the Heroku CLI installed on your machine.
-2. **Login to Heroku**:
+1. **Install Heroku CLI**: Install it on your system.
+2. **Login and Setup**:
    ```bash
    heroku login
    heroku container:login
    ```
-3. **Create a New App**:
+3. **Create and Deploy**:
    ```bash
    heroku create your-app-name
-   ```
-4. **Setup Config Vars**:
-   - Go to Heroku Dashboard -> Settings -> Reveal Config Vars.
-   - Add all mandatory variables from `config.env`.
-5. **Push and Release Container**:
-   ```bash
    heroku container:push web -a your-app-name
    heroku container:release web -a your-app-name
    ```
-6. **Alternative (Buildpacks)**: If you prefer not using Docker, add `heroku/python` and `https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git` buildpacks.
+4. **Config Vars**: Add all variables in Settings -> Reveal Config Vars.
 
-### 📱 Mobile & DaRemote Deployment (High Speed)
-1. **Prepare your VPS**: Ensure you have a Linux VPS (Ubuntu/Debian recommended).
-2. **One-Click Deployment**: Run the following command in your mobile SSH client:
+### 🖥️ VPS Deployment (Manual)
+1. **Dependencies**:
+   ```bash
+   sudo apt update && sudo apt install git python3 python3-pip ffmpeg -y
+   ```
+2. **Clone & Setup**:
+   ```bash
+   git clone https://github.com/arjunrajrock7-creator/LEECHPRO7.git && cd LEECHPRO7
+   pip3 install -r requirements.txt
+   ```
+3. **Configure**: Create `config.env` with your details.
+4. **Start**: `python3 -m bot` or use `pm2` / `screen`.
+
+### 📱 Mobile & DaRemote Deployment (Auto)
+1. **One-Click Command**: Run this in DaRemote or any SSH client:
    ```bash
    wget https://raw.githubusercontent.com/arjunrajrock7-creator/LEECHPRO7/master/deploy_vps.sh && bash deploy_vps.sh
    ```
-3. **What it does**: This script automates everything:
-   - Updates your system.
-   - Installs Docker and Docker-Compose.
-   - Clones the repository.
-   - Sets up a sample `config.env`.
-   - Starts the bot in the background using Docker.
-4. **Final Step**: After running the script, edit your `config.env` using `nano config.env`, add your credentials, and restart with `docker-compose restart`.
+2. **Setup**: This script installs Docker, clones the repo, and sets up high-speed optimizations.
+3. **Finalize**: Edit `config.env` and run `docker-compose restart`.
+
+### 🐳 Docker Deployment (Universal)
+```bash
+docker build -t leechpro7 .
+docker run -p 8000:8000 --env-file config.env leechpro7
+```
 
 ---
 

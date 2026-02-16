@@ -212,7 +212,7 @@ async def gdcloneNode(message, link, listen_up):
         await deleteMessage(process_msg)
     if is_gdrive_link(link):
         gd = GoogleDriveHelper(listener=MirrorLeechListener(message))
-        name, mime_type, size, files, _ = await sync_to_async(gd.count, link)
+        name, mime_type, size, files, _ = await sync_to_async(gd.count, link, message.from_user.id)
         if org_link:
             cget().request(
                 "POST",
