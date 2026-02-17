@@ -1,4 +1,5 @@
 import os
+import json
 import asyncio
 import multiprocessing
 from bot import LOGGER, bot_cache, config_dict
@@ -27,7 +28,6 @@ class MediaUtils:
         if rc != 0:
             LOGGER.error(f"FFprobe failed for {path}: {stderr}")
             return []
-        import json
         try:
             return json.loads(stdout).get("streams", [])
         except:

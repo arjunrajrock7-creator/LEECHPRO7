@@ -42,6 +42,7 @@ from bot.helper.ext_utils.bot_utils import (
     get_readable_time,
     is_mega_link,
     is_gdrive_link,
+    download_image_url,
 )
 from bot.helper.ext_utils.fs_utils import (
     get_base_name,
@@ -447,7 +448,6 @@ class MirrorLeechListener:
 
             # 1. Attachment Manager
             if attach_list := self.user_dict.get("v_attach"):
-                from bot.helper.ext_utils.bot_utils import download_image_url
                 attach_files = []
                 for item in attach_list.split(","):
                     item = item.strip()
@@ -486,7 +486,6 @@ class MirrorLeechListener:
 
             # 2. Intro Injection
             if intro_link := self.user_dict.get("v_intro"):
-                from bot.helper.ext_utils.bot_utils import download_image_url
                 local_intro = await download_image_url(intro_link)
                 if await aiopath.exists(local_intro):
                     if await aiopath.isfile(curr_path) and (await get_document_type(curr_path))[0]:
@@ -608,7 +607,6 @@ class MirrorLeechListener:
                                 LOGGER.error(f"Compression failed for {file}: {err}")
 
         if (w_path := self.user_dict.get("v_watermark")) and self.isLeech and w_path != "Not Set":
-            from bot.helper.ext_utils.bot_utils import download_image_url
             wm_target = up_path or dl_path
             local_w = await download_image_url(w_path) if w_path.startswith("http") else w_path
             threads = MediaUtils.get_optimal_threads()
