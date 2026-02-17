@@ -452,8 +452,8 @@ class MirrorLeechListener:
                 for item in attach_list.split(","):
                     item = item.strip()
                     if ":" in item and item.startswith("http"): # url only
-                         local_at = await download_image_url(item)
-                         if local_at: attach_files.append(local_at)
+                        local_at = await download_image_url(item)
+                        if local_at: attach_files.append(local_at)
                     elif ":" in item: # name:url
                         name, url = item.split(":", 1)
                         local_at = await download_image_url(url.strip())

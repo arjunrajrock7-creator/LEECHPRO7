@@ -103,11 +103,12 @@ Before deployment, ensure you have the following variables ready:
    - Connect your GitHub and select the `LEECHPRO7` repository.
    - Select **Docker** as the builder.
    - In **Environment Variables**, add all mandatory keys from `config.env`.
-   - Set the **Port** to `8000`.
+   - **Crucial**: Set the **Port** to `8000`.
+   - **Instance Type**: 'Nano' is enough for basic usage, but 'Small' is recommended for high-speed FFmpeg tasks.
    - Deploy.
 4. **Docker Method**:
    - Use the image: `mysterysd/wzmlx:latest` or build your own.
-   - Set the **Command** to `bash start.sh`.
+   - Set the **Command** to `bash start.vs`.
    - Configure variables and port `8000`.
 
 ### ☁️ Heroku Deployment (High Performance)
@@ -141,7 +142,7 @@ Before deployment, ensure you have the following variables ready:
 ### 📱 Mobile & DaRemote Deployment (Auto)
 1. **One-Click Command**: Run this in DaRemote or any SSH client:
    ```bash
-   wget https://raw.githubusercontent.com/arjunrajrock7-creator/LEECHPRO7/master/deploy_vps.sh && bash deploy_vps.sh
+   wget https://raw.githubusercontent.com/arjunrajrock7-creator/LEECHPRO7/master/deploy_vps.vs && bash deploy_vps.vs
    ```
 2. **Setup**: This script installs Docker, clones the repo, and sets up high-speed optimizations.
 3. **Finalize**: Edit `config.env` and run `docker-compose restart`.

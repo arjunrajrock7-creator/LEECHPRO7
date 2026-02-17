@@ -1313,7 +1313,7 @@ async def edit_bot_settings(client, query):
         handler_dict[message.chat.id] = False
         aria2_defaults = await sync_to_async(aria2.client.get_global_option)
         if aria2_defaults[data[2]] == aria2_options[data[2]]:
-            await query.answer("Value already same as you added in aria.sh!")
+            await query.answer("Value already same as you added in aria.vs!")
             return
         await query.answer()
         value = aria2_defaults[data[2]]
