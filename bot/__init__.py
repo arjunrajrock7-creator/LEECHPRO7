@@ -868,11 +868,19 @@ aria2c_global = [
     "server-stat-of",
 ]
 
-if not aria2_options:
-    aria2_options = aria2.client.get_global_option()
-else:
-    a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
-    aria2.set_global_options(a2c_glo)
+# Safely connect to Aria2 with retries
+while True:
+    try:
+        if not aria2_options:
+            aria2_options = aria2.client.get_global_option()
+        else:
+            a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
+            aria2.set_global_options(a2c_glo)
+        log_info("Successfully connected to Aria2 RPC")
+        break
+    except Exception as e:
+        log_error(f"Aria2 RPC connection failed: {e}. Retrying in 2 seconds...")
+        sleep(2)
 
 qb_client = get_client()
 if not qbit_options:
