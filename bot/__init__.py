@@ -805,14 +805,24 @@ if BASE_URL or environ.get("PORT"):
         shell=True,
     )
 
-srun(["qbittorrent-nox", "-d", f"--profile={getcwd()}"])
+# Check if qbittorrent-nox is already running
+if srun(["pgrep", "-x", "qbittorrent-nox"]).returncode != 0:
+    log_info("Starting qBittorrent-nox...")
+    srun(["qbittorrent-nox", "-d", f"--profile={getcwd()}"])
+
 if not ospath.exists(".netrc"):
     with open(".netrc", "w"):
         pass
 srun(["chmod", "600", ".netrc"])
 srun(["cp", ".netrc", "/root/.netrc"])
-srun(["chmod", "+x", "aria.vs"])
-srun("./aria.vs", shell=True)
+
+# Check if aria2c is already running
+if srun(["pgrep", "-x", "aria2c"]).returncode != 0:
+    log_info("Starting Aria2c...")
+    srun(["chmod", "+x", "aria.vs"])
+    srun("./aria.vs", shell=True)
+else:
+    log_info("Aria2c is already running.")
 if ospath.exists("accounts.zip"):
     if ospath.exists("accounts"):
         srun(["rm", "-rf", "accounts"])
