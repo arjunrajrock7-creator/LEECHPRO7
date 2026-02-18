@@ -2,7 +2,7 @@ from time import time, monotonic
 from datetime import datetime
 from sys import executable
 from os import execl as osexecl
-from asyncio import create_subprocess_exec, gather, run as asyrun
+from asyncio import create_subprocess_exec, gather, run as asyrun, iscoroutine
 from uuid import uuid4
 from base64 import b64decode
 from importlib import import_module, reload
@@ -440,7 +440,10 @@ async def stop_signals():
         await bot.stop()
 
 
-bot_run = bot.loop.run_until_complete
-bot_run(main())
-bot_run(idle())
-bot_run(stop_signals())
+def run_async(coro):
+    if iscoroutine(coro):
+        bot.loop.run_until_complete(coro)
+
+run_async(main())
+run_async(idle())
+run_async(stop_signals())

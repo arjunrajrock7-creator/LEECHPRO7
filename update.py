@@ -83,8 +83,8 @@ if UPSTREAM_REPO is not None:
                      && git add . \
                      && git commit -sm update -q \
                      && git remote add origin {UPSTREAM_REPO} \
-                     && git fetch origin -q \
-                     && git reset --hard origin/{UPSTREAM_BRANCH} -q"
+                     && git fetch origin {UPSTREAM_BRANCH} -q \
+                     && git reset --hard FETCH_HEAD -q"
         ],
         shell=True,
     )

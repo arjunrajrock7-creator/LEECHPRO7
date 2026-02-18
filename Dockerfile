@@ -3,7 +3,7 @@ FROM mysterysd/wzmlx:latest
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 
-RUN apt-get update && apt-get install -y aria2 curl jq && apt-get clean
+RUN apt-get update && apt-get install -y aria2 curl jq procps && apt-get clean
 
 COPY requirements.txt .
 RUN pip3 install --upgrade setuptools wheel
