@@ -356,7 +356,8 @@ def get_readable_message():
             msg += BotTheme("STATUS_SIZE", Size=download.size())
             msg += BotTheme("NON_ENGINE", Engine=download.eng())
 
-        msg += BotTheme("USER", User=download.message.from_user.mention(style="html"))
+        user_mention = download.message.from_user.mention(style="html") if download.message.from_user else download.message.sender_chat.title
+        msg += BotTheme("USER", User=user_mention)
         if (download.eng()).startswith("qBit"):
             msg += BotTheme(
                 "BTSEL", Btsel=f"/{BotCommands.BtSelectCommand}_{download.gid()}"

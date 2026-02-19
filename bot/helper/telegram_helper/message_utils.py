@@ -52,6 +52,8 @@ from bot.helper.ext_utils.exceptions import TgLinkException
 
 
 async def sendMessage(message, text, buttons=None, photo=None, **kwargs):
+    if message is None:
+        return
     try:
         if photo:
             try:
@@ -294,9 +296,9 @@ async def deleteMessage(message):
 async def auto_delete_message(cmd_message=None, bot_message=None):
     if config_dict["AUTO_DELETE_MESSAGE_DURATION"] != -1:
         await sleep(config_dict["AUTO_DELETE_MESSAGE_DURATION"])
-        if cmd_message is not None:
+        if cmd_message is not None and not isinstance(cmd_message, str):
             await deleteMessage(cmd_message)
-        if bot_message is not None:
+        if bot_message is not None and not isinstance(bot_message, str):
             await deleteMessage(bot_message)
 
 
@@ -563,9 +565,10 @@ async def user_info(user_id):
 
 
 async def check_botpm(message, button=None):
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
     try:
         temp_msg = await message._client.send_message(
-            chat_id=message.from_user.id, text="<b>Checking Access...</b>"
+            chat_id=user_id, text="<b>Checking Access...</b>"
         )
         await deleteMessage(temp_msg)
         return None, button

@@ -55,6 +55,69 @@ class MediaUtils:
         return rc == 0, stderr
 
     @staticmethod
+    async def hardsub(path, sub_path, out_path):
+        threads = MediaUtils.get_optimal_threads()
+        # Escaping path for ffmpeg filter
+        escaped_sub = sub_path.replace("'", "'\\''").replace(":", "\\:")
+        cmd = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto",
+            "-i", path, "-vf", f"subtitles='{escaped_sub}'",
+            "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "copy",
+            "-threads", threads, out_path, "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def merge_va(video_path, audio_path, out_path):
+        threads = MediaUtils.get_optimal_threads()
+        cmd = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto",
+            "-i", video_path, "-i", audio_path,
+            "-map", "0:v:0", "-map", "1:a:0", "-c", "copy",
+            "-threads", threads, out_path, "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def merge_vs(video_path, sub_path, out_path):
+        threads = MediaUtils.get_optimal_threads()
+        cmd = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto",
+            "-i", video_path, "-i", sub_path,
+            "-map", "0", "-map", "1", "-c", "copy",
+            "-threads", threads, out_path, "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def apply_filters(path, filter_str, out_path):
+        threads = MediaUtils.get_optimal_threads()
+        cmd = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto",
+            "-i", path, "-vf", filter_str,
+            "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "copy",
+            "-threads", threads, out_path, "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
+    async def swap_audio(path, audio_path, out_path):
+        threads = MediaUtils.get_optimal_threads()
+        # Replaces all audio in 'path' with audio from 'audio_path'
+        cmd = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto",
+            "-i", path, "-i", audio_path,
+            "-map", "0:v", "-map", "1:a", "-c", "copy",
+            "-threads", threads, out_path, "-y"
+        ]
+        _, stderr, rc = await cmd_exec(cmd)
+        return rc == 0, stderr
+
+    @staticmethod
     async def process_custom_ffmpeg(path, cmd_list, listener):
         from bot.helper.ext_utils.leech_utils import get_document_type
         from bot.helper.ext_utils.bot_utils import sync_to_async

@@ -28,34 +28,23 @@ async def media_tools_callback(client, query):
 
     if action == "main":
         buttons = ButtonMaker()
+        vt_ops = [
+            ("Encode", "compress"), ("Watermark", "watermark"), ("Merge V+A", "merge_va"),
+            ("Merge V+S", "merge_vs"), ("External Merge", "ext_merge"), ("Hardsub", "hardsub"),
+            ("Extract", "extract"), ("Swap Audio", "swap_audio"), ("Remove Audio", "rem_audio"),
+            ("Convert", "convert"), ("Concat", "concat"), ("Filters", "filters"),
+            ("Intro", "intro"), ("Metadata", "metadata"), ("Attachments", "attach")
+        ]
+        for name, key in vt_ops:
+            enabled = "✅" if user_dict.get(key) or (key == "compress" and user_dict.get("v_bitrate")) else "🔘"
+            buttons.ibutton(f"{enabled} {name}", f"mediatool {key} {uid}")
 
-        lmeta = "🏷️" if user_dict.get("lmeta") else "🔘"
-        buttons.ibutton(f"{lmeta} Metadata", f"mediatool metadata {uid}")
-
-        tracks = "🎵" if user_dict.get("audio_change") or user_dict.get("default_audio") else "🔘"
-        buttons.ibutton(f"{tracks} Tracks", f"mediatool tracks {uid}")
-
-        compress = "🗜️" if user_dict.get("v_bitrate") else "🔘"
-        buttons.ibutton(f"{compress} Compress", f"mediatool compress {uid}")
-
-        merge = "🔗" if user_dict.get("lmerge") or user_dict.get("auto_merge_zip") else "🔘"
-        buttons.ibutton(f"{merge} Merge", f"mediatool merge {uid}")
-
-        watermark = "🖼️" if user_dict.get("v_watermark") else "🔘"
-        buttons.ibutton(f"{watermark} Watermark", f"mediatool watermark {uid}")
-
-        subsync = "⏳" if user_dict.get("v_subsync") else "🔘"
-        buttons.ibutton(f"{subsync} Sub Sync", f"mediatool subsync {uid}")
-
-        intro = "🎬" if user_dict.get("v_intro") else "🔘"
-        buttons.ibutton(f"{intro} Intro Video", f"mediatool intro {uid}")
-
-        attach = "📎" if user_dict.get("v_attach") else "🔘"
-        buttons.ibutton(f"{attach} Attachments", f"mediatool attach {uid}")
-
-        buttons.ibutton("🔙 Back to Settings", f"userset {uid} leech")
+        buttons.ibutton("✔ Confirm", f"mediatool confirm {uid}")
+        buttons.ibutton("🔄 Reset", f"mediatool reset {uid}")
+        buttons.ibutton("🔙 Back", f"userset {uid} leech")
         buttons.ibutton("🛑 Close", f"mediatool close")
-        await editMessage(query.message, "☘️ <b>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM VIDEO TOOLS</b> ☘️\n\n<i>Select a tool to configure:</i>", buttons.build_menu(2))
+
+        await editMessage(query.message, "☘️ <b>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM VIDEO TOOLS</b> ☘️\n\n<i>Select tools to apply:</i>", buttons.build_menu(3))
 
     elif action == "close":
         await deleteMessage(query.message)
@@ -124,5 +113,25 @@ async def media_tools_callback(client, query):
         buttons.ibutton("⚙️ Edit Attachments", f"userset {uid} v_attach edit")
         buttons.ibutton("🔙 Back", f"mediatool main {uid}")
         await editMessage(query.message, f"<b>MKV Attachments</b>\n\n<b>Current:</b> <code>{val}</code>\n\nFiles to be attached to MKV container (comma separated links).", buttons.build_menu(1))
+
+    elif action in ["merge_va", "merge_vs", "ext_merge", "hardsub", "extract", "swap_audio", "rem_audio", "convert", "concat", "filters"]:
+        # These will be implemented as toggles or simple input settings for now
+        # To match the UI requirements, we show a basic edit prompt
+        buttons = ButtonMaker()
+        buttons.ibutton(f"⚙️ Configure {action.replace('_', ' ').title()}", f"userset {uid} v_{action} edit")
+        buttons.ibutton("🔙 Back", f"mediatool main {uid}")
+        await editMessage(query.message, f"<b>{action.replace('_', ' ').title()}</b>\n\nConfigure this tool for your tasks.", buttons.build_menu(1))
+
+    elif action == "confirm":
+        await query.answer("Tools Configured!", show_alert=True)
+        await deleteMessage(query.message)
+
+    elif action == "reset":
+        # Clear all media tool related settings for user
+        media_keys = ["v_bitrate", "v_watermark", "lmerge", "v_intro", "v_attach", "v_subsync", "audio_change", "default_audio"]
+        for k in media_keys:
+            if k in user_dict: del user_dict[k]
+        await query.answer("All Video Tools Reset!", show_alert=True)
+        await media_tools_callback(client, query) # Refresh main menu
 
 bot.add_handler(CallbackQueryHandler(media_tools_callback, filters=regex("^mediatool")))

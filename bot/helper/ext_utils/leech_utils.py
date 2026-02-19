@@ -410,13 +410,13 @@ async def split_file(
 def get_season_episode(filename):
     match = re_search(r'[Ss](\d+)[Ee](\d+)', filename)
     if match:
-        return match.group(1), match.group(2)
+        return f"S{match.group(1)}", f"E{match.group(2)}"
     match = re_search(r'(\d+)x(\d+)', filename)
     if match:
-        return match.group(1), match.group(2)
+        return f"S{match.group(1)}", f"E{match.group(2)}"
     match = re_search(r'[Ee]pisode\s*(\d+)', filename, re_IGNORECASE)
     if match:
-        return "", match.group(1)
+        return "", f"E{match.group(1)}"
     return "", ""
 
 
@@ -425,6 +425,18 @@ def get_quality(filename):
     if match:
         return match.group(1)
     return ""
+
+def get_audio_info(filename):
+    match = re_search(r'(HINDI|ENG|TAMIL|TELUGU|MULTI)', filename, re_IGNORECASE)
+    if match:
+        return match.group(1).upper()
+    return ""
+
+def get_title_info(filename):
+    # Strip common patterns to get a 'clean' title
+    title = re_sub(r'(\d{3,4}p|S\d+E\d+|\d+x\d+|\[.*\]|\(.*\))', '', filename, flags=re_IGNORECASE)
+    title = title.replace('.', ' ').strip()
+    return title
 
 
 async def format_filename(file_, user_id, dirpath=None, isMirror=False):
@@ -463,14 +475,26 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
         ext = ospath.splitext(file_)[1]
         season, episode = get_season_episode(file_)
         quality = get_quality(file_)
-        size = get_readable_file_size(await aiopath.getsize(ospath.join(dirpath, file_))) if dirpath else ""
-        file_ = lautorename.format(
-            season=season,
-            episode=episode,
-            quality=quality,
-            size=size
-        ) + ext
-        LOGGER.info(f"Auto Renamed : {file_}")
+        audio = get_audio_info(file_)
+        title = get_title_info(ospath.splitext(file_)[0])
+        size = ""
+        if dirpath:
+            f_p = ospath.join(dirpath, file_)
+            if await aiopath.exists(f_p):
+                size = get_readable_file_size(await aiopath.getsize(f_p))
+
+        try:
+            file_ = lautorename.format(
+                season=season,
+                episode=episode,
+                quality=quality,
+                audio=audio,
+                title=title,
+                size=size
+            ).strip() + ext
+            LOGGER.info(f"Auto Renamed : {file_}")
+        except Exception as e:
+            LOGGER.error(f"Auto Rename Error: {e}")
 
     if remname:
         if not remname.startswith("|"):

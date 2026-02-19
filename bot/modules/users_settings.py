@@ -207,6 +207,16 @@ desp_dict = {
         "Files to be attached to MKV files (e.g., XML, JPG, TXT)",
         "Send files or links to be attached. \n<b>Timeout:</b> 60 sec",
     ],
+    "v_merge_va": ["Merge Video and Audio tracks", "Send audio link or reply to audio file. \n<b>Timeout:</b> 60 sec"],
+    "v_merge_vs": ["Merge Video and Subtitle tracks", "Send subtitle link or reply to subtitle file. \n<b>Timeout:</b> 60 sec"],
+    "v_ext_merge": ["External Merge operation", "Send merge parameters. \n<b>Timeout:</b> 60 sec"],
+    "v_hardsub": ["Hardsub subtitle into video", "Send subtitle link or reply to subtitle file. \n<b>Timeout:</b> 60 sec"],
+    "v_extract": ["Extract specific tracks", "Send extraction parameters (e.g., 0:a:0). \n<b>Timeout:</b> 60 sec"],
+    "v_swap_audio": ["Swap audio track with external one", "Send audio link or reply to audio file. \n<b>Timeout:</b> 60 sec"],
+    "v_rem_audio": ["Remove specific audio track", "Send audio track index to remove. \n<b>Timeout:</b> 60 sec"],
+    "v_convert": ["Convert video format", "Send target format (e.g., mp4, mkv). \n<b>Timeout:</b> 60 sec"],
+    "v_concat": ["Concat multiple videos", "Send links separated by space. \n<b>Timeout:</b> 60 sec"],
+    "v_filters": ["Apply video filters", "Send FFmpeg filter string. \n<b>Timeout:</b> 60 sec"],
     "ffmpeg_cmds": [
         "Dict of list values of ffmpeg commands. You can set multiple ffmpeg commands for all files before upload. Don't write ffmpeg at beginning, start directly with the arguments.",
         "<b>Examples:</b> <code>{\"subtitle\": [\"-i mltb.mkv -c copy -c:s srt mltb.mkv\", \"-i mltb.video -c copy -c:s srt mltb\"], \"convert\": [\"-i mltb.m4a -c:a libmp3lame -q:a 2 mltb.mp3\", \"-i mltb.audio -c:a libmp3lame -q:a 2 mltb.mp3\"]}</code>\n\n<b>Notes:</b>\n- Add <code>-del</code> to the list which you want from the bot to delete the original files after command run complete!\n- To execute one of those lists in bot for example, you must use -ff subtitle (list key) or -ff convert (list key)\nHere I will explain how to use mltb.* which is reference to files you want to work on.\n1. First cmd: the input is mltb.mkv so this cmd will work only on mkv videos and the output is mltb.mkv also so all outputs is mkv. -del will delete the original media after complete run of the cmd.\n2. Second cmd: the input is mltb.video so this cmd will work on all videos and the output is only mltb so the extenstion is same as input files.\n3. Third cmd: the input in mltb.m4a so this cmd will work only on m4a audios and the output is mltb.mp3 so the output extension is mp3.\n4. Fourth cmd: the input is mltb.audio so this cmd will work on all audios and the output is mltb.mp3 so the output extension is mp3.\n\nSend dict of FFMPEG_CMDS Options according to format.\n<b>Timeout:</b> 60 sec",
@@ -238,6 +248,16 @@ fname_dict = {
     "v_intro": "Intro Video",
     "v_intro_sub": "Intro Subtitle",
     "v_attach": "MKV Attachments",
+    "v_merge_va": "Merge V+A",
+    "v_merge_vs": "Merge V+S",
+    "v_ext_merge": "External Merge",
+    "v_hardsub": "Hardsub",
+    "v_extract": "Extract",
+    "v_swap_audio": "Swap Audio",
+    "v_rem_audio": "Remove Audio",
+    "v_convert": "Convert",
+    "v_concat": "Concat",
+    "v_filters": "Filters",
     "ffmpeg_cmds": "FFmpeg CMDS",
     "leech_dest": "Leech Destination",
     "mprefix": "Prefix",
@@ -1015,7 +1035,7 @@ async def set_custom(client, message, pre_event, key, direct=False):
             except Exception:
                 value = ""
         return_key = "universal"
-    elif key in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
+    elif key in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"] or key.startswith("v_"):
         return_key = "audio"
     elif key == "ffmpeg_cmds":
         try:
@@ -1180,6 +1200,26 @@ async def edit_user_settings(client, query):
         else:
             await query.answer("Old Settings", show_alert=True)
             await update_user_settings(query, "leech")
+    elif data[2] == "lautorename":
+        await query.answer()
+        edit_mode = len(data) == 4
+        if not edit_mode:
+            # Show preview
+            val = user_dict.get("lautorename", "Not Set")
+            example = "Marvels.Agents.of.S.H.I.E.L.D.S01E01.720p.WEB-DL.x264.mkv"
+            from bot.helper.ext_utils.leech_utils import format_filename
+            res, _ = await format_filename(example, user_id, isMirror=False)
+            preview = f"<b>Auto Rename Preview</b>\n\n<b>Input:</b> <code>{example}</code>\n<b>Output:</b> <code>{res}</code>\n\n<b>Template:</b> <code>{val}</code>"
+            buttons = ButtonMaker()
+            buttons.ibutton("Change Template", f"userset {user_id} lautorename edit")
+            buttons.ibutton("Back", f"userset {user_id} leech")
+            return await editMessage(message, preview, buttons.build_menu(1))
+
+        await update_user_settings(query, data[2], "leech", edit_mode)
+        pfunc = partial(set_custom, pre_event=query, key=data[2])
+        rfunc = partial(update_user_settings, query, data[2], "leech")
+        await event_handler(client, query, pfunc, rfunc)
+
     elif data[2] == "thumb":
         await query.answer()
         edit_mode = len(data) == 4
@@ -1386,12 +1426,22 @@ async def edit_user_settings(client, query):
         "v_intro",
         "v_intro_sub",
         "v_attach",
+        "v_merge_va",
+        "v_merge_vs",
+        "v_ext_merge",
+        "v_hardsub",
+        "v_extract",
+        "v_swap_audio",
+        "v_rem_audio",
+        "v_convert",
+        "v_concat",
+        "v_filters",
         "ffmpeg_cmds",
     ]:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
-        if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync", "v_intro", "v_intro_sub", "v_attach"]:
+        if data[2] in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync", "v_intro", "v_intro_sub", "v_attach"] or data[2].startswith("v_"):
             return_key = "audio"
         elif data[2] == "ffmpeg_cmds":
             return_key = "leech"
@@ -1414,6 +1464,16 @@ async def edit_user_settings(client, query):
         "dlmeta_video",
         "dlmeta_audio",
         "dlmeta_sub",
+        "dv_merge_va",
+        "dv_merge_vs",
+        "dv_ext_merge",
+        "dv_hardsub",
+        "dv_extract",
+        "dv_swap_audio",
+        "dv_rem_audio",
+        "dv_convert",
+        "dv_concat",
+        "dv_filters",
         "dffmpeg_cmds",
     ]:
         handler_dict[user_id] = False

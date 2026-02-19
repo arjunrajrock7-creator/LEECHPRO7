@@ -594,7 +594,7 @@ class MirrorLeechListener:
             if await aiopath.isfile(comp_path) and (await get_document_type(comp_path))[0]:
                 out_path = f"{comp_path}.comp.tmp"
                 cmd = [
-                    "ffmpeg", "-hide_banner", "-loglevel", "error", "-i", comp_path,
+                    "ffmpeg", "-hide_banner", "-loglevel", "error", "-hwaccel", "auto", "-i", comp_path,
                     "-c:v", "libx264", "-b:v", bitrate, "-preset", "ultrafast",
                     "-threads", threads, "-c:a", "copy", out_path, "-y"
                 ]
@@ -603,6 +603,7 @@ class MirrorLeechListener:
                     await move(out_path, comp_path)
                 else:
                     LOGGER.error(f"Compression failed: {err}")
+                    await sendMessage(self.message, f"❌ <b>Compression Failed!</b>\n\n<code>{err}</code>\n\nOriginal file kept safely.")
             elif await aiopath.isdir(comp_path):
                 for dirpath, _, files in await sync_to_async(walk, comp_path):
                     for file in files:

@@ -24,15 +24,12 @@ async def audio_tools(client, message):
 
     msg = await sendMessage(message, "<i>Downloading file to analyze streams...</i>")
 
-    # We need to download at least enough to get streams.
-    # For many formats, we need the whole thing if it's not streamed.
-    # To be safe and meet the requirement "file download after show all audios", we download it.
-
-    listener = MirrorLeechListener(message, isLeech=True, tag=message.from_user.mention)
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+    tag = message.from_user.mention if message.from_user else message.sender_chat.title
+    listener = MirrorLeechListener(message, isLeech=True, tag=tag)
     path = f"{DOWNLOAD_DIR}audio_{message.id}/"
     os.makedirs(path, exist_ok=True)
 
-    # We'll use a simplified download here
     file_path = await client.download_media(rply, file_name=path)
 
     streams = await MediaUtils.get_streams(file_path)
@@ -40,14 +37,15 @@ async def audio_tools(client, message):
 
     if not audio_streams:
         await deleteMessage(msg)
-        os.remove(file_path)
+        if os.path.exists(file_path): os.remove(file_path)
         return await sendMessage(message, "No audio streams found in this file.")
 
     audio_state[message.id] = {
         "path": file_path,
         "streams": audio_streams,
         "selected": [s.get("index") for s in audio_streams],
-        "listener": listener
+        "listener": listener,
+        "user_id": user_id
     }
 
     await show_audio_selection(msg, message.id)
@@ -55,17 +53,20 @@ async def audio_tools(client, message):
 async def show_audio_selection(message, state_id):
     data = audio_state[state_id]
     buttons = ButtonMaker()
-    for s in data["streams"]:
+    for i, s in enumerate(data["streams"], start=1):
         idx = s.get("index")
         lang = s.get("tags", {}).get("language", "und")
         codec = s.get("codec_name", "unknown")
-        selected = "✅" if idx in data["selected"] else "❌"
-        buttons.ibutton(f"{selected} Stream {idx} ({lang} - {codec})", f"audiostream {state_id} {idx}")
+        chan = s.get("channels", "2")
+        selected = "✅" if idx in data["selected"] else "🔘"
+        buttons.ibutton(f"{selected} {i}️⃣ {lang.upper()} ({codec.upper()} {chan}.0)", f"audiostream {state_id} {idx}")
 
-    buttons.ibutton("DONE", f"audiostream {state_id} done")
-    buttons.ibutton("CANCEL", f"audiostream {state_id} cancel")
+    buttons.ibutton("4️⃣ Remove All Audio", f"audiostream {state_id} remove_all")
+    buttons.ibutton("5️⃣ Keep Original", f"audiostream {state_id} keep_orig")
+    buttons.ibutton("6️⃣ Cancel", f"audiostream {state_id} cancel")
+    buttons.ibutton("✔ Confirm & Process", f"audiostream {state_id} done", position="footer")
 
-    await editMessage(message, "Select the audio streams you want to KEEP:", buttons.build_menu(1))
+    await editMessage(message, "✨ <b>Available Audio Tracks</b> ✨\n\n<i>Select tracks to KEEP or choose an option below:</i>", buttons.build_menu(1))
 
 @CallbackQueryHandler
 @new_task
@@ -79,9 +80,12 @@ async def audio_callback(client, query):
 
     state = audio_state[state_id]
 
+    if query.from_user.id != state["user_id"]:
+        return await query.answer("Not yours!", show_alert=True)
+
     if action == "done":
-        if not state["selected"]:
-            return await query.answer("Select at least one stream!", show_alert=True)
+        if not state["selected"] and "remove_all" not in state:
+             return await query.answer("Select at least one stream or 'Remove All'!", show_alert=True)
         await query.answer("Processing...")
         await process_audio(query.message, state_id)
     elif action == "cancel":
@@ -90,6 +94,15 @@ async def audio_callback(client, query):
             os.remove(file_path)
         del audio_state[state_id]
         await deleteMessage(query.message)
+    elif action == "remove_all":
+        state["selected"] = []
+        state["remove_all"] = True
+        await query.answer("All audio will be removed.")
+        await process_audio(query.message, state_id)
+    elif action == "keep_orig":
+        state["selected"] = [s.get("index") for s in state["streams"]]
+        await query.answer("Keeping original tracks.")
+        await process_audio(query.message, state_id)
     else:
         stream_idx = int(action)
         if stream_idx in state["selected"]:
@@ -103,19 +116,19 @@ async def process_audio(message, state_id):
     input_path = state["path"]
     selected = state["selected"]
     listener = state["listener"]
+    remove_all = state.get("remove_all", False)
 
     output_path = f"{input_path}.processed.mkv"
 
-    # Construct ffmpeg command
-    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", input_path, "-map", "0:v:0"]
-    # Map selected audio streams
-    # ffmpeg indices for mapping are often different from absolute indices if we use 0:a:N
-    # But here we have absolute indices from ffprobe.
-    for idx in selected:
-        cmd.extend(["-map", f"0:{idx}"])
+    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", input_path]
 
-    # Map all subtitles as well? Requirement says "remove unselected audios", doesn't mention subtitles.
-    # To be safe, keep subtitles.
+    if remove_all:
+        cmd.extend(["-map", "0:v", "-an"])
+    else:
+        cmd.extend(["-map", "0:v:0"])
+        for idx in selected:
+            cmd.extend(["-map", f"0:{idx}"])
+
     cmd.extend(["-map", "0:s?", "-c", "copy", output_path, "-y"])
 
     await editMessage(message, "<i>Processing video with selected audio streams...</i>")

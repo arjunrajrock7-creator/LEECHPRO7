@@ -42,10 +42,36 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
 | `TELEGRAM_HASH` | Your App Hash from my.telegram.org |
 | `DATABASE_URL` | Your MongoDB connection string |
 | `LEECH_DEST` | Default Leech destination (True for DM, False for Group) |
+| `FFMPEG_CMDS` | Dictionary of preset FFmpeg commands |
 
 ---
 
 ## 📦 Deployment Guides
+
+### 🐧 VPS Deployment (Recommended)
+1. `sudo apt update && sudo apt upgrade -y`
+2. `sudo apt install docker.io docker-compose -y`
+3. `git clone https://github.com/arjunrajrock7-creator/LEECHPRO7 && cd LEECHPRO7`
+4. `cp config_sample.env config.env` (Update your variables)
+5. `docker-compose up -d --build`
+
+### 📱 Termux Deployment
+1. `pkg update && pkg upgrade -y`
+2. `pkg install python ffmpeg aria2 git -y`
+3. `git clone https://github.com/arjunrajrock7-creator/LEECHPRO7 && cd LEECHPRO7`
+4. `pip install -r requirements.txt`
+5. `python3 -m bot`
+
+---
+
+## 🎮 Commands List
+
+- `/mirror2`: Mirror link/file to GDrive.
+- `/leech2`: Leech link/file to Telegram.
+- `/audio2`: Analyze and manage audio tracks (Reply to file).
+- `/merge2`: Merge multiple files.
+- `/usetting2`: User settings menu.
+- `/bsetting2`: Bot settings (Sudo only).
 
 ### ☁️ Heroku Deployment (Recommended)
 1. **Container Registry Method**:
@@ -97,10 +123,29 @@ You can set multiple FFmpeg command sets in your user settings.
 
 To access the Video Tool menu, use the `-vt` argument in your command.
 
+**Options included:**
+✔ Encode, Watermark, Merge V+A, Merge V+S, Hardsub, Extract, Swap Audio, Convert, Filters, Intro.
+
 **Examples:**
 - `/cmd -vt`
 - External Merge: `/cmd -i 10 -m "Your File Name" -vt`
 - Apply FFmpeg key: `/cmd -vt -ff metadata`
+
+---
+
+## 📤 Upload Mode (DM vs Group)
+
+Configure this in `/usetting2`.
+- **Bot DM**: Files sent directly to your private chat.
+- **Group**: Files sent to the authorized group ID.
+
+---
+
+## 🛠 Advanced Troubleshooting
+
+- **NoneType Errors**: Fixed by fallback to `sender_chat`.
+- **Stuck Tasks**: Use `/cancel2` and check logs.
+- **FFmpeg Fails**: Check if command syntax is correct in `FFMPEG_CMDS`.
 
 ---
 
