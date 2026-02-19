@@ -44,23 +44,23 @@ class WZMLStyle:
     HELP_HEADER = "✨ <b><u>Hᴇʟᴘ Gᴜɪᴅᴇ Mᴇɴᴜ</u></b>\n\n💡 <b>Nᴏᴛᴇ: <i>Cʟɪᴄᴋ ᴏɴ ᴀɴʏ CMD ᴛᴏ sᴇᴇ ᴅᴇᴛᴀɪʟs.</i></b>"
 
     # async def stats(client, message):
-    BOT_STATS = """<b>╭━━「 ⚙️ 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐈𝐒𝐓𝐈𝐂𝐒 」</b>
-<b>┃</b>
-<b>┃</b> 🕒 <b>𝐔𝐩𝐭𝐢𝐦𝐞:</b> {bot_uptime}
-<b>┃</b>
-<b>┃</b> 📊 <b><u>𝐑𝐀𝐌 𝐔𝐒𝐀𝐆𝐄</u></b>
-<b>┃</b> {ram_bar} {ram}%
-<b>┃</b> <b>𝐔𝐬𝐞𝐝:</b> {ram_u} | <b>𝐅𝐫𝐞𝐞:</b> {ram_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {ram_t}
-<b>┃</b>
-<b>┃</b> 🔄 <b><u>𝐒𝐖𝐀𝐏 𝐌𝐄𝐌𝐎𝐑𝐘</u></b>
-<b>┃</b> {swap_bar} {swap}%
-<b>┃</b> <b>𝐔𝐬𝐞𝐝:</b> {swap_u} | <b>𝐅𝐫𝐞𝐞:</b> {swap_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {swap_t}
-<b>┃</b>
-<b>┃</b> 💽 <b><u>𝐃𝐈𝐒𝐊 𝐒𝐓𝐀𝐓𝐒</u></b>
-<b>┃</b> {disk_bar} {disk}%
-<b>┃</b> <b>𝐑𝐞𝐚𝐝:</b> {disk_read} | <b>𝐖𝐫𝐢𝐭𝐞:</b> {disk_write}
-<b>┃</b> <b>𝐔𝐬𝐞𝐝:</b> {disk_u} | <b>𝐅𝐫𝐞𝐞:</b> {disk_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {disk_t}
-<b>╰━━━━━━━━━━━━━━</b>
+    BOT_STATS = """<b>╭ ⌬ <u>𝘽𝙊𝙏 𝙎𝙏𝘼𝙏𝙎</u></b>
+<b>┊</b>
+<b>┊</b> 🕒 <b>𝐔𝐩𝐭𝐢𝐦𝐞:</b> {bot_uptime}
+<b>┊</b>
+<b>┊</b> 📊 <b><u>𝐑𝐀𝐌 𝐔𝐒𝐀𝐆𝐄</u></b>
+<b>┊</b> {ram_bar} {ram}%
+<b>┊</b> <b>𝐔𝐬𝐞𝐝:</b> {ram_u} | <b>𝐅𝐫𝐞𝐞:</b> {ram_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {ram_t}
+<b>┊</b>
+<b>┊</b> 🔄 <b><u>𝐒𝐖𝐀𝐏 𝐌𝐄𝐌𝐎𝐑𝐘</u></b>
+<b>┊</b> {swap_bar} {swap}%
+<b>┊</b> <b>𝐔𝐬𝐞𝐝:</b> {swap_u} | <b>𝐅𝐫𝐞𝐞:</b> {swap_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {swap_t}
+<b>┊</b>
+<b>┊</b> 💽 <b><u>𝐃𝐈𝐒𝐊 𝐒𝐓𝐀𝐓𝐒</u></b>
+<b>┊</b> {disk_bar} {disk}%
+<b>┊</b> <b>𝐑𝐞𝐚𝐝:</b> {disk_read} | <b>𝐖𝐫𝐢𝐭𝐞:</b> {disk_write}
+<b>┊</b> <b>𝐔𝐬𝐞𝐝:</b> {disk_u} | <b>𝐅𝐫𝐞𝐞:</b> {disk_f} | <b>𝐓𝐨𝐭𝐚𝐥:</b> {disk_t}
+<b>╰ ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡</b>
     """
     SYS_STATS = """<b>╭━━「 🖥 𝐒𝐘𝐒𝐓𝐄𝐌 𝐈𝐍𝐅𝐎 」</b>
 <b>┃</b>
@@ -180,16 +180,16 @@ class WZMLStyle:
     STATUS_NAME = "<b><i>{Name}</i></b>"
 
     #####---------PROGRESSIVE STATUS-------
-    BAR = "\n<b>Progress:</b> {Bar} » {Pct}%"
-    PROCESSED = "\n<b>Processed:</b> 📦 {Processed}"
-    TOTAL_SIZE = "\n<b>Total:</b> 📁 {Total}"
-    STATUS = '\n<b>Status:</b> {Status_Icon} <a href="{Url}">{Status}...</a>'
-    ETA = "\n<b>ETA:</b> ⏳ {Eta}"
-    SPEED = "\n<b>Speed:</b> ⚡ {Speed}"
+    BAR = "\n<b>╭ Progress:</b> {Bar} » {Pct}%"
+    PROCESSED = "\n<b>┊ Processed:</b> 📦 {Processed}"
+    TOTAL_SIZE = "\n<b>┊ Total:</b> 📁 {Total}"
+    STATUS = '\n<b>┊ Status:</b> {Status_Icon} <a href="{Url}">{Status}...</a>'
+    ETA = "\n<b>┊ ETA:</b> ⏳ {Eta}"
+    SPEED = "\n<b>┊ Speed:</b> ⚡ {Speed}"
     ELAPSED = " | <b>Elapsed:</b> ⏱️ {Elapsed}"
-    ENGINE = "\n<b>Engine:</b> 🔧 {Engine}"
-    UPLOAD = "\n<b>Upload:</b> 📤 {Upload}"
-    STA_MODE = "\n<b>Mode:</b> 🔄 {Mode}"
+    ENGINE = "\n<b>┊ Engine:</b> 🔧 {Engine}"
+    UPLOAD = "\n<b>┊ Upload:</b> 📤 {Upload}"
+    STA_MODE = "\n<b>┊ Mode:</b> 🔄 {Mode}"
     SEEDERS = "\n<b>Seeders:</b> {Seeders} | "
     LEECHERS = "<b>Leechers:</b> {Leechers}"
 
@@ -206,9 +206,9 @@ class WZMLStyle:
     NON_ENGINE = "\n<b>Engine:</b> {Engine}"
 
     ####--------OVERALL MSG FOOTER----------
-    USER = "\n<b>User:</b> 👤 {User}"
-    BTSEL = "\n┠ <b>Select:</b> {Btsel}"
-    CANCEL = "\n┖ {Cancel}\n\n"
+    USER = "\n<b>┊ User:</b> 👤 {User}"
+    BTSEL = "\n<b>┊ Select:</b> {Btsel}"
+    CANCEL = "\n<b>╰</b> {Cancel}\n\n"
 
     ####------FOOTER--------
     FOOTER = "<b>「 🌟 BOT STATS 」</b>\n"
@@ -308,7 +308,8 @@ class WZMLStyle:
 🧪<b> 𝐋𝐞𝐞𝐜𝐡 𝐑𝐞𝐦𝐧𝐚𝐦𝐞 :</b> <code>{LREMNAME}</code>
 ✍️<b> 𝐀𝐮𝐭𝐨 𝐑𝐞𝐧𝐚𝐦𝐞 :</b> <code>{LAUTORENAME}</code>
 🆔<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐭𝐚𝐝𝐚𝐭𝐚 :</b> <code>{LMETA}</code>
-🔗<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐫𝐠𝐞 :</b> <i>{LMERGE}</i>"""
+🔗<b> 𝐋𝐞𝐞𝐜𝐡 𝐌𝐞𝐫𝐠𝐞 :</b> <i>{LMERGE}</i>
+⌨️<b> FFmpeg CMDS :</b> <i>Available</i>"""
 
     AUDIO_SETTING = """🎬 <b><u>Media Tools Settings:</u></b>
 

@@ -191,8 +191,10 @@ def get_progress_bar_string(pct):
     pct = float(str(pct).strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 10)
-    p_str = '█' * cFull
-    p_str += '░' * (10 - cFull)
+    p_str = '⬤' * cFull
+    if cFull < 10:
+        p_str += '◕'
+        p_str += '○' * (9 - cFull)
     return f"[{p_str}]"
 
 
@@ -516,7 +518,7 @@ def get_mega_link_type(url):
 def arg_parser(items, arg_base):
     if not items:
         return arg_base
-    bool_arg_set = {"-b", "-e", "-z", "-s", "-j", "-d"}
+    bool_arg_set = {"-b", "-e", "-z", "-s", "-j", "-d", "-vt"}
     t = len(items)
     i = 0
     arg_start = -1

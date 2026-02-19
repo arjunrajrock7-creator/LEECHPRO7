@@ -23,9 +23,10 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
 ### 🌟 Key Features
 - ⚡ **Ultra Speed Boost**: Optimized multi-threaded Aria2 and qBittorrent configurations.
 - 📁 **Cloud Support**: Seamlessly Mirror/Leech to Google Drive and other cloud storages.
+- ⌨️ **Custom FFmpeg CMDS**: Define complex command sequences in settings and trigger with `-ff key`.
+- 🎞️ **Video Tool Suite**: Advanced interactive media processing with `-vt` argument.
 - 🛠️ **Metadata Editor**: Custom General, Video, Audio, and Subtitle tags.
 - 🔄 **Auto Rename**: Smart renaming with placeholders like `{season}`, `{episode}`, `{quality}`.
-- 🎞️ **Media Tools**: Intro injection, watermark support, and MKV attachment management.
 - 📱 **Mobile Optimized**: One-click deployment for DaRemote and Termius users.
 - 🔗 **Advanced Merging**: Use `/merge2` with `-i` and `-n` flags for precise file combining.
 - 🔊 **Audio Selector**: Interactive `/audio` tool to manage and remove unwanted audio tracks.
@@ -71,6 +72,35 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
   1. Open DaRemote and connect to your VPS.
   2. Navigate to "Commands" and paste the deploy script.
   3. Ensure 100% success rate by using a clean Ubuntu/Debian environment.
+
+---
+
+## ⌨️ Custom FFmpeg Commands (`FFMPEG_CMDS`)
+
+You can set multiple FFmpeg command sets in your user settings.
+- **Format:** `{"key": ["cmd1", "cmd2"]}`
+- **Usage:** `/cmd -ff key`
+
+### 💡 Placeholders:
+- `mltb.mkv`: Matches only `.mkv` files.
+- `mltb.video`: Matches all video formats.
+- `mltb.audio`: Matches all audio formats.
+- `mltb`: Reference to the original file (matches all).
+- `-del`: Add to a command to delete the source file after successful processing.
+
+**Example:**
+`{"subtitle": ["-i mltb.mkv -c copy -c:s srt mltb.mkv", "-i mltb.video -c copy -c:s srt mltb"]}`
+
+---
+
+## ⌬ Video Tool Usage Guide
+
+To access the Video Tool menu, use the `-vt` argument in your command.
+
+**Examples:**
+- `/cmd -vt`
+- External Merge: `/cmd -i 10 -m "Your File Name" -vt`
+- Apply FFmpeg key: `/cmd -vt -ff metadata`
 
 ---
 

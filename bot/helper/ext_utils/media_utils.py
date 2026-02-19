@@ -1,5 +1,7 @@
 import os
+import re
 import json
+import shlex
 import asyncio
 import multiprocessing
 from bot import LOGGER, bot_cache, config_dict
@@ -51,6 +53,78 @@ class MediaUtils:
         ]
         _, stderr, rc = await cmd_exec(cmd)
         return rc == 0, stderr
+
+    @staticmethod
+    async def process_custom_ffmpeg(path, cmd_list, listener):
+        from bot.helper.ext_utils.leech_utils import get_document_type
+
+        files = []
+        if os.path.isfile(path):
+            files.append(path)
+        else:
+            for root, _, fs in os.walk(path):
+                for f in fs:
+                    files.append(os.path.join(root, f))
+
+        for f_path in files:
+            is_video, is_audio, _ = await get_document_type(f_path)
+            base_name, extension = os.path.splitext(f_path)
+            ext = extension[1:] if extension.startswith('.') else extension
+
+            curr_f_path = f_path
+            for cmd_str in cmd_list:
+                should_del = "-del" in cmd_str
+                pure_cmd = cmd_str.replace("-del", "").strip()
+
+                parts = shlex.split(pure_cmd)
+
+                # Filter check
+                skip = False
+                if "-i" in parts:
+                    idx = parts.index("-i")
+                    if idx + 1 < len(parts):
+                        inp = parts[idx+1]
+                        if inp.startswith("mltb."):
+                            p_ext = inp.split(".", 1)[1]
+                            if p_ext == "video" and not is_video: skip = True
+                            elif p_ext == "audio" and not is_audio: skip = True
+                            elif p_ext not in ["video", "audio"] and p_ext != ext: skip = True
+                if skip: continue
+
+                # Replacement
+                new_parts = []
+                for p in parts:
+                    if p.startswith("mltb."):
+                        p_ext = p.split(".", 1)[1]
+                        if p_ext == "video" or p_ext == "audio":
+                            new_parts.append(curr_f_path)
+                        else:
+                            new_parts.append(f"{base_name}.{p_ext}")
+                    elif p == "mltb":
+                        new_parts.append(curr_f_path)
+                    else:
+                        new_parts.append(p)
+
+                output_path = None
+                for part in reversed(new_parts):
+                    if not part.startswith("-"):
+                        output_path = part
+                        break
+
+                full_cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error"] + new_parts
+                if "-y" not in full_cmd:
+                    full_cmd.append("-y")
+
+                success, err = await listener.run_ffmpeg_with_watchdog(full_cmd)
+                if success:
+                    if should_del and os.path.exists(curr_f_path) and output_path and os.path.abspath(curr_f_path) != os.path.abspath(output_path):
+                        os.remove(curr_f_path)
+                    if output_path and os.path.exists(output_path):
+                        curr_f_path = output_path
+                        _, extension = os.path.splitext(curr_f_path)
+                        ext = extension[1:] if extension.startswith('.') else extension
+                else:
+                    LOGGER.error(f"Custom FFmpeg failed for {curr_f_path}: {err}")
 
     @staticmethod
     async def attachment_manager(path, out_path, attach_files=None, remove_attachments=False):

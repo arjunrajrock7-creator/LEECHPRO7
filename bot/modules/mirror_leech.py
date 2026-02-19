@@ -123,6 +123,8 @@ async def _mirror_leech(
         "-screenshots": "",
         "-t": "",
         "-thumb": "",
+        "-vt": False,
+        "-ff": "",
     }
 
     args = arg_parser(input_list[1:], arg_base)
@@ -158,6 +160,8 @@ async def _mirror_leech(
     ussr = args["-u"] or args["-user"]
     pssw = args["-p"] or args["-pass"]
     thumb = args["-t"] or args["-thumb"]
+    vt = args["-vt"]
+    ff = args["-ff"]
     sshots = int(ss) if (ss := (args["-ss"] or args["-screenshots"])).isdigit() else 0
     bulk_start = 0
     bulk_end = 0
@@ -486,7 +490,7 @@ async def _mirror_leech(
         drive_id=drive_id,
         index_link=index_link,
         source_url=org_link or link,
-        leech_utils={"screenshots": sshots, "thumb": thumb},
+        leech_utils={"screenshots": sshots, "thumb": thumb, "vt": vt, "ff": ff},
     )
 
     if file_ is not None:
