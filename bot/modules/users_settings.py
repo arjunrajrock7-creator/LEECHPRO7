@@ -16,6 +16,7 @@ from asyncio import sleep
 from cryptography.fernet import Fernet
 
 import asyncio
+import json
 from bot import (
     OWNER_ID,
     LOGGER,
@@ -207,8 +208,12 @@ desp_dict = {
         "Send files or links to be attached. \n<b>Timeout:</b> 60 sec",
     ],
     "ffmpeg_cmds": [
-        "Set manual FFmpeg commands to be applied during video processing.",
-        "Send manual FFmpeg commands. \n<b>Example:</b> -c:v libx264 -preset fast -crf 23 \n<b>Timeout:</b> 60 sec",
+        "Dict of list values of ffmpeg commands. You can set multiple ffmpeg commands for all files before upload. Don't write ffmpeg at beginning, start directly with the arguments.",
+        "<b>Examples:</b> <code>{\"subtitle\": [\"-i mltb.mkv -c copy -c:s srt mltb.mkv\", \"-i mltb.video -c copy -c:s srt mltb\"], \"convert\": [\"-i mltb.m4a -c:a libmp3lame -q:a 2 mltb.mp3\", \"-i mltb.audio -c:a libmp3lame -q:a 2 mltb.mp3\"]}</code>\n\n<b>Notes:</b>\n- Add <code>-del</code> to the list which you want from the bot to delete the original files after command run complete!\n- To execute one of those lists in bot for example, you must use -ff subtitle (list key) or -ff convert (list key)\nHere I will explain how to use mltb.* which is reference to files you want to work on.\n1. First cmd: the input is mltb.mkv so this cmd will work only on mkv videos and the output is mltb.mkv also so all outputs is mkv. -del will delete the original media after complete run of the cmd.\n2. Second cmd: the input is mltb.video so this cmd will work on all videos and the output is only mltb so the extenstion is same as input files.\n3. Third cmd: the input in mltb.m4a so this cmd will work only on m4a audios and the output is mltb.mp3 so the output extension is mp3.\n4. Fourth cmd: the input is mltb.audio so this cmd will work on all audios and the output is mltb.mp3 so the output extension is mp3.\n\nSend dict of FFMPEG_CMDS Options according to format.\n<b>Timeout:</b> 60 sec",
+    ],
+    "leech_dest": [
+        "Leech Destination allows you to choose where you want to receive your Leeched files.",
+        "",
     ],
 }
 fname_dict = {
@@ -234,6 +239,7 @@ fname_dict = {
     "v_intro_sub": "Intro Subtitle",
     "v_attach": "MKV Attachments",
     "ffmpeg_cmds": "FFmpeg CMDS",
+    "leech_dest": "Leech Destination",
     "mprefix": "Prefix",
     "msuffix": "Suffix",
     "mremname": "Remname",
@@ -641,6 +647,12 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
 
         lmerge = user_dict.get("lmerge", False)
         buttons.ibutton(f"🔀 MERGE: {'ENABLE ✅' if lmerge else 'DISABLE ❌'}", f"userset {user_id} lmerge")
+
+        ldest = user_dict.get("leech_dest", config_dict.get("LEECH_DEST", False))
+        buttons.ibutton(f"{'✅ ' if ldest else ''}📥 Leech to DM", f"userset {user_id} ldest_dm")
+        buttons.ibutton(f"{'✅ ' if not ldest else ''}👥 Leech to Group", f"userset {user_id} ldest_grp")
+        leech_dest = "DM" if ldest else "GROUP"
+
         buttons.ibutton("⌨️ FFmpeg CMDS", f"userset {user_id} ffmpeg_cmds")
         buttons.ibutton("Video Tools", f"mediatool main {user_id}")
 
@@ -661,6 +673,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             LAUTORENAME=escape(lautorename),
             LMETA=escape(lmeta),
             LMERGE=lmerge,
+            LDEST=leech_dest,
         )
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
@@ -1005,6 +1018,11 @@ async def set_custom(client, message, pre_event, key, direct=False):
     elif key in ["audio_change", "default_audio", "v_bitrate", "v_watermark", "v_subsync"]:
         return_key = "audio"
     elif key == "ffmpeg_cmds":
+        try:
+            value = json.loads(value)
+        except Exception as e:
+            LOGGER.error(f"Error parsing FFmpeg CMDS: {e}")
+            return await editMessage(pre_event, "<i>Invalid JSON Format for FFmpeg CMDS!</i>")
         return_key = "leech"
     update_user_ldata(user_id, n_key, value)
     await deleteMessage(message)
@@ -1187,7 +1205,7 @@ async def edit_user_settings(client, query):
         await update_user_settings(query, data[2][1:], "universal")
         if DATABASE_URL:
             await DbManger().update_user_data(user_id)
-    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata", "remove_metadata", "auto_merge_zip"]:
+    elif data[2] in ["bot_pm", "mediainfo", "save_mode", "td_mode", "lmerge", "merge_original", "strip_metadata", "remove_metadata", "auto_merge_zip", "ldest_dm", "ldest_grp"]:
         handler_dict[user_id] = False
         if (
             data[2] == "save_mode"
@@ -1214,12 +1232,18 @@ async def edit_user_settings(client, query):
                 "Set UserTD first to Enable User TD Mode !", show_alert=True
             )
         await query.answer()
-        update_user_ldata(user_id, data[2], not user_dict.get(data[2], False))
+        if data[2] == "ldest_dm":
+            update_user_ldata(user_id, "leech_dest", True)
+        elif data[2] == "ldest_grp":
+            update_user_ldata(user_id, "leech_dest", False)
+        else:
+            update_user_ldata(user_id, data[2], not user_dict.get(data[2], False))
+
         if data[2] in ["td_mode"]:
             await update_user_settings(query, "user_tds", "mirror")
         elif data[2] in ["lmerge", "auto_merge_zip"]:
             await update_user_settings(query, "audio")
-        elif data[2] in ["merge_original", "remove_metadata"]:
+        elif data[2] in ["merge_original", "remove_metadata", "ldest_dm", "ldest_grp"]:
             await update_user_settings(query, "leech")
         else:
             await update_user_settings(query, "universal")

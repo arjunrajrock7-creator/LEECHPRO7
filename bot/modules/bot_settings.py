@@ -73,11 +73,13 @@ default_values = {
     "IMG_PAGE": 1,
     "AUTHOR_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
     "AUTHOR_URL": "https://t.me/ALONEKINGSTAR77",
-    "TITLE_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡-X",
+    "TITLE_NAME": "⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
     "GD_INFO": "Uploaded by ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡",
+    "LEECH_DEST": False,
 }
 bool_vars = [
     "AS_DOCUMENT",
+    "LEECH_DEST",
     "BOT_PM",
     "STOP_DUPLICATE",
     "SET_COMMANDS",
@@ -240,6 +242,9 @@ async def load_config():
 
     LEECH_MERGE = environ.get("LEECH_MERGE", "")
     LEECH_MERGE = LEECH_MERGE.lower() == "true"
+
+    LEECH_DEST = environ.get("LEECH_DEST", "")
+    LEECH_DEST = LEECH_DEST.lower() == "true"
 
     MIRROR_FILENAME_PREFIX = environ.get("MIRROR_FILENAME_PREFIX", "")
     if len(MIRROR_FILENAME_PREFIX) == 0:
@@ -729,6 +734,7 @@ async def load_config():
             "LEECH_FILENAME_REMNAME": LEECH_FILENAME_REMNAME,
             "LEECH_FILENAME_AUTORENAME": LEECH_FILENAME_AUTORENAME,
             "LEECH_MERGE": LEECH_MERGE,
+            "LEECH_DEST": LEECH_DEST,
             "MIRROR_FILENAME_PREFIX": MIRROR_FILENAME_PREFIX,
             "MIRROR_FILENAME_SUFFIX": MIRROR_FILENAME_SUFFIX,
             "MIRROR_FILENAME_REMNAME": MIRROR_FILENAME_REMNAME,

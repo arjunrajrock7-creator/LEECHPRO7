@@ -140,7 +140,11 @@ class MirrorLeechListener:
         self.isPrivate = message.chat.type == ChatType.BOT
         self.user_id = self.message.from_user.id
         self.user_dict = user_data.get(self.user_id, {})
-        self.isPM = config_dict["BOT_PM"] or self.user_dict.get("bot_pm")
+        self.isPM = any([
+            config_dict["BOT_PM"],
+            self.user_dict.get("bot_pm"),
+            self.user_dict.get("leech_dest", config_dict.get("LEECH_DEST", False))
+        ])
         self.suproc = None
         self.sameDir = sameDir
         self.rcFlags = rcFlags
@@ -665,23 +669,12 @@ class MirrorLeechListener:
                 if self.suproc == "cancelled":
                     return
 
-        if (custom_ffmpeg := self.user_dict.get("ffmpeg_cmds")) and self.isLeech:
+        ff_key = self.leech_utils.get("ff")
+        if ff_key and (ff_dict := self.user_dict.get("ffmpeg_cmds")) and isinstance(ff_dict, dict) and ff_key in ff_dict and self.isLeech:
+            custom_cmds = ff_dict[ff_key]
             process_path = up_path or dl_path
-            LOGGER.info(f"Applying custom FFmpeg commands: {custom_ffmpeg}")
-            if await aiopath.isfile(process_path) and (await get_document_type(process_path))[0]:
-                out_path = f"{process_path}.custom.tmp"
-                success, _ = await MediaUtils.apply_custom_ffmpeg(process_path, out_path, custom_ffmpeg)
-                if success:
-                    await move(out_path, process_path)
-            elif await aiopath.isdir(process_path):
-                for dirpath, _, files in await sync_to_async(walk, process_path):
-                    for file in files:
-                        v_path = ospath.join(dirpath, file)
-                        if (await get_document_type(v_path))[0]:
-                            out_v = f"{v_path}.custom.tmp"
-                            success, _ = await MediaUtils.apply_custom_ffmpeg(v_path, out_v, custom_ffmpeg)
-                            if success:
-                                await move(out_v, v_path)
+            LOGGER.info(f"Applying custom FFmpeg commands for key: {ff_key}")
+            await MediaUtils.process_custom_ffmpeg(process_path, custom_cmds, self)
 
         if metadata := self.user_dict.get("lmeta") or config_dict["METADATA"]:
             meta_path = up_path or dl_path

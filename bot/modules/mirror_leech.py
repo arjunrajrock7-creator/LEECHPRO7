@@ -73,6 +73,7 @@ from bot.helper.ext_utils.help_messages import (
 )
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
 from bot.modules.gen_pyro_sess import get_decrypt_key
+from bot.modules.users_settings import get_user_settings, handler_dict
 
 
 @new_task
@@ -123,10 +124,41 @@ async def _mirror_leech(
         "-screenshots": "",
         "-t": "",
         "-thumb": "",
+        "-vt": False,
+        "-ff": "",
     }
 
     args = arg_parser(input_list[1:], arg_base)
     cmd = input_list[0].split("@")[0]
+
+    if args["-vt"] and not args["link"] and not message.reply_to_message:
+        handler_dict[message.from_user.id] = False
+        # Trigger the mediatool main directly
+        from bot.helper.telegram_helper.message_utils import sendMessage
+        from bot.helper.telegram_helper.button_build import ButtonMaker
+        user_id = message.from_user.id
+        user_dict = user_data.get(user_id, {})
+        buttons = ButtonMaker()
+        lmeta = "🏷️" if user_dict.get("lmeta") else "🔘"
+        buttons.ibutton(f"{lmeta} Metadata", f"mediatool metadata {user_id}")
+        tracks = "🎵" if user_dict.get("audio_change") or user_dict.get("default_audio") else "🔘"
+        buttons.ibutton(f"{tracks} Tracks", f"mediatool tracks {user_id}")
+        compress = "🗜️" if user_dict.get("v_bitrate") else "🔘"
+        buttons.ibutton(f"{compress} Compress", f"mediatool compress {user_id}")
+        merge = "🔗" if user_dict.get("lmerge") or user_dict.get("auto_merge_zip") else "🔘"
+        buttons.ibutton(f"{merge} Merge", f"mediatool merge {user_id}")
+        watermark = "🖼️" if user_dict.get("v_watermark") else "🔘"
+        buttons.ibutton(f"{watermark} Watermark", f"mediatool watermark {user_id}")
+        subsync = "⏳" if user_dict.get("v_subsync") else "🔘"
+        buttons.ibutton(f"{subsync} Sub Sync", f"mediatool subsync {user_id}")
+        intro = "🎬" if user_dict.get("v_intro") else "🔘"
+        buttons.ibutton(f"{intro} Intro Video", f"mediatool intro {user_id}")
+        attach = "📎" if user_dict.get("v_attach") else "🔘"
+        buttons.ibutton(f"{attach} Attachments", f"mediatool attach {user_id}")
+        buttons.ibutton("🔙 Back to Settings", f"userset {user_id} leech")
+        buttons.ibutton("🛑 Close", f"mediatool close")
+        await sendMessage(message, "☘️ <b>⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡ PREMIUM VIDEO TOOLS</b> ☘️\n\n<i>Select a tool to configure:</i>", buttons.build_menu(2), photo="IMAGES")
+        return
 
     multi = int(args["-i"]) if args["-i"].isdigit() else 0
 
@@ -158,6 +190,8 @@ async def _mirror_leech(
     ussr = args["-u"] or args["-user"]
     pssw = args["-p"] or args["-pass"]
     thumb = args["-t"] or args["-thumb"]
+    vt = args["-vt"]
+    ff = args["-ff"]
     sshots = int(ss) if (ss := (args["-ss"] or args["-screenshots"])).isdigit() else 0
     bulk_start = 0
     bulk_end = 0
@@ -486,7 +520,7 @@ async def _mirror_leech(
         drive_id=drive_id,
         index_link=index_link,
         source_url=org_link or link,
-        leech_utils={"screenshots": sshots, "thumb": thumb},
+        leech_utils={"screenshots": sshots, "thumb": thumb, "vt": vt, "ff": ff},
     )
 
     if file_ is not None:

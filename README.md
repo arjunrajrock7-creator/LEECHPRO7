@@ -16,7 +16,7 @@
 
 ---
 
-## 🚀 Welcome to ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡-X
+# 🚀 Welcome to ⚡𝗛𝗘𝗠𝗔𝗡𝗧𝗛⚡
 
 The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultra-high speed and 100% deployment success rate on **Heroku**, **Koyeb**, **VPS**, and **Render**.
 
@@ -41,6 +41,7 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
 | `TELEGRAM_API` | Your App ID from my.telegram.org |
 | `TELEGRAM_HASH` | Your App Hash from my.telegram.org |
 | `DATABASE_URL` | Your MongoDB connection string |
+| `LEECH_DEST` | Default Leech destination (True for DM, False for Group) |
 
 ---
 
@@ -71,6 +72,35 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
   1. Open DaRemote and connect to your VPS.
   2. Navigate to "Commands" and paste the deploy script.
   3. Ensure 100% success rate by using a clean Ubuntu/Debian environment.
+
+---
+
+## ⌨️ Custom FFmpeg Commands (`FFMPEG_CMDS`)
+
+You can set multiple FFmpeg command sets in your user settings.
+- **Format:** `{"key": ["cmd1", "cmd2"]}`
+- **Usage:** `/cmd -ff key`
+
+### 💡 Placeholders:
+- `mltb.mkv`: Matches only `.mkv` files.
+- `mltb.video`: Matches all video formats.
+- `mltb.audio`: Matches all audio formats.
+- `mltb`: Reference to the original file (matches all).
+- `-del`: Add to a command to delete the source file after successful processing.
+
+**Example:**
+`{"subtitle": ["-i mltb.mkv -c copy -c:s srt mltb.mkv", "-i mltb.video -c copy -c:s srt mltb"]}`
+
+---
+
+## ⌬ Video Tool Usage Guide
+
+To access the Video Tool menu, use the `-vt` argument in your command.
+
+**Examples:**
+- `/cmd -vt`
+- External Merge: `/cmd -i 10 -m "Your File Name" -vt`
+- Apply FFmpeg key: `/cmd -vt -ff metadata`
 
 ---
 
