@@ -323,7 +323,15 @@ class MirrorLeechListener:
         user_dict = user_data.get(self.message.from_user.id, {})
 
         if self.join and await aiopath.isdir(dl_path):
-            await join_files(dl_path)
+            is_video = False
+            for f in await listdir(dl_path):
+                if (await get_document_type(ospath.join(dl_path, f)))[0]:
+                    is_video = True
+                    break
+            if is_video:
+                await merge_videos(dl_path, self, name)
+            else:
+                await join_files(dl_path)
 
         if self.extract:
             pswd = self.extract if isinstance(self.extract, str) else ""
@@ -377,6 +385,8 @@ class MirrorLeechListener:
                                     return
                                 elif code != 0:
                                     LOGGER.error("Unable to extract archive splits!")
+                                    await self.onUploadError("Unable to extract archive splits! Check if the password is correct or the archive is corrupted.")
+                                    return
                         if (
                             not self.seed
                             and self.suproc is not None

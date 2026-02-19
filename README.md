@@ -27,6 +27,8 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
 - 🔄 **Auto Rename**: Smart renaming with placeholders like `{season}`, `{episode}`, `{quality}`.
 - 🎞️ **Media Tools**: Intro injection, watermark support, and MKV attachment management.
 - 📱 **Mobile Optimized**: One-click deployment for DaRemote and Termius users.
+- 🔗 **Advanced Merging**: Use `/merge2` with `-i` and `-n` flags for precise file combining.
+- 🔊 **Audio Selector**: Interactive `/audio` tool to manage and remove unwanted audio tracks.
 
 ---
 
@@ -59,11 +61,16 @@ The most powerful and feature-rich Telegram Mirror-Leech bot, optimized for ultr
 - Select **Docker** as the builder.
 - Add your variables and set port to `8000`.
 
-### 🖥️ VPS & Mobile Deployment
+### 🖥️ VPS & Mobile Deployment (DaRemote/Termius)
+- Create a `config.env` file in your root directory.
 - Run this command in your terminal:
   ```bash
   wget https://raw.githubusercontent.com/arjunrajrock7-creator/LEECHPRO7/master/deploy_vps.vs && bash deploy_vps.vs
   ```
+- **DaRemote Instructions**:
+  1. Open DaRemote and connect to your VPS.
+  2. Navigate to "Commands" and paste the deploy script.
+  3. Ensure 100% success rate by using a clean Ubuntu/Debian environment.
 
 ---
 

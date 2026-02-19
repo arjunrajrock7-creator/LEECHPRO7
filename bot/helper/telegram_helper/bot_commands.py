@@ -88,6 +88,8 @@ class _BotCommands:
         self.MyDramaListCommand = f"mdl{CMD_SUFFIX}"
         self.GDCleanCommand = [f"gdclean{CMD_SUFFIX}", f"gc{CMD_SUFFIX}"]
         self.BroadcastCommand = [f"broadcast{CMD_SUFFIX}", f"bc{CMD_SUFFIX}"]
+        self.MergeCommand = [f"merge{CMD_SUFFIX}", f"merge2"]
+        self.AudioCommand = [f"audio{CMD_SUFFIX}", f"audio"]
 
 
 BotCommands = _BotCommands()

@@ -191,9 +191,9 @@ def get_progress_bar_string(pct):
     pct = float(str(pct).strip("%"))
     p = min(max(pct, 0), 100)
     cFull = int(p // 10)
-    p_str = '🟥' * cFull
-    p_str += '⬜' * (10 - cFull)
-    return f"┃{p_str}┃"
+    p_str = '█' * cFull
+    p_str += '░' * (10 - cFull)
+    return f"[{p_str}]"
 
 
 def get_all_versions():
@@ -252,6 +252,23 @@ class EngineStatus:
         self.STATUS_RCLONE = f"RClone {version_cache['rclone']}"
 
 
+STATUS_ICONS = {
+    MirrorStatus.STATUS_UPLOADING: "📤",
+    MirrorStatus.STATUS_DOWNLOADING: "🚀",
+    MirrorStatus.STATUS_CLONING: "🌀",
+    MirrorStatus.STATUS_QUEUEDL: "💤",
+    MirrorStatus.STATUS_QUEUEUP: "💤",
+    MirrorStatus.STATUS_PAUSED: "⏸️",
+    MirrorStatus.STATUS_ARCHIVING: "📦",
+    MirrorStatus.STATUS_EXTRACTING: "📂",
+    MirrorStatus.STATUS_SPLITTING: "✂️",
+    MirrorStatus.STATUS_CHECKING: "🔍",
+    MirrorStatus.STATUS_SEEDING: "🌱",
+    MirrorStatus.STATUS_METADATA: "🏷️",
+    MirrorStatus.STATUS_MERGING: "🔗",
+}
+
+
 def get_readable_message():
     msg = ""
     button = None
@@ -287,17 +304,26 @@ def get_readable_message():
         ]:
             msg += BotTheme(
                 "BAR",
-                Bar=f"{get_progress_bar_string(download.progress())} {download.progress()}",
+                Bar=get_progress_bar_string(download.progress()),
+                Pct=download.progress().strip("%"),
             )
             msg += BotTheme(
                 "PROCESSED",
-                Processed=f"{download.processed_bytes()} of {download.size()}",
+                Processed=download.processed_bytes(),
             )
-            msg += BotTheme("STATUS", Status=download.status(), Url=msg_link)
+            msg += BotTheme("TOTAL_SIZE", Total=download.size())
+            msg += BotTheme(
+                "STATUS",
+                Status_Icon=STATUS_ICONS.get(download.status(), "⚙️"),
+                Status=download.status(),
+                Url=msg_link,
+            )
             msg += BotTheme("ETA", Eta=download.eta())
             msg += BotTheme("SPEED", Speed=download.speed())
             msg += BotTheme("ELAPSED", Elapsed=get_readable_time(elapsed))
             msg += BotTheme("ENGINE", Engine=download.eng())
+            upload_to = "Telegram | #1" if "Leech" in download.upload_details["mode"] else "Cloud"
+            msg += BotTheme("UPLOAD", Upload=upload_to)
             msg += BotTheme("STA_MODE", Mode=download.upload_details["mode"])
             if hasattr(download, "seeders_num"):
                 try:
@@ -306,7 +332,12 @@ def get_readable_message():
                 except Exception:
                     pass
         elif download.status() == MirrorStatus.STATUS_SEEDING:
-            msg += BotTheme("STATUS", Status=download.status(), Url=msg_link)
+            msg += BotTheme(
+                "STATUS",
+                Status_Icon=STATUS_ICONS.get(download.status(), "⚙️"),
+                Status=download.status(),
+                Url=msg_link,
+            )
             msg += BotTheme("SEED_SIZE", Size=download.size())
             msg += BotTheme("SEED_SPEED", Speed=download.upload_speed())
             msg += BotTheme("UPLOADED", Upload=download.uploaded_bytes())
@@ -314,12 +345,16 @@ def get_readable_message():
             msg += BotTheme("TIME", Time=download.seeding_time())
             msg += BotTheme("SEED_ENGINE", Engine=download.eng())
         else:
-            msg += BotTheme("STATUS", Status=download.status(), Url=msg_link)
+            msg += BotTheme(
+                "STATUS",
+                Status_Icon=STATUS_ICONS.get(download.status(), "⚙️"),
+                Status=download.status(),
+                Url=msg_link,
+            )
             msg += BotTheme("STATUS_SIZE", Size=download.size())
             msg += BotTheme("NON_ENGINE", Engine=download.eng())
 
         msg += BotTheme("USER", User=download.message.from_user.mention(style="html"))
-        msg += BotTheme("ID", Id=download.message.from_user.id)
         if (download.eng()).startswith("qBit"):
             msg += BotTheme(
                 "BTSEL", Btsel=f"/{BotCommands.BtSelectCommand}_{download.gid()}"

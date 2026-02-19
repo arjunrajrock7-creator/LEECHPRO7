@@ -87,6 +87,8 @@ from .modules import (
     broadcast,
     category_select,
     media_tools,
+    merge,
+    audio_tools,
 )
 
 

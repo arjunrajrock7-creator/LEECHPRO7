@@ -10,6 +10,7 @@ from re import split as re_split, I, search as re_search
 from subprocess import run as srun
 from sys import exit as sexit
 from bot import bot_cache
+from bot.helper.ext_utils.media_utils import MediaUtils
 
 from .exceptions import NotSupportedExtractionArchive
 from bot import aria2, LOGGER, DOWNLOAD_DIR, get_client, GLOBAL_EXTENSION_FILTER, user_data
@@ -272,7 +273,7 @@ async def edit_metadata(
         "-c:v", "copy",
         "-c:a", "copy",
         "-c:s", "copy",
-        "-threads", "0",
+        "-threads", MediaUtils.get_optimal_threads(),
         outfile,
         "-y",
     ])

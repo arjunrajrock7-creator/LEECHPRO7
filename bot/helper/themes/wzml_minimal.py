@@ -180,45 +180,46 @@ class WZMLStyle:
     STATUS_NAME = "<b><i>{Name}</i></b>"
 
     #####---------PROGRESSIVE STATUS-------
-    BAR = "\n┃ {Bar}"
-    PROCESSED = "\n┠ <b>𝐏𝐫𝐨𝐜𝐞𝐬𝐬𝐞𝐝:</b> {Processed}"
-    STATUS = '\n┠ <b>𝐒𝐭𝐚𝐭𝐮𝐬:</b> <a href="{Url}">{Status}</a>'
-    ETA = " | <b>𝐄𝐓𝐀:</b> {Eta}"
-    SPEED = "\n┠ <b>𝐒𝐩𝐞𝐞𝐝:</b> {Speed}"
-    ELAPSED = " | <b>𝐄𝐥𝐚𝐩𝐬𝐞𝐝:</b> {Elapsed}"
-    ENGINE = "\n┠ <b>𝐄𝐧𝐠𝐢𝐧𝐞:</b> {Engine}"
-    STA_MODE = "\n┠ <b>𝐌𝐨𝐝𝐞:</b> {Mode}"
-    SEEDERS = "\n┠ <b>𝐒𝐞𝐞𝐝𝐞𝐫𝐬:</b> {Seeders} | "
-    LEECHERS = "<b>𝐋𝐞𝐞𝐜𝐡𝐞𝐫𝐬:</b> {Leechers}"
+    BAR = "\n<b>Progress:</b> {Bar} » {Pct}%"
+    PROCESSED = "\n<b>Processed:</b> 📦 {Processed}"
+    TOTAL_SIZE = "\n<b>Total:</b> 📁 {Total}"
+    STATUS = '\n<b>Status:</b> {Status_Icon} <a href="{Url}">{Status}...</a>'
+    ETA = "\n<b>ETA:</b> ⏳ {Eta}"
+    SPEED = "\n<b>Speed:</b> ⚡ {Speed}"
+    ELAPSED = " | <b>Elapsed:</b> ⏱️ {Elapsed}"
+    ENGINE = "\n<b>Engine:</b> 🔧 {Engine}"
+    UPLOAD = "\n<b>Upload:</b> 📤 {Upload}"
+    STA_MODE = "\n<b>Mode:</b> 🔄 {Mode}"
+    SEEDERS = "\n<b>Seeders:</b> {Seeders} | "
+    LEECHERS = "<b>Leechers:</b> {Leechers}"
 
     ####--------SEEDING----------
-    SEED_SIZE = "\n┠ <b>𝐒𝐢𝐳𝐞: </b>{Size}"
-    SEED_SPEED = "\n┠ <b>𝐒𝐩𝐞𝐞𝐝: </b> {Speed} | "
-    UPLOADED = "<b>𝐔𝐩𝐥𝐨𝐚𝐝𝐞𝐝: </b> {Upload}"
-    RATIO = "\n┠ <b>𝐑𝐚𝐭𝐢𝐨: </b> {Ratio} | "
-    TIME = "<b>𝐓𝐢𝐦𝐞: </b> {Time}"
-    SEED_ENGINE = "\n┠ <b>𝐄𝐧𝐠𝐢𝐧𝐞:</b> {Engine}"
+    SEED_SIZE = "\n<b>Size: </b>{Size}"
+    SEED_SPEED = "\n<b>Speed: </b> {Speed} | "
+    UPLOADED = "<b>Uploaded: </b> {Upload}"
+    RATIO = "\n<b>Ratio: </b> {Ratio} | "
+    TIME = "<b>Time: </b> {Time}"
+    SEED_ENGINE = "\n<b>Engine:</b> {Engine}"
 
     ####--------NON-PROGRESSIVE + NON SEEDING----------
-    STATUS_SIZE = "\n┠ <b>𝐒𝐢𝐳𝐞: </b>{Size}"
-    NON_ENGINE = "\n┠ <b>𝐄𝐧𝐠𝐢𝐧𝐞:</b> {Engine}"
+    STATUS_SIZE = "\n<b>Size: </b>{Size}"
+    NON_ENGINE = "\n<b>Engine:</b> {Engine}"
 
     ####--------OVERALL MSG FOOTER----------
-    USER = "\n┠ <b>𝐔𝐬𝐞𝐫:</b> <code>{User}</code> | "
-    ID = "<b>𝐈𝐃:</b> <code>{Id}</code>"
+    USER = "\n<b>User:</b> 👤 {User}"
     BTSEL = "\n┠ <b>Select:</b> {Btsel}"
     CANCEL = "\n┖ {Cancel}\n\n"
 
     ####------FOOTER--------
-    FOOTER = "<b>╭━━「 🌟 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐒 」</b>\n"
-    TASKS = "<b>┃</b> 📥 <b>𝐓𝐚𝐬𝐤𝐬:</b> {Tasks}\n"
-    BOT_TASKS = "<b>┃</b> 📤 <b>𝐓𝐚𝐬𝐤𝐬:</b> {Tasks}/{Ttask} | <b>𝐀𝐕𝐋:</b> {Free}\n"
-    Cpu = "<b>┃</b> 💻 <b>𝐂𝐏𝐔:</b> {cpu}% | "
-    FREE = "<b>𝐅𝐫𝐞𝐞:</b> {free} [{free_p}%]"
-    Ram = "\n<b>┃</b> 📊 <b>𝐑𝐀𝐌:</b> {ram}% | "
-    uptime = "<b>𝐔𝐏:</b> {uptime}"
-    DL = "\n<b>┃</b> 🔽 <b>𝐃𝐋:</b> {DL}/s | "
-    UL = "<b>🔼 𝐔𝐋:</b> {UL}/s"
+    FOOTER = "<b>「 🌟 BOT STATS 」</b>\n"
+    TASKS = "📥 <b>Tasks:</b> {Tasks}\n"
+    BOT_TASKS = "📤 <b>Tasks:</b> {Tasks}/{Ttask} | <b>AVL:</b> {Free}\n"
+    Cpu = "💻 <b>CPU:</b> {cpu}% | "
+    FREE = "<b>Free:</b> {free} [{free_p}%]"
+    Ram = "\n📊 <b>RAM:</b> {ram}% | "
+    uptime = "<b>UP:</b> {uptime}"
+    DL = "\n🔽 <b>DL:</b> {DL}/s | "
+    UL = "🔼 <b>UL:</b> {UL}/s"
 
     ###--------BUTTONS-------
     PREVIOUS = "⫷"
