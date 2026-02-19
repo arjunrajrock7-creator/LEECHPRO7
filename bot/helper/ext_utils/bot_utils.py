@@ -518,40 +518,42 @@ def get_mega_link_type(url):
 def arg_parser(items, arg_base):
     if not items:
         return arg_base
-    bool_arg_set = {"-b", "-e", "-z", "-s", "-j", "-d"}
+    bool_arg_set = {
+        "-b", "-bulk", "-e", "-extract", "-uz", "-unzip", "-z", "-zip",
+        "-s", "-select", "-j", "-join", "-d", "-seed", "-vt"
+    }
     t = len(items)
     i = 0
-    arg_start = -1
-
-    while i + 1 <= t:
-        part = items[i].strip()
-        if part in arg_base:
-            if arg_start == -1:
-                arg_start = i
-            if i + 1 == t and part in bool_arg_set or part in ["-s", "-j"]:
-                arg_base[part] = True
-            else:
-                sub_list = []
-                for j in range(i + 1, t):
-                    item = items[j].strip()
-                    if item in arg_base:
-                        if part in bool_arg_set and not sub_list:
-                            arg_base[part] = True
-                        break
-                    sub_list.append(item.strip())
-                    i += 1
-                if sub_list:
-                    arg_base[part] = " ".join(sub_list)
-        i += 1
-
     link = []
-    if items[0].strip() not in arg_base:
-        if arg_start == -1:
-            link.extend(item.strip() for item in items)
+    while i < t:
+        part = items[i].strip()
+        if not part:
+            i += 1
+            continue
+        if part in arg_base:
+            i += 1
+            sub_list = []
+            while i < t:
+                item = items[i].strip()
+                if not item:
+                    i += 1
+                    continue
+                if item in arg_base:
+                    break
+                if is_url(item) or is_magnet(item) or is_rclone_path(item) or is_telegram_link(item):
+                    break
+                sub_list.append(item)
+                i += 1
+            if sub_list:
+                arg_base[part] = " ".join(sub_list)
+            elif part in bool_arg_set:
+                arg_base[part] = True
+            i -= 1
         else:
-            link.extend(items[r].strip() for r in range(arg_start))
-        if link:
-            arg_base["link"] = " ".join(link)
+            link.append(part)
+        i += 1
+    if link:
+        arg_base["link"] = " ".join(link)
     return arg_base
 
 
